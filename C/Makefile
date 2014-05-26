@@ -10,7 +10,8 @@ tests = \
    test_organizations_t \
    test_conferences_t \
    test_conference_teams_t \
-   test_conference_stats_t
+   test_conference_stats_t \
+   test_conference_accolades_t
 
 ALL: PROGS TESTS
 
@@ -30,12 +31,16 @@ test_conference_teams_t: test_conference_teams_t.o conference_teams_t.o sql_quer
 test_conference_stats_t: test_conference_stats_t.o conference_stats_t.o sql_query.o data_list.o libncfobuilders.a libncfocompares.a
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfobuilders -lncfocompares
 
+test_conference_accolades_t: test_conference_accolades_t.o conference_accolades_t.o sql_query.o data_list.o libncfobuilders.a libncfocompares.a
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfobuilders -lncfocompares
+
 
 NCFOBUILDERS_OBJECTS = \
  build_organization.o \
  build_conference.o \
  build_conference_team.o \
- build_conference_stats.o
+ build_conference_stats.o \
+ build_conference_accolade.o
 
 libncfobuilders.a: $(NCFOBUILDERS_OBJECTS)
 	$(AR) $(ARFLAGS) $@ $^
@@ -45,7 +50,8 @@ NCFOCOMPARES_OBJECTS = \
  compare_organizations.o \
  compare_conferences.o \
  compare_conference_teams.o \
- compare_conference_stats.o
+ compare_conference_stats.o \
+ compare_conference_accolades.o
 
 libncfocompares.a: $(NCFOCOMPARES_OBJECTS)
 	$(AR) $(ARFLAGS) $@ $^

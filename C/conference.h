@@ -17,6 +17,27 @@ typedef enum
 
 } bowl_game_e;
 
+typedef enum
+{
+     cacc_None                 = 0,
+     cacc_CottonBowlChampions  = 1,
+     cacc_OrangeBowlChampions  = 2,
+     cacc_RoseBowlChampions    = 3,
+     cacc_SugarBowlChampions   = 4,
+     cacc_FiestaBowlChampions  = 5,
+     cacc_LibertyBowlChampions = 6,
+     cacc_NCFOChampions        = 7
+
+} conference_accolade_e;
+
+typedef struct
+{
+     int                    conference_id;
+     int                    season;
+     conference_accolade_e  accolade;
+
+} conference_accolade_s;
+
 typedef struct
 {
      int            conference_id;
@@ -62,5 +83,9 @@ int conference_stats_t_read(               sqlite3 *db,                         
 int conference_stats_t_read_by_conference( sqlite3 *db, const int conference_id,         data_list_s      *conference_stats );
 int conference_stats_t_update(             sqlite3 *db,                          const conference_stats_s *conference_stats );
 int conference_stats_t_delete(             sqlite3 *db,                          const conference_stats_s *conference_stats );
+
+int conference_accolades_t_create(             sqlite3 *db,                          const conference_accolade_s *conference_accolade  );
+int conference_accolades_t_read_by_conference( sqlite3 *db, const int conference_id,         data_list_s         *conference_accolades );
+int conference_accolades_t_delete(             sqlite3 *db,                          const conference_accolade_s *conference_accolade  );
 
 #endif

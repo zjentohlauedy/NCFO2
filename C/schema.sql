@@ -36,3 +36,12 @@ CREATE TABLE Conference_Stats_T
 --
    UNIQUE ( Conference_Id, Season, Bowl_Game )
 );
+
+CREATE TABLE Conference_Accolades_T
+(
+   Conference_Id INTEGER,
+   Season        INTEGER,
+   Accolade      INTEGER,
+--
+   UNIQUE ( Conference_Id, Season, Accolade )
+);

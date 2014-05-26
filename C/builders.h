@@ -16,4 +16,7 @@ void               buildIntoConferenceTeam( conference_team_s *conference, const
 conference_stats_s *buildConferenceStats(                                    const int conference_id, const int season, const bowl_game_e bowl_game );
 void               buildIntoConferenceStats( conference_stats_s *conference, const int conference_id, const int season, const bowl_game_e bowl_game );
 
+conference_accolade_s *buildConferenceAccolade(                                        const int conference_id, const int season, const conference_accolade_e accolade );
+void                   buildIntoConferenceAccolade( conference_accolade_s *conference, const int conference_id, const int season, const conference_accolade_e accolade );
+
 #endif
