@@ -1,0 +1,16 @@
+S??
+*.bak
+*.nes
+*.nst
+*.tsbsup
+*.txt
+*.png
+*.db
+*.o
+*.a
+TAGS
+
+# executables
+C/test_organizations_t
+C/test_conferences_t
+C/test_conference_teams_t
