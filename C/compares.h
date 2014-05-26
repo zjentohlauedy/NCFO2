@@ -13,4 +13,7 @@ char  *_compareConferences( conference_s *expected, conference_s *actual );
 #define compareConferenceTeams( A, B ) do { char *ret; if ( (ret = _compareConferenceTeams( (A), (B) )) != NULL ) return ret; } while ( 0 )
 char  *_compareConferenceTeams( conference_team_s *expected, conference_team_s *actual );
 
+#define compareConferenceStats( A, B ) do { char *ret; if ( (ret = _compareConferenceStats( (A), (B) )) != NULL ) return ret; } while ( 0 )
+char  *_compareConferenceStats( conference_stats_s *expected, conference_stats_s *actual );
+
 #endif

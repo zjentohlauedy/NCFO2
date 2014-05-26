@@ -14,3 +14,4 @@ TAGS
 C/test_organizations_t
 C/test_conferences_t
 C/test_conference_teams_t
+C/test_conference_stats_t

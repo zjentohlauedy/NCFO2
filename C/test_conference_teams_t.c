@@ -15,7 +15,7 @@ static int load_conference_team_data( void *output, int cols, char *data[], char
 {
      static conference_team_s conference_team;
 
-     conference_team_s **dt = (conference_team_s **)output;
+     conference_team_s **ct = (conference_team_s **)output;
 
      if ( cols < 2 ) return SQLITE_ERROR;
 
@@ -24,7 +24,7 @@ static int load_conference_team_data( void *output, int cols, char *data[], char
      conference_team.conference_id = atoi( data[0] );
      conference_team.team_id       = atoi( data[1] );
 
-     *dt = &conference_team;
+     *ct = &conference_team;
 
      return SQLITE_OK;
 }

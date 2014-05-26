@@ -44,6 +44,7 @@ TESTARGS=$DBFILE
 runTestProg test_organizations_t
 runTestProg test_conferences_t
 runTestProg test_conference_teams_t
+runTestProg test_conference_stats_t
 
 if [ $FAIL -ne 0 ]; then
 
