@@ -46,6 +46,13 @@ runTestProg test_conferences_t
 runTestProg test_conference_teams_t
 runTestProg test_conference_stats_t
 runTestProg test_conference_accolades_t
+runTestProg test_teams_t
+runTestProg test_team_players_t
+runTestProg test_team_stats_t
+runTestProg test_team_offense_stats_t
+runTestProg test_team_defense_stats_t
+runTestProg test_team_kicking_stats_t
+runTestProg test_team_accolades_t
 
 if [ $FAIL -ne 0 ]; then
 

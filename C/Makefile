@@ -11,7 +11,14 @@ tests = \
    test_conferences_t \
    test_conference_teams_t \
    test_conference_stats_t \
-   test_conference_accolades_t
+   test_conference_accolades_t \
+   test_teams_t \
+   test_team_players_t \
+   test_team_stats_t \
+   test_team_offense_stats_t \
+   test_team_defense_stats_t \
+   test_team_kicking_stats_t \
+   test_team_accolades_t
 
 ALL: PROGS TESTS
 
@@ -34,13 +41,41 @@ test_conference_stats_t: test_conference_stats_t.o conference_stats_t.o sql_quer
 test_conference_accolades_t: test_conference_accolades_t.o conference_accolades_t.o sql_query.o data_list.o libncfobuilders.a libncfocompares.a
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfobuilders -lncfocompares
 
+test_teams_t: test_teams_t.o teams_t.o sql_query.o libncfobuilders.a libncfocompares.a
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfobuilders -lncfocompares
+
+test_team_players_t: test_team_players_t.o team_players_t.o sql_query.o data_list.o libncfobuilders.a libncfocompares.a
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfobuilders -lncfocompares
+
+test_team_stats_t: test_team_stats_t.o team_stats_t.o sql_query.o data_list.o libncfobuilders.a libncfocompares.a
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfobuilders -lncfocompares
+
+test_team_offense_stats_t: test_team_offense_stats_t.o team_offense_stats_t.o sql_query.o data_list.o libncfobuilders.a libncfocompares.a
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfobuilders -lncfocompares
+
+test_team_defense_stats_t: test_team_defense_stats_t.o team_defense_stats_t.o sql_query.o data_list.o libncfobuilders.a libncfocompares.a
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfobuilders -lncfocompares
+
+test_team_kicking_stats_t: test_team_kicking_stats_t.o team_kicking_stats_t.o sql_query.o data_list.o libncfobuilders.a libncfocompares.a
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfobuilders -lncfocompares
+
+test_team_accolades_t: test_team_accolades_t.o team_accolades_t.o sql_query.o data_list.o libncfobuilders.a libncfocompares.a
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfobuilders -lncfocompares
+
 
 NCFOBUILDERS_OBJECTS = \
  build_organization.o \
  build_conference.o \
  build_conference_team.o \
  build_conference_stats.o \
- build_conference_accolade.o
+ build_conference_accolade.o \
+ build_team.o \
+ build_team_player.o \
+ build_team_stats.o \
+ build_team_offense_stats.o \
+ build_team_defense_stats.o \
+ build_team_kicking_stats.o \
+ build_team_accolade.o
 
 libncfobuilders.a: $(NCFOBUILDERS_OBJECTS)
 	$(AR) $(ARFLAGS) $@ $^
@@ -51,7 +86,14 @@ NCFOCOMPARES_OBJECTS = \
  compare_conferences.o \
  compare_conference_teams.o \
  compare_conference_stats.o \
- compare_conference_accolades.o
+ compare_conference_accolades.o \
+ compare_teams.o \
+ compare_team_players.o \
+ compare_team_stats.o \
+ compare_team_offense_stats.o \
+ compare_team_defense_stats.o \
+ compare_team_kicking_stats.o \
+ compare_team_accolades.o
 
 libncfocompares.a: $(NCFOCOMPARES_OBJECTS)
 	$(AR) $(ARFLAGS) $@ $^

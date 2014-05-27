@@ -3,19 +3,7 @@
 
 #include <sqlite3.h>
 #include "data_list.h"
-
-typedef enum
-{
-     bg_None             = 0,
-     bg_CottonBowl       = 1,
-     bg_OrangeBowl       = 2,
-     bg_RoseBowl         = 3,
-     bg_SugarBowl        = 4,
-     bg_FiestaBowl       = 5,
-     bg_LibertyBowl      = 6,
-     bg_NCFOChampionship = 7
-
-} bowl_game_e;
+#include "bowls.h"
 
 typedef enum
 {
