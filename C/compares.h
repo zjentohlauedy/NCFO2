@@ -4,6 +4,7 @@
 #include "organization.h"
 #include "conference.h"
 #include "team.h"
+#include "player.h"
 
 #define compareOrganizations( A, B ) do { char *ret; if ( (ret = _compareOrganizations( (A), (B) )) != NULL ) return ret; } while ( 0 )
 char  *_compareOrganizations( organization_s *expected, organization_s *actual );
@@ -40,5 +41,8 @@ char  *_compareTeamKickingStats( team_kicking_stats_s *expected, team_kicking_st
 
 #define compareTeamAccolades( A, B ) do { char *ret; if ( (ret = _compareTeamAccolades( (A), (B) )) != NULL ) return ret; } while ( 0 )
 char  *_compareTeamAccolades( team_accolade_s *expected, team_accolade_s *actual );
+
+#define comparePlayers( A, B ) do { char *ret; if ( (ret = _comparePlayers( (A), (B) )) != NULL ) return ret; } while ( 0 )
+char  *_comparePlayers( player_s *expected, player_s *actual );
 
 #endif

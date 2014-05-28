@@ -138,3 +138,15 @@ CREATE TABLE Team_Accolades_T
 --
    UNIQUE ( Team_Id, Season, Accolade )
 );
+
+CREATE TABLE Players_T
+(
+   Player_Id       INTEGER PRIMARY KEY,
+   First_Name      TEXT,
+   Last_Name       TEXT,
+   Face            INTEGER,
+   Position        INTEGER,
+   Number          INTEGER,
+   Freshman_Season INTEGER,
+   Maturity        INTEGER
+);

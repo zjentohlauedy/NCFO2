@@ -18,7 +18,8 @@ tests = \
    test_team_offense_stats_t \
    test_team_defense_stats_t \
    test_team_kicking_stats_t \
-   test_team_accolades_t
+   test_team_accolades_t \
+   test_players_t
 
 ALL: PROGS TESTS
 
@@ -62,6 +63,9 @@ test_team_kicking_stats_t: test_team_kicking_stats_t.o team_kicking_stats_t.o sq
 test_team_accolades_t: test_team_accolades_t.o team_accolades_t.o sql_query.o data_list.o libncfobuilders.a libncfocompares.a
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfobuilders -lncfocompares
 
+test_players_t: test_players_t.o players_t.o sql_query.o libncfobuilders.a libncfocompares.a
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfobuilders -lncfocompares
+
 
 NCFOBUILDERS_OBJECTS = \
  build_organization.o \
@@ -75,7 +79,8 @@ NCFOBUILDERS_OBJECTS = \
  build_team_offense_stats.o \
  build_team_defense_stats.o \
  build_team_kicking_stats.o \
- build_team_accolade.o
+ build_team_accolade.o \
+ build_player.o
 
 libncfobuilders.a: $(NCFOBUILDERS_OBJECTS)
 	$(AR) $(ARFLAGS) $@ $^
@@ -93,7 +98,8 @@ NCFOCOMPARES_OBJECTS = \
  compare_team_offense_stats.o \
  compare_team_defense_stats.o \
  compare_team_kicking_stats.o \
- compare_team_accolades.o
+ compare_team_accolades.o \
+ compare_players.o
 
 libncfocompares.a: $(NCFOCOMPARES_OBJECTS)
 	$(AR) $(ARFLAGS) $@ $^

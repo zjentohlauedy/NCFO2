@@ -4,6 +4,7 @@
 #include "organization.h"
 #include "conference.h"
 #include "team.h"
+#include "player.h"
 
 organization_s *buildOrganization(                                   const int organization_id );
 void            buildIntoOrganization( organization_s *organization, const int organization_id );
@@ -40,5 +41,8 @@ void                  buildIntoTeamKickingStats( team_kicking_stats_s *team, con
 
 team_accolade_s *buildTeamAccolade(                            const int team_id, const int season, const team_accolade_e accolade );
 void             buildIntoTeamAccolade( team_accolade_s *team, const int team_id, const int season, const team_accolade_e accolade );
+
+player_s *buildPlayer(                       const int player_id );
+void      buildIntoPlayer( player_s *player, const int player_id );
 
 #endif
