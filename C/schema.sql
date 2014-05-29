@@ -150,3 +150,12 @@ CREATE TABLE Players_T
    Freshman_Season INTEGER,
    Maturity        INTEGER
 );
+
+CREATE TABLE Player_Ratings_T
+(
+   Player_Id  INTEGER PRIMARY KEY,
+   Run_Speed  INTEGER,
+   Rush_Power INTEGER,
+   Max_Speed  INTEGER,
+   Hit_Power  INTEGER
+);

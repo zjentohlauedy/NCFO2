@@ -99,8 +99,8 @@ static char *players_t_create__ShouldGiveAnErrorIfPlayerIdAlreadyExists()
      /**/    expected.face             =  999;
      /**/    expected.position         =  241;
      /**/    expected.number           =   88;
-     /**/    expected.freshman_season  =   6;
-     /**/    expected.maturity         =   2;
+     /**/    expected.freshman_season  =    6;
+     /**/    expected.maturity         =    2;
 
      assertEquals( SQLITE_CONSTRAINT, players_t_create( db, &expected ) );
 
@@ -143,8 +143,8 @@ static char *players_t_update__ShouldModifyMatchingRecord_GivenThePlayerId()
      /**/    expected.face             =  999;
      /**/    expected.position         =  241;
      /**/    expected.number           =   88;
-     /**/    expected.freshman_season  =   6;
-     /**/    expected.maturity         =   2;
+     /**/    expected.freshman_season  =    6;
+     /**/    expected.maturity         =    2;
 
      assertEquals( SQLITE_OK, players_t_update( db, &expected ) );
 

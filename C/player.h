@@ -24,6 +24,16 @@ typedef enum
 typedef struct
 {
      int         player_id;
+     int         run_speed;
+     int         rush_power;
+     int         max_speed;
+     int         hit_power;
+
+} player_ratings_s;
+
+typedef struct
+{
+     int         player_id;
      char        first_name      [ 20 + 1 ];
      char        last_name       [ 20 + 1 ];
      int         face;
@@ -39,5 +49,10 @@ int players_t_create( sqlite3 *db, const player_s *player );
 int players_t_read(   sqlite3 *db,       player_s *player );
 int players_t_update( sqlite3 *db, const player_s *player );
 int players_t_delete( sqlite3 *db, const player_s *player );
+
+int player_ratings_t_create( sqlite3 *db, const player_ratings_s *player_ratings );
+int player_ratings_t_read(   sqlite3 *db,       player_ratings_s *player_ratings );
+int player_ratings_t_update( sqlite3 *db, const player_ratings_s *player_ratings );
+int player_ratings_t_delete( sqlite3 *db, const player_ratings_s *player_ratings );
 
 #endif

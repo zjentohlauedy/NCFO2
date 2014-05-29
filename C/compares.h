@@ -45,4 +45,7 @@ char  *_compareTeamAccolades( team_accolade_s *expected, team_accolade_s *actual
 #define comparePlayers( A, B ) do { char *ret; if ( (ret = _comparePlayers( (A), (B) )) != NULL ) return ret; } while ( 0 )
 char  *_comparePlayers( player_s *expected, player_s *actual );
 
+#define comparePlayerRatings( A, B ) do { char *ret; if ( (ret = _comparePlayerRatings( (A), (B) )) != NULL ) return ret; } while ( 0 )
+char  *_comparePlayerRatings( player_ratings_s *expected, player_ratings_s *actual );
+
 #endif

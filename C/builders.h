@@ -45,4 +45,7 @@ void             buildIntoTeamAccolade( team_accolade_s *team, const int team_id
 player_s *buildPlayer(                       const int player_id );
 void      buildIntoPlayer( player_s *player, const int player_id );
 
+player_ratings_s *buildPlayerRatings(                                       const int player_id );
+void              buildIntoPlayerRatings( player_ratings_s *player_ratings, const int player_id );
+
 #endif
