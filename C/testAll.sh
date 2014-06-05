@@ -57,6 +57,7 @@ runTestProg test_players_t
 runTestProg test_player_ratings_t
 runTestProg test_player_quarterback_ratings_t
 runTestProg test_player_offense_ratings_t
+runTestProg test_player_defense_ratings_t
 
 if [ $FAIL -ne 0 ]; then
 

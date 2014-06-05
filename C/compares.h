@@ -54,4 +54,7 @@ char  *_comparePlayerQuarterbackRatings( player_quarterback_ratings_s *expected,
 #define comparePlayerOffenseRatings( A, B ) do { char *ret; if ( (ret = _comparePlayerOffenseRatings( (A), (B) )) != NULL ) return ret; } while ( 0 )
 char  *_comparePlayerOffenseRatings( player_offense_ratings_s *expected, player_offense_ratings_s *actual );
 
+#define comparePlayerDefenseRatings( A, B ) do { char *ret; if ( (ret = _comparePlayerDefenseRatings( (A), (B) )) != NULL ) return ret; } while ( 0 )
+char  *_comparePlayerDefenseRatings( player_defense_ratings_s *expected, player_defense_ratings_s *actual );
+
 #endif

@@ -175,3 +175,10 @@ CREATE TABLE Player_Offense_Ratings_T
    Ball_Control INTEGER,
    Receiving    INTEGER
 );
+
+CREATE TABLE Player_Defense_Ratings_T
+(
+   Player_Id     INTEGER PRIMARY KEY,
+   Interceptions INTEGER,
+   Quickness     INTEGER
+);
