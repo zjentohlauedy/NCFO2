@@ -24,6 +24,14 @@ typedef enum
 typedef struct
 {
      int         player_id;
+     int         kicking_ability;
+     int         avoid_kick_block;
+
+} player_kicking_ratings_s;
+
+typedef struct
+{
+     int         player_id;
      int         interceptions;
      int         quickness;
 
@@ -95,5 +103,10 @@ int player_defense_ratings_t_create( sqlite3 *db, const player_defense_ratings_s
 int player_defense_ratings_t_read(   sqlite3 *db,       player_defense_ratings_s *player_defense_ratings );
 int player_defense_ratings_t_update( sqlite3 *db, const player_defense_ratings_s *player_defense_ratings );
 int player_defense_ratings_t_delete( sqlite3 *db, const player_defense_ratings_s *player_defense_ratings );
+
+int player_kicking_ratings_t_create( sqlite3 *db, const player_kicking_ratings_s *player_kicking_ratings );
+int player_kicking_ratings_t_read(   sqlite3 *db,       player_kicking_ratings_s *player_kicking_ratings );
+int player_kicking_ratings_t_update( sqlite3 *db, const player_kicking_ratings_s *player_kicking_ratings );
+int player_kicking_ratings_t_delete( sqlite3 *db, const player_kicking_ratings_s *player_kicking_ratings );
 
 #endif

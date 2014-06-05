@@ -182,3 +182,10 @@ CREATE TABLE Player_Defense_Ratings_T
    Interceptions INTEGER,
    Quickness     INTEGER
 );
+
+CREATE TABLE Player_Kicking_Ratings_T
+(
+   Player_Id        INTEGER PRIMARY KEY,
+   Kicking_Ability  INTEGER,
+   Avoid_Kick_Block INTEGER
+);

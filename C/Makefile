@@ -23,7 +23,8 @@ tests = \
    test_player_ratings_t \
    test_player_quarterback_ratings_t \
    test_player_offense_ratings_t \
-   test_player_defense_ratings_t
+   test_player_defense_ratings_t \
+   test_player_kicking_ratings_t
 
 ALL: PROGS TESTS
 
@@ -82,6 +83,9 @@ test_player_offense_ratings_t: test_player_offense_ratings_t.o player_offense_ra
 test_player_defense_ratings_t: test_player_defense_ratings_t.o player_defense_ratings_t.o sql_query.o libncfobuilders.a libncfocompares.a
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfobuilders -lncfocompares
 
+test_player_kicking_ratings_t: test_player_kicking_ratings_t.o player_kicking_ratings_t.o sql_query.o libncfobuilders.a libncfocompares.a
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfobuilders -lncfocompares
+
 
 NCFOBUILDERS_OBJECTS = \
  build_organization.o \
@@ -100,7 +104,8 @@ NCFOBUILDERS_OBJECTS = \
  build_player_ratings.o \
  build_player_quarterback_ratings.o \
  build_player_offense_ratings.o \
- build_player_defense_ratings.o
+ build_player_defense_ratings.o \
+ build_player_kicking_ratings.o
 
 libncfobuilders.a: $(NCFOBUILDERS_OBJECTS)
 	$(AR) $(ARFLAGS) $@ $^
@@ -123,7 +128,8 @@ NCFOCOMPARES_OBJECTS = \
  compare_player_ratings.o \
  compare_player_quarterback_ratings.o \
  compare_player_offense_ratings.o \
- compare_player_defense_ratings.o
+ compare_player_defense_ratings.o \
+ compare_player_kicking_ratings.o
 
 libncfocompares.a: $(NCFOCOMPARES_OBJECTS)
 	$(AR) $(ARFLAGS) $@ $^

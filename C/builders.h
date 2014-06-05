@@ -57,4 +57,7 @@ void                      buildIntoPlayerOffenseRatings( player_offense_ratings_
 player_defense_ratings_s *buildPlayerDefenseRatings(                                                       const int player_id );
 void                      buildIntoPlayerDefenseRatings( player_defense_ratings_s *player_defense_ratings, const int player_id );
 
+player_kicking_ratings_s *buildPlayerKickingRatings(                                                       const int player_id );
+void                      buildIntoPlayerKickingRatings( player_kicking_ratings_s *player_kicking_ratings, const int player_id );
+
 #endif
