@@ -25,3 +25,4 @@ C/test_team_kicking_stats_t
 C/test_team_accolades_t
 C/test_players_t
 C/test_player_ratings_t
+C/test_player_quarterback_ratings_t

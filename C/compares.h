@@ -48,4 +48,7 @@ char  *_comparePlayers( player_s *expected, player_s *actual );
 #define comparePlayerRatings( A, B ) do { char *ret; if ( (ret = _comparePlayerRatings( (A), (B) )) != NULL ) return ret; } while ( 0 )
 char  *_comparePlayerRatings( player_ratings_s *expected, player_ratings_s *actual );
 
+#define comparePlayerQuarterbackRatings( A, B ) do { char *ret; if ( (ret = _comparePlayerQuarterbackRatings( (A), (B) )) != NULL ) return ret; } while ( 0 )
+char  *_comparePlayerQuarterbackRatings( player_quarterback_ratings_s *expected, player_quarterback_ratings_s *actual );
+
 #endif

@@ -80,7 +80,7 @@ static char *player_ratings_t_create__ShouldInsertRecordsInThePlayerRatingsTTabl
      return NULL;
 }
 
-static char *player_ratings_t_create__ShouldGiveAnErrorIfPlayerRatingsIdAlreadyExists()
+static char *player_ratings_t_create__ShouldGiveAnErrorIfPlayerIdAlreadyExists()
 {
      player_ratings_s expected = { 0 };
 
@@ -100,7 +100,7 @@ static char *player_ratings_t_create__ShouldGiveAnErrorIfPlayerRatingsIdAlreadyE
      return NULL;
 }
 
-static char *player_ratings_t_read__ShouldRetrieveMatchingRecord_GivenThePlayerRatingsId()
+static char *player_ratings_t_read__ShouldRetrieveMatchingRecord_GivenThePlayerId()
 {
      player_ratings_s expected = { 0 };
 
@@ -121,7 +121,7 @@ static char *player_ratings_t_read__ShouldRetrieveMatchingRecord_GivenThePlayerR
      return NULL;
 }
 
-static char *player_ratings_t_update__ShouldModifyMatchingRecord_GivenThePlayerRatingsId()
+static char *player_ratings_t_update__ShouldModifyMatchingRecord_GivenThePlayerId()
 {
      player_ratings_s expected = { 0 };
 
@@ -145,7 +145,7 @@ static char *player_ratings_t_update__ShouldModifyMatchingRecord_GivenThePlayerR
      return NULL;
 }
 
-static char *player_ratings_t_delete__ShouldDeleteMatchingRecord_GivenThePlayerRatingsId()
+static char *player_ratings_t_delete__ShouldDeleteMatchingRecord_GivenThePlayerId()
 {
      player_ratings_s expected = { 0 };
 
@@ -172,11 +172,11 @@ static void check_sqlite_error()
 
 static void run_all_tests()
 {
-     run_test( player_ratings_t_create__ShouldInsertRecordsInThePlayerRatingsTTable,        check_sqlite_error );
-     run_test( player_ratings_t_create__ShouldGiveAnErrorIfPlayerRatingsIdAlreadyExists,    check_sqlite_error );
-     run_test( player_ratings_t_read__ShouldRetrieveMatchingRecord_GivenThePlayerRatingsId, check_sqlite_error );
-     run_test( player_ratings_t_update__ShouldModifyMatchingRecord_GivenThePlayerRatingsId, check_sqlite_error );
-     run_test( player_ratings_t_delete__ShouldDeleteMatchingRecord_GivenThePlayerRatingsId, check_sqlite_error );
+     run_test( player_ratings_t_create__ShouldInsertRecordsInThePlayerRatingsTTable, check_sqlite_error );
+     run_test( player_ratings_t_create__ShouldGiveAnErrorIfPlayerIdAlreadyExists,    check_sqlite_error );
+     run_test( player_ratings_t_read__ShouldRetrieveMatchingRecord_GivenThePlayerId, check_sqlite_error );
+     run_test( player_ratings_t_update__ShouldModifyMatchingRecord_GivenThePlayerId, check_sqlite_error );
+     run_test( player_ratings_t_delete__ShouldDeleteMatchingRecord_GivenThePlayerId, check_sqlite_error );
 }
 
 

@@ -159,3 +159,12 @@ CREATE TABLE Player_Ratings_T
    Max_Speed  INTEGER,
    Hit_Power  INTEGER
 );
+
+CREATE TABLE Player_Quarterback_Ratings_T
+(
+   Player_Id        INTEGER PRIMARY KEY,
+   Pass_Speed       INTEGER,
+   Pass_Control     INTEGER,
+   Pass_Accuracy    INTEGER,
+   Avoid_Pass_Block INTEGER
+);

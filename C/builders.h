@@ -48,4 +48,7 @@ void      buildIntoPlayer( player_s *player, const int player_id );
 player_ratings_s *buildPlayerRatings(                                       const int player_id );
 void              buildIntoPlayerRatings( player_ratings_s *player_ratings, const int player_id );
 
+player_quarterback_ratings_s *buildPlayerQuarterbackRatings(                                                               const int player_id );
+void                          buildIntoPlayerQuarterbackRatings( player_quarterback_ratings_s *player_quarterback_ratings, const int player_id );
+
 #endif
