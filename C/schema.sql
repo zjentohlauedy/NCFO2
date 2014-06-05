@@ -168,3 +168,10 @@ CREATE TABLE Player_Quarterback_Ratings_T
    Pass_Accuracy    INTEGER,
    Avoid_Pass_Block INTEGER
 );
+
+CREATE TABLE Player_Offense_Ratings_T
+(
+   Player_Id    INTEGER PRIMARY KEY,
+   Ball_Control INTEGER,
+   Receiving    INTEGER
+);
