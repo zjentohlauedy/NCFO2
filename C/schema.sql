@@ -210,3 +210,16 @@ CREATE TABLE Player_Offense_Stats_T
 --
    UNIQUE ( Player_Id, Season, Bowl_Game )
 );
+
+CREATE TABLE Player_Defense_Stats_T
+(
+   Player_Id         INTEGER,
+   Season            INTEGER,
+   Bowl_Game         INTEGER,
+   Sacks             INTEGER,
+   Interceptions     INTEGER,
+   Return_Yards      INTEGER,
+   Return_Touchdowns INTEGER,
+--
+   UNIQUE ( Player_Id, Season, Bowl_Game )
+);

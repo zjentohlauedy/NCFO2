@@ -63,4 +63,7 @@ void                      buildIntoPlayerKickingRatings( player_kicking_ratings_
 player_offense_stats_s *buildPlayerOffenseStats(                                     const int player_id, const int season, const bowl_game_e bowl_game );
 void                    buildIntoPlayerOffenseStats( player_offense_stats_s *player, const int player_id, const int season, const bowl_game_e bowl_game );
 
+player_defense_stats_s *buildPlayerDefenseStats(                                     const int player_id, const int season, const bowl_game_e bowl_game );
+void                    buildIntoPlayerDefenseStats( player_defense_stats_s *player, const int player_id, const int season, const bowl_game_e bowl_game );
+
 #endif
