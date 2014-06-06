@@ -66,6 +66,7 @@ typedef struct
      bowl_game_e  bowl_game;
      int          pass_attempts;
      int          completions;
+     int          interceptions;
      int          pass_yards;
      int          pass_touchdowns;
      int          rush_attempts;

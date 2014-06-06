@@ -24,6 +24,7 @@ void buildIntoTeamOffenseStats( team_offense_stats_s *team_offense_stats, const 
 
      team_offense_stats->pass_attempts   = rand() %  200;
      team_offense_stats->completions     = rand() %  150;
+     team_offense_stats->interceptions   = rand() %  150;
      team_offense_stats->pass_yards      = rand() % 3000;
      team_offense_stats->pass_touchdowns = rand() %   50;
      team_offense_stats->rush_attempts   = rand() %  200;

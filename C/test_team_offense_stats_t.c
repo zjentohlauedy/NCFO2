@@ -18,7 +18,7 @@ static int load_team_offense_stats_data( void *output, int cols, char *data[], c
 
      team_offense_stats_s **tos = (team_offense_stats_s **)output;
 
-     if ( cols < 10 ) return SQLITE_ERROR;
+     if ( cols < 11 ) return SQLITE_ERROR;
 
      memset( &team_offense_stats, '\0', sizeof(team_offense_stats_s) );
 
@@ -27,11 +27,12 @@ static int load_team_offense_stats_data( void *output, int cols, char *data[], c
      team_offense_stats.bowl_game       = atoi( data[ 2] );
      team_offense_stats.pass_attempts   = atoi( data[ 3] );
      team_offense_stats.completions     = atoi( data[ 4] );
-     team_offense_stats.pass_yards      = atoi( data[ 5] );
-     team_offense_stats.pass_touchdowns = atoi( data[ 6] );
-     team_offense_stats.rush_attempts   = atoi( data[ 7] );
-     team_offense_stats.rush_yards      = atoi( data[ 8] );
-     team_offense_stats.rush_touchdowns = atoi( data[ 9] );
+     team_offense_stats.interceptions   = atoi( data[ 5] );
+     team_offense_stats.pass_yards      = atoi( data[ 6] );
+     team_offense_stats.pass_touchdowns = atoi( data[ 7] );
+     team_offense_stats.rush_attempts   = atoi( data[ 8] );
+     team_offense_stats.rush_yards      = atoi( data[ 9] );
+     team_offense_stats.rush_touchdowns = atoi( data[10] );
 
      *tos = &team_offense_stats;
 
@@ -57,13 +58,14 @@ static void insert_a_team_offense_stats( team_offense_stats_s *team_offense_stat
      char query[999+1];
 
 
-     snprintf( query, sizeof(query), "insert into team_offense_stats_t (team_id, season, bowl_game, pass_attempts, completions, pass_yards, pass_touchdowns, rush_attempts, rush_yards, rush_touchdowns)"
-               "values (%d, %d, %d, %d, %d, %d, %d, %d, %d, %d)",
+     snprintf( query, sizeof(query), "insert into team_offense_stats_t (team_id, season, bowl_game, pass_attempts, completions, interceptions, pass_yards, pass_touchdowns, rush_attempts, rush_yards, rush_touchdowns)"
+               "values (%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d)",
                team_offense_stats->team_id,
                team_offense_stats->season,
                team_offense_stats->bowl_game,
                team_offense_stats->pass_attempts,
                team_offense_stats->completions,
+               team_offense_stats->interceptions,
                team_offense_stats->pass_yards,
                team_offense_stats->pass_touchdowns,
                team_offense_stats->rush_attempts,
