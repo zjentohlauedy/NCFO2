@@ -87,6 +87,7 @@ CREATE TABLE Team_Offense_Stats_T
    Bowl_Game       INTEGER,
    Pass_Attempts   INTEGER,
    Completions     INTEGER,
+   Interceptions   INTEGER,
    Pass_Yards      INTEGER,
    Pass_Touchdowns INTEGER,
    Rush_Attempts   INTEGER,
@@ -188,4 +189,24 @@ CREATE TABLE Player_Kicking_Ratings_T
    Player_Id        INTEGER PRIMARY KEY,
    Kicking_Ability  INTEGER,
    Avoid_Kick_Block INTEGER
+);
+
+CREATE TABLE Player_Offense_Stats_T
+(
+   Player_Id            INTEGER,
+   Season               INTEGER,
+   Bowl_Game            INTEGER,
+   Pass_Attempts        INTEGER,
+   Completions          INTEGER,
+   Interceptions        INTEGER,
+   Pass_Yards           INTEGER,
+   Pass_Touchdowns      INTEGER,
+   Rush_Attempts        INTEGER,
+   Rush_Yards           INTEGER,
+   Rush_Touchdowns      INTEGER,
+   Receptions           INTEGER,
+   Receiving_Yards      INTEGER,
+   Receiving_Touchdowns INTEGER,
+--
+   UNIQUE ( Player_Id, Season, Bowl_Game )
 );

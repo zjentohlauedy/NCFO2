@@ -3,6 +3,7 @@
 
 #include <sqlite3.h>
 #include "data_list.h"
+#include "bowls.h"
 
 typedef enum
 {
@@ -20,6 +21,25 @@ typedef enum
      pos_Punter        = 11
 
 } position_e;
+
+typedef struct
+{
+     int          player_id;
+     int          season;
+     bowl_game_e  bowl_game;
+     int          pass_attempts;
+     int          completions;
+     int          interceptions;
+     int          pass_yards;
+     int          pass_touchdowns;
+     int          rush_attempts;
+     int          rush_yards;
+     int          rush_touchdowns;
+     int          receptions;
+     int          receiving_yards;
+     int          receiving_touchdowns;
+
+} player_offense_stats_s;
 
 typedef struct
 {
@@ -108,5 +128,11 @@ int player_kicking_ratings_t_create( sqlite3 *db, const player_kicking_ratings_s
 int player_kicking_ratings_t_read(   sqlite3 *db,       player_kicking_ratings_s *player_kicking_ratings );
 int player_kicking_ratings_t_update( sqlite3 *db, const player_kicking_ratings_s *player_kicking_ratings );
 int player_kicking_ratings_t_delete( sqlite3 *db, const player_kicking_ratings_s *player_kicking_ratings );
+
+int player_offense_stats_t_create(         sqlite3 *db,                      const player_offense_stats_s *player_offense_stats );
+int player_offense_stats_t_read(           sqlite3 *db,                            player_offense_stats_s *player_offense_stats );
+int player_offense_stats_t_read_by_player( sqlite3 *db, const int player_id,       data_list_s            *player_offense_stats );
+int player_offense_stats_t_update(         sqlite3 *db,                      const player_offense_stats_s *player_offense_stats );
+int player_offense_stats_t_delete(         sqlite3 *db,                      const player_offense_stats_s *player_offense_stats );
 
 #endif

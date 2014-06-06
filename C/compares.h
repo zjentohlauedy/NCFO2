@@ -60,4 +60,7 @@ char  *_comparePlayerDefenseRatings( player_defense_ratings_s *expected, player_
 #define comparePlayerKickingRatings( A, B ) do { char *ret; if ( (ret = _comparePlayerKickingRatings( (A), (B) )) != NULL ) return ret; } while ( 0 )
 char  *_comparePlayerKickingRatings( player_kicking_ratings_s *expected, player_kicking_ratings_s *actual );
 
+#define comparePlayerOffenseStats( A, B ) do { char *ret; if ( (ret = _comparePlayerOffenseStats( (A), (B) )) != NULL ) return ret; } while ( 0 )
+char  *_comparePlayerOffenseStats( player_offense_stats_s *expected, player_offense_stats_s *actual );
+
 #endif
