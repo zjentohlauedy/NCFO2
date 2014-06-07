@@ -238,3 +238,18 @@ CREATE TABLE Player_Kicking_Stats_T
 --
    UNIQUE ( Player_Id, Season, Bowl_Game )
 );
+
+CREATE TABLE Player_Returns_Stats_T
+(
+   Player_Id              INTEGER,
+   Season                 INTEGER,
+   Bowl_Game              INTEGER,
+   Kick_Returns           INTEGER,
+   Kick_Return_Yards      INTEGER,
+   Kick_Return_Touchdowns INTEGER,
+   Punt_Returns           INTEGER,
+   Punt_Return_Yards      INTEGER,
+   Punt_Return_Touchdowns INTEGER,
+--
+   UNIQUE ( Player_Id, Season, Bowl_Game )
+);
