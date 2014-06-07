@@ -66,4 +66,7 @@ void                    buildIntoPlayerOffenseStats( player_offense_stats_s *pla
 player_defense_stats_s *buildPlayerDefenseStats(                                     const int player_id, const int season, const bowl_game_e bowl_game );
 void                    buildIntoPlayerDefenseStats( player_defense_stats_s *player, const int player_id, const int season, const bowl_game_e bowl_game );
 
+player_kicking_stats_s *buildPlayerKickingStats(                                     const int player_id, const int season, const bowl_game_e bowl_game );
+void                    buildIntoPlayerKickingStats( player_kicking_stats_s *player, const int player_id, const int season, const bowl_game_e bowl_game );
+
 #endif

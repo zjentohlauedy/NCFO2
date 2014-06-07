@@ -27,6 +27,20 @@ typedef struct
      int          player_id;
      int          season;
      bowl_game_e  bowl_game;
+     int          extra_point_attempts;
+     int          extra_points_made;
+     int          field_goal_attempts;
+     int          field_goals_made;
+     int          punts;
+     int          punt_yards;
+
+} player_kicking_stats_s;
+
+typedef struct
+{
+     int          player_id;
+     int          season;
+     bowl_game_e  bowl_game;
      int          sacks;
      int          interceptions;
      int          return_yards;
@@ -152,5 +166,11 @@ int player_defense_stats_t_read(           sqlite3 *db,                         
 int player_defense_stats_t_read_by_player( sqlite3 *db, const int player_id,       data_list_s            *player_defense_stats );
 int player_defense_stats_t_update(         sqlite3 *db,                      const player_defense_stats_s *player_defense_stats );
 int player_defense_stats_t_delete(         sqlite3 *db,                      const player_defense_stats_s *player_defense_stats );
+
+int player_kicking_stats_t_create(         sqlite3 *db,                      const player_kicking_stats_s *player_kicking_stats );
+int player_kicking_stats_t_read(           sqlite3 *db,                            player_kicking_stats_s *player_kicking_stats );
+int player_kicking_stats_t_read_by_player( sqlite3 *db, const int player_id,       data_list_s            *player_kicking_stats );
+int player_kicking_stats_t_update(         sqlite3 *db,                      const player_kicking_stats_s *player_kicking_stats );
+int player_kicking_stats_t_delete(         sqlite3 *db,                      const player_kicking_stats_s *player_kicking_stats );
 
 #endif
