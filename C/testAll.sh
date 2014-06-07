@@ -63,6 +63,7 @@ runTestProg test_player_offense_stats_t
 runTestProg test_player_defense_stats_t
 runTestProg test_player_kicking_stats_t
 runTestProg test_player_returns_stats_t
+runTestProg test_player_accolades_t
 
 if [ $FAIL -ne 0 ]; then
 

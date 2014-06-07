@@ -72,4 +72,7 @@ void                    buildIntoPlayerKickingStats( player_kicking_stats_s *pla
 player_returns_stats_s *buildPlayerReturnsStats(                                     const int player_id, const int season, const bowl_game_e bowl_game );
 void                    buildIntoPlayerReturnsStats( player_returns_stats_s *player, const int player_id, const int season, const bowl_game_e bowl_game );
 
+player_accolade_s *buildPlayerAccolade(                                const int player_id, const int season, const player_accolade_e accolade );
+void               buildIntoPlayerAccolade( player_accolade_s *player, const int player_id, const int season, const player_accolade_e accolade );
+
 #endif

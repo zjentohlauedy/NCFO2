@@ -33,3 +33,4 @@ C/test_player_offense_stats_t
 C/test_player_defense_stats_t
 C/test_player_kicking_stats_t
 C/test_player_returns_stats_t
+C/test_player_accolades_t

@@ -7,6 +7,28 @@
 
 typedef enum
 {
+     pacc_None                 =  0,
+     pacc_ConferenceChampions  =  1,
+     pacc_CottonBowlChampions  =  2,
+     pacc_OrangeBowlChampions  =  3,
+     pacc_RoseBowlChampions    =  4,
+     pacc_SugarBowlChampions   =  5,
+     pacc_FiestaBowlChampions  =  6,
+     pacc_LibertyBowlChampions =  7,
+     pacc_NCFOChampions        =  8
+
+} player_accolade_e;
+
+typedef struct
+{
+     int                player_id;
+     int                season;
+     player_accolade_e  accolade;
+
+} player_accolade_s;
+
+typedef enum
+{
      pos_None          =  0,
      pos_Quarterback   =  1,
      pos_Runningback   =  2,
@@ -192,5 +214,9 @@ int player_returns_stats_t_read(           sqlite3 *db,                         
 int player_returns_stats_t_read_by_player( sqlite3 *db, const int player_id,       data_list_s            *player_returns_stats );
 int player_returns_stats_t_update(         sqlite3 *db,                      const player_returns_stats_s *player_returns_stats );
 int player_returns_stats_t_delete(         sqlite3 *db,                      const player_returns_stats_s *player_returns_stats );
+
+int player_accolades_t_create(         sqlite3 *db,                      const player_accolade_s *player_accolade  );
+int player_accolades_t_read_by_player( sqlite3 *db, const int player_id,       data_list_s       *player_accolades );
+int player_accolades_t_delete(         sqlite3 *db,                      const player_accolade_s *player_accolade  );
 
 #endif

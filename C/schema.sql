@@ -253,3 +253,12 @@ CREATE TABLE Player_Returns_Stats_T
 --
    UNIQUE ( Player_Id, Season, Bowl_Game )
 );
+
+CREATE TABLE Player_Accolades_T
+(
+   Player_Id INTEGER,
+   Season    INTEGER,
+   Accolade  INTEGER,
+--
+   UNIQUE ( Player_Id, Season, Accolade )
+);

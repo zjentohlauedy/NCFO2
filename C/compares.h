@@ -72,4 +72,7 @@ char  *_comparePlayerKickingStats( player_kicking_stats_s *expected, player_kick
 #define comparePlayerReturnsStats( A, B ) do { char *ret; if ( (ret = _comparePlayerReturnsStats( (A), (B) )) != NULL ) return ret; } while ( 0 )
 char  *_comparePlayerReturnsStats( player_returns_stats_s *expected, player_returns_stats_s *actual );
 
+#define comparePlayerAccolades( A, B ) do { char *ret; if ( (ret = _comparePlayerAccolades( (A), (B) )) != NULL ) return ret; } while ( 0 )
+char  *_comparePlayerAccolades( player_accolade_s *expected, player_accolade_s *actual );
+
 #endif
