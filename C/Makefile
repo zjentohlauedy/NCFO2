@@ -29,7 +29,8 @@ tests = \
    test_player_defense_stats_t \
    test_player_kicking_stats_t \
    test_player_returns_stats_t \
-   test_player_accolades_t
+   test_player_accolades_t\
+   test_player_service
 
 ALL: PROGS TESTS
 
@@ -106,6 +107,39 @@ test_player_returns_stats_t: test_player_returns_stats_t.o player_returns_stats_
 test_player_accolades_t: test_player_accolades_t.o player_accolades_t.o sql_query.o data_list.o libncfobuilders.a libncfocompares.a
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfobuilders -lncfocompares
 
+test_player_service: test_player_service.o libncfodata.a libncfobuilders.a libncfocompares.a
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfodata -lncfobuilders -lncfocompares
+
+NCFODATA_OBJECTS = \
+ sql_query.o \
+ data_list.o \
+ conference_accolades_t.o \
+ conference_stats_t.o \
+ conferences_t.o \
+ conference_teams_t.o \
+ organizations_t.o \
+ player_accolades_t.o \
+ player_defense_ratings_t.o \
+ player_defense_stats_t.o \
+ player_kicking_ratings_t.o \
+ player_kicking_stats_t.o \
+ player_offense_ratings_t.o \
+ player_offense_stats_t.o \
+ player_quarterback_ratings_t.o \
+ player_ratings_t.o \
+ player_returns_stats_t.o \
+ players_t.o \
+ team_accolades_t.o \
+ team_defense_stats_t.o \
+ team_kicking_stats_t.o \
+ team_offense_stats_t.o \
+ team_players_t.o \
+ team_stats_t.o \
+ teams_t.o \
+ player_service.o
+
+libncfodata.a: $(NCFODATA_OBJECTS)
+	$(AR) $(ARFLAGS) $@ $^
 
 NCFOBUILDERS_OBJECTS = \
  build_organization.o \

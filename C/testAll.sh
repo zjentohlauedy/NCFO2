@@ -41,18 +41,6 @@ echo
 
 TESTARGS=$DBFILE
 
-runTestProg test_organizations_t
-runTestProg test_conferences_t
-runTestProg test_conference_teams_t
-runTestProg test_conference_stats_t
-runTestProg test_conference_accolades_t
-runTestProg test_teams_t
-runTestProg test_team_players_t
-runTestProg test_team_stats_t
-runTestProg test_team_offense_stats_t
-runTestProg test_team_defense_stats_t
-runTestProg test_team_kicking_stats_t
-runTestProg test_team_accolades_t
 runTestProg test_players_t
 runTestProg test_player_ratings_t
 runTestProg test_player_quarterback_ratings_t
@@ -64,6 +52,23 @@ runTestProg test_player_defense_stats_t
 runTestProg test_player_kicking_stats_t
 runTestProg test_player_returns_stats_t
 runTestProg test_player_accolades_t
+
+runTestProg test_teams_t
+runTestProg test_team_players_t
+runTestProg test_team_stats_t
+runTestProg test_team_offense_stats_t
+runTestProg test_team_defense_stats_t
+runTestProg test_team_kicking_stats_t
+runTestProg test_team_accolades_t
+
+runTestProg test_conferences_t
+runTestProg test_conference_teams_t
+runTestProg test_conference_stats_t
+runTestProg test_conference_accolades_t
+
+runTestProg test_organizations_t
+
+runTestProg test_player_service
 
 if [ $FAIL -ne 0 ]; then
 
