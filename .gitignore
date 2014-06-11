@@ -35,3 +35,5 @@ C/test_player_kicking_stats_t
 C/test_player_returns_stats_t
 C/test_player_accolades_t
 C/test_player_service
+C/test_team_service
+C/test_conference_service

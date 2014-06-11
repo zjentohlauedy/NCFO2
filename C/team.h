@@ -5,6 +5,13 @@
 #include "data_list.h"
 #include "bowls.h"
 
+#define TEAM_PLAYER_SENTINEL         { -1, -1, -1 }
+#define TEAM_ACCOLADE_SENTINEL       { -1, -1, tacc_None }
+#define TEAM_STATS_SENTINEL          { -1, -1, bg_None, -1, -1, -1, -1, -1, -1, -1, -1 }
+#define TEAM_OFFENSE_STATS_SENTINEL  { -1, -1, bg_None, -1, -1, -1, -1, -1, -1, -1, -1 }
+#define TEAM_DEFENSE_STATS_SENTINEL  { -1, -1, bg_None, -1, -1, -1, -1 }
+#define TEAM_KICKING_STATS_SENTINEL  { -1, -1, bg_None, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 }
+
 typedef enum
 {
      tacc_None                 = 0,
@@ -93,18 +100,24 @@ typedef struct
 
 typedef struct
 {
-     int       team_id;
-     int       season;
-     int       player_id;
+     int  team_id;
+     int  season;
+     int  player_id;
 
 } team_player_s;
 
 typedef struct
 {
-     int                    team_id;
-     char                   name         [20 + 1];
-     char                   location     [20 + 1];
-     char                   abbreviation [ 4 + 1];
+     int                   team_id;
+     char                  name         [20 + 1];
+     char                  location     [20 + 1];
+     char                  abbreviation [ 4 + 1];
+     team_player_s        *players;
+     team_accolade_s      *accolades;
+     team_stats_s         *stats;
+     team_offense_stats_s *offense_stats;
+     team_defense_stats_s *defense_stats;
+     team_kicking_stats_s *kicking_stats;
 
 } team_s;
 
@@ -146,5 +159,10 @@ int team_kicking_stats_t_delete(       sqlite3 *db,                    const tea
 int team_accolades_t_create(       sqlite3 *db,                    const team_accolade_s *team_accolade  );
 int team_accolades_t_read_by_team( sqlite3 *db, const int team_id,       data_list_s     *team_accolades );
 int team_accolades_t_delete(       sqlite3 *db,                    const team_accolade_s *team_accolade  );
+
+team_s *get_team(            sqlite3 *db, const int     team_id                   );
+team_s *get_team_for_season( sqlite3 *db, const int     team_id, const int season );
+int     save_team(           sqlite3 *db, const team_s *team                      );
+void    free_team(                              team_s *team                      );
 
 #endif

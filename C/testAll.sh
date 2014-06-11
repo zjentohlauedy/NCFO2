@@ -69,6 +69,8 @@ runTestProg test_conference_accolades_t
 runTestProg test_organizations_t
 
 runTestProg test_player_service
+runTestProg test_team_service
+runTestProg test_conference_service
 
 if [ $FAIL -ne 0 ]; then
 

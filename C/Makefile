@@ -30,7 +30,9 @@ tests = \
    test_player_kicking_stats_t \
    test_player_returns_stats_t \
    test_player_accolades_t\
-   test_player_service
+   test_player_service \
+   test_team_service \
+   test_conference_service
 
 ALL: PROGS TESTS
 
@@ -110,6 +112,13 @@ test_player_accolades_t: test_player_accolades_t.o player_accolades_t.o sql_quer
 test_player_service: test_player_service.o libncfodata.a libncfobuilders.a libncfocompares.a
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfodata -lncfobuilders -lncfocompares
 
+test_team_service: test_team_service.o libncfodata.a libncfobuilders.a libncfocompares.a
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfodata -lncfobuilders -lncfocompares
+
+test_conference_service: test_conference_service.o libncfodata.a libncfobuilders.a libncfocompares.a
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfodata -lncfobuilders -lncfocompares
+
+
 NCFODATA_OBJECTS = \
  sql_query.o \
  data_list.o \
@@ -136,7 +145,9 @@ NCFODATA_OBJECTS = \
  team_players_t.o \
  team_stats_t.o \
  teams_t.o \
- player_service.o
+ player_service.o \
+ team_service.o \
+ conference_service.o
 
 libncfodata.a: $(NCFODATA_OBJECTS)
 	$(AR) $(ARFLAGS) $@ $^

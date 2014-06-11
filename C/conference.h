@@ -5,6 +5,10 @@
 #include "data_list.h"
 #include "bowls.h"
 
+#define CONFERENCE_TEAM_SENTINEL     { -1, -1 }
+#define CONFERENCE_STATS_SENTINEL    { -1, -1, bg_None, -1, -1, -1, -1, -1, -1, -1, -1 }
+#define CONFERENCE_ACCOLADE_SENTINEL { -1, -1, cacc_None }
+
 typedef enum
 {
      cacc_None                 = 0,
@@ -51,8 +55,11 @@ typedef struct
 
 typedef struct
 {
-     int                  conference_id;
-     char                 name          [20 + 1];
+     int                    conference_id;
+     char                   name          [20 + 1];
+     conference_team_s     *teams;
+     conference_stats_s    *stats;
+     conference_accolade_s *accolades;
 
 } conference_s;
 
@@ -75,5 +82,9 @@ int conference_stats_t_delete(             sqlite3 *db,                         
 int conference_accolades_t_create(             sqlite3 *db,                          const conference_accolade_s *conference_accolade  );
 int conference_accolades_t_read_by_conference( sqlite3 *db, const int conference_id,         data_list_s         *conference_accolades );
 int conference_accolades_t_delete(             sqlite3 *db,                          const conference_accolade_s *conference_accolade  );
+
+conference_s *get_conference(  sqlite3 *db, const int           conference_id );
+int           save_conference( sqlite3 *db, const conference_s *conference    );
+void          free_conference(                    conference_s *conference    );
 
 #endif
