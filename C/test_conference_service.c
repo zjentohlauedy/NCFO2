@@ -28,7 +28,8 @@ static char *get_conference__ShouldReturnTheMatchingConferenceObject_GivenAConfe
 
      assertEquals( SQLITE_OK, conferences_t_delete( db, expected ) );
 
-     free_conference( actual );
+     free_conference( expected );
+     free_conference( actual   );
 
      return NULL;
 }
@@ -58,7 +59,8 @@ static char *get_conference__ShouldReturnTheMatchingConferenceWithTeams_GivenACo
      assertEquals( SQLITE_OK, conference_teams_t_delete( db, expected_conference_team1 ) );
      assertEquals( SQLITE_OK, conference_teams_t_delete( db, expected_conference_team2 ) );
 
-     free_conference( actual );
+     free_conference( expected );
+     free_conference( actual   );
 
      free( expected_conference_team1 );
      free( expected_conference_team2 );

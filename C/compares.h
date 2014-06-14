@@ -9,6 +9,9 @@
 #define compareOrganizations( A, B ) do { char *ret; if ( (ret = _compareOrganizations( (A), (B) )) != NULL ) return ret; } while ( 0 )
 char  *_compareOrganizations( organization_s *expected, organization_s *actual );
 
+#define compareOrganizationConferences( A, B ) do { char *ret; if ( (ret = _compareOrganizationConferences( (A), (B) )) != NULL ) return ret; } while ( 0 )
+char  *_compareOrganizationConferences( organization_conference_s *expected, organization_conference_s *actual );
+
 #define compareConferences( A, B ) do { char *ret; if ( (ret = _compareConferences( (A), (B) )) != NULL ) return ret; } while ( 0 )
 char  *_compareConferences( conference_s *expected, conference_s *actual );
 

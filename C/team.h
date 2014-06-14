@@ -4,6 +4,7 @@
 #include <sqlite3.h>
 #include "data_list.h"
 #include "bowls.h"
+#include "player.h"
 
 #define TEAM_PLAYER_SENTINEL         { -1, -1, -1 }
 #define TEAM_ACCOLADE_SENTINEL       { -1, -1, tacc_None }
@@ -100,9 +101,10 @@ typedef struct
 
 typedef struct
 {
-     int  team_id;
-     int  season;
-     int  player_id;
+     int       team_id;
+     int       season;
+     int       player_id;
+     player_s *player;
 
 } team_player_s;
 

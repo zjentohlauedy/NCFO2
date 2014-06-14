@@ -111,9 +111,21 @@ int save_conference( sqlite3 *db, const conference_s *conference )
 }
 
 
+void free_conference_teams( conference_team_s *conference_teams )
+{
+     for ( int i = 0; conference_teams[i].conference_id > 0; ++i )
+     {
+          free_team( conference_teams[i].team );
+     }
+
+     free( conference_teams );
+}
+
 void free_conference( conference_s *conference )
 {
-     if ( conference->teams     != NULL ) free( conference->teams     );
+     if ( conference == NULL ) return;
+
+     if ( conference->teams     != NULL ) free_conference_teams( conference->teams );
      if ( conference->stats     != NULL ) free( conference->stats     );
      if ( conference->accolades != NULL ) free( conference->accolades );
 

@@ -290,6 +290,8 @@ player_s *get_player( sqlite3 *db, const int player_id )
 
 void free_player( player_s *player )
 {
+     if ( player == NULL ) return;
+
      if ( player->ratings != NULL ) free( player->ratings );
 
      switch ( player->position )

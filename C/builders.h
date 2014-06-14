@@ -9,6 +9,9 @@
 organization_s *buildOrganization(                                   const int organization_id );
 void            buildIntoOrganization( organization_s *organization, const int organization_id );
 
+organization_conference_s *buildOrganizationConference(                                              const int organization_id, const int conference_id );
+void                       buildIntoOrganizationConference( organization_conference_s *organization, const int organization_id, const int conference_id );
+
 conference_s *buildConference(                               const int conference_id );
 void          buildIntoConference( conference_s *conference, const int conference_id );
 

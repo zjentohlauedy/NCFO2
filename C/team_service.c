@@ -224,7 +224,21 @@ team_s *get_team( sqlite3 *db, const int team_id )
 }
 
 
+void free_team_players( team_player_s *team_players )
+{
+     for ( int i = 0; team_players[i].team_id > 0; ++i )
+     {
+          free_player( team_players[i].player );
+     }
+
+     free( team_players );
+}
+
 void free_team( team_s *team )
 {
+     if ( team == NULL ) return;
+
+     if ( team->players ) free_team_players( team->players );
+
      free( team );
 }

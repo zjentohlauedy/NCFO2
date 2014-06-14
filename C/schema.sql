@@ -6,6 +6,14 @@ CREATE TABLE Organizations_T
    Season          INTEGER
 );
 
+CREATE TABLE Organization_Conferences_T
+(
+   Organization_Id INTEGER,
+   Conference_Id   INTEGER,
+--
+   UNIQUE ( Organization_Id, Conference_Id )
+);
+
 CREATE TABLE Conferences_T
 (
    Conference_Id INTEGER PRIMARY KEY,

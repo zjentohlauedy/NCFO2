@@ -4,6 +4,7 @@
 #include <sqlite3.h>
 #include "data_list.h"
 #include "bowls.h"
+#include "team.h"
 
 #define CONFERENCE_TEAM_SENTINEL     { -1, -1 }
 #define CONFERENCE_STATS_SENTINEL    { -1, -1, bg_None, -1, -1, -1, -1, -1, -1, -1, -1 }
@@ -50,6 +51,7 @@ typedef struct
 {
      int     conference_id;
      int     team_id;
+     team_s *team;
 
 } conference_team_s;
 

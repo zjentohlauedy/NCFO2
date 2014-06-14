@@ -8,6 +8,7 @@ progs = \
 
 tests = \
    test_organizations_t \
+   test_organization_conferences_t \
    test_conferences_t \
    test_conference_teams_t \
    test_conference_stats_t \
@@ -32,7 +33,8 @@ tests = \
    test_player_accolades_t\
    test_player_service \
    test_team_service \
-   test_conference_service
+   test_conference_service \
+   test_organization_service
 
 ALL: PROGS TESTS
 
@@ -41,6 +43,9 @@ PROGS: $(progs) TAGS
 TESTS: $(tests) ncfo_test.db TAGS
 
 test_organizations_t: test_organizations_t.o organizations_t.o sql_query.o libncfobuilders.a libncfocompares.a
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfobuilders -lncfocompares
+
+test_organization_conferences_t: test_organization_conferences_t.o organization_conferences_t.o sql_query.o data_list.o libncfobuilders.a libncfocompares.a
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfobuilders -lncfocompares
 
 test_conferences_t: test_conferences_t.o conferences_t.o sql_query.o libncfobuilders.a libncfocompares.a
@@ -118,15 +123,19 @@ test_team_service: test_team_service.o libncfodata.a libncfobuilders.a libncfoco
 test_conference_service: test_conference_service.o libncfodata.a libncfobuilders.a libncfocompares.a
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfodata -lncfobuilders -lncfocompares
 
+test_organization_service: test_organization_service.o libncfodata.a libncfobuilders.a libncfocompares.a
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfodata -lncfobuilders -lncfocompares
+
 
 NCFODATA_OBJECTS = \
  sql_query.o \
  data_list.o \
+ organizations_t.o \
+ organization_conferences_t.o \
  conference_accolades_t.o \
  conference_stats_t.o \
  conferences_t.o \
  conference_teams_t.o \
- organizations_t.o \
  player_accolades_t.o \
  player_defense_ratings_t.o \
  player_defense_stats_t.o \
@@ -147,13 +156,15 @@ NCFODATA_OBJECTS = \
  teams_t.o \
  player_service.o \
  team_service.o \
- conference_service.o
+ conference_service.o \
+ organization_service.o
 
 libncfodata.a: $(NCFODATA_OBJECTS)
 	$(AR) $(ARFLAGS) $@ $^
 
 NCFOBUILDERS_OBJECTS = \
  build_organization.o \
+ build_organization_conference.o \
  build_conference.o \
  build_conference_team.o \
  build_conference_stats.o \
@@ -183,6 +194,7 @@ libncfobuilders.a: $(NCFOBUILDERS_OBJECTS)
 
 NCFOCOMPARES_OBJECTS = \
  compare_organizations.o \
+ compare_organization_conferences.o \
  compare_conferences.o \
  compare_conference_teams.o \
  compare_conference_stats.o \

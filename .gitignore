@@ -12,6 +12,7 @@ TAGS
 
 # executables
 C/test_organizations_t
+C/test_organization_conferences_t
 C/test_conferences_t
 C/test_conference_teams_t
 C/test_conference_stats_t
@@ -37,3 +38,4 @@ C/test_player_accolades_t
 C/test_player_service
 C/test_team_service
 C/test_conference_service
+C/test_organization_service
