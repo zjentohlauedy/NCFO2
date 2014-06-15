@@ -8,6 +8,7 @@ S??
 *.db
 *.o
 *.a
+*.lock
 TAGS
 
 # executables
