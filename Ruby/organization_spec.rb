@@ -60,4 +60,18 @@ describe Organization do
       expect( result[ :organization_id ] ).to eq 1
     end
   end
+
+  describe '#from_hash' do
+    it 'should set fields to values from given hash' do
+      organization = Organization.new
+      hash = { organization_id: 1, name: 'Test Name', abbreviation: 'TN', season: 3 }
+
+      organization.from_hash hash
+
+      expect( organization.organization_id ).to eq hash[ :organization_id ]
+      expect( organization.name            ).to eq hash[ :name            ]
+      expect( organization.abbreviation    ).to eq hash[ :abbreviation    ]
+      expect( organization.season          ).to eq hash[ :season          ]
+    end
+  end
 end

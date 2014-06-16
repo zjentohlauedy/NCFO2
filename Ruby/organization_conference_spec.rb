@@ -49,4 +49,16 @@ describe OrganizationConference do
       expect( result[ :conference_id   ] ).to eq 4
     end
   end
+
+  describe '#from_hash' do
+    it 'should set fields to values from given hash' do
+      organization_conference = OrganizationConference.new
+      hash = { organization_id: 1, conference_id: 3 }
+
+      organization_conference.from_hash hash
+
+      expect( organization_conference.organization_id ).to eq hash[ :organization_id ]
+      expect( organization_conference.conference_id   ).to eq hash[ :conference_id   ]
+    end
+  end
 end

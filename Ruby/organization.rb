@@ -24,4 +24,10 @@ class Organization < Persistable
     { organization_id: @organization_id }
   end
 
+  def from_hash hash
+    @organization_id = hash[ :organization_id ]
+    @name            = hash[ :name            ]
+    @abbreviation    = hash[ :abbreviation    ]
+    @season          = hash[ :season          ]
+  end
 end

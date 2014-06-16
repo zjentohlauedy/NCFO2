@@ -1,6 +1,7 @@
 require 'persistable'
 
 class OrganizationConference < Persistable
+  attr_accessor :organization_id, :conference_id
 
   @organization_id
   @conference_id
@@ -24,6 +25,11 @@ class OrganizationConference < Persistable
 
   def key_hash
     { organization_id: @organization_id, conference_id: @conference_id }
+  end
+
+  def from_hash hash
+    @organization_id = hash[ :organization_id ]
+    @conference_id   = hash[ :conference_id   ]
   end
 
 end
