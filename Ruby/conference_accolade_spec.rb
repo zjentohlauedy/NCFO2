@@ -7,7 +7,7 @@ describe ConferenceAccolade do
   describe '#build_insert' do
     it 'should return a well formed SQL insert statement' do
       conference_accolade = ConferenceAccolade.new
-      expect( conference_accolade.build_insert ).to eq 'INSERT INTO Conference_Accolades_T ( Conference_Id, Season, Accolade ) VALUES ( ?, ?, ? )'
+      expect( conference_accolade.build_insert ).to eq 'INSERT INTO Conference_Accolades_T ( Conference_Id, Season, Accolade ) VALUES ( :conference_id, :season, :accolade )'
     end
   end
 
@@ -15,14 +15,14 @@ describe ConferenceAccolade do
     it 'should return a well formed SQL select statement' do
       conference_accolade = ConferenceAccolade.new
       result = conference_accolade.build_select_by_conference
-      expect( result ).to eq 'SELECT Conference_Id, Season, Accolade FROM Conference_Accolades_T WHERE Conference_Id = ?'
+      expect( result ).to eq 'SELECT Conference_Id, Season, Accolade FROM Conference_Accolades_T WHERE Conference_Id = :conference_id'
     end
   end
 
   describe '#build_delete' do
-    it 'should return a well formed SQL update statement' do
+    it 'should return a well formed SQL delete statement' do
       conference_accolade = ConferenceAccolade.new
-      expect( conference_accolade.build_delete ).to eq 'DELETE FROM Conference_Accolades_T WHERE Conference_Id = ? AND Season = ? AND Accolade = ?'
+      expect( conference_accolade.build_delete ).to eq 'DELETE FROM Conference_Accolades_T WHERE Conference_Id = :conference_id AND Season = :season AND Accolade = :accolade'
     end
   end
 

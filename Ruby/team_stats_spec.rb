@@ -7,28 +7,36 @@ describe TeamStats do
   describe '#build_insert' do
     it 'should return a well formed SQL insert statement' do
       team_stats = TeamStats.new
-      expect( team_stats.build_insert ).to eq 'INSERT INTO Team_Stats_T ( Team_Id, Season, Bowl_Game, Wins, Losses, Home_Wins, Home_Losses, Road_Wins, Road_Losses, Points_Scored, Points_Allowed ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )'
+      expect( team_stats.build_insert ).to eq 'INSERT INTO Team_Stats_T ( Team_Id, Season, Bowl_Game, Wins, Losses, Home_Wins, Home_Losses, Road_Wins, Road_Losses, Points_Scored, Points_Allowed ) VALUES ( :team_id, :season, :bowl_game, :wins, :losses, :home_wins, :home_losses, :road_wins, :road_losses, :points_scored, :points_allowed )'
     end
   end
 
   describe '#build_select' do
     it 'should return a well formed SQL select statement' do
       team_stats = TeamStats.new
-      expect( team_stats.build_select ).to eq 'SELECT Team_Id, Season, Bowl_Game, Wins, Losses, Home_Wins, Home_Losses, Road_Wins, Road_Losses, Points_Scored, Points_Allowed FROM Team_Stats_T WHERE Team_Id = ? AND Season = ? AND Bowl_Game = ?'
+      expect( team_stats.build_select ).to eq 'SELECT Team_Id, Season, Bowl_Game, Wins, Losses, Home_Wins, Home_Losses, Road_Wins, Road_Losses, Points_Scored, Points_Allowed FROM Team_Stats_T WHERE Team_Id = :team_id AND Season = :season AND Bowl_Game = :bowl_game'
+    end
+  end
+
+  describe '#build_select_by_team' do
+    it 'should return a well formed SQL select statement' do
+      team_stats = TeamStats.new
+      result = team_stats.build_select_by_team
+      expect( result ).to eq 'SELECT Team_Id, Season, Bowl_Game, Wins, Losses, Home_Wins, Home_Losses, Road_Wins, Road_Losses, Points_Scored, Points_Allowed FROM Team_Stats_T WHERE Team_Id = :team_id'
     end
   end
 
   describe '#build_update' do
     it 'should return a well formed SQL update statement' do
       team_stats = TeamStats.new
-      expect( team_stats.build_update ).to eq 'UPDATE Team_Stats_T SET Wins = ?, Losses = ?, Home_Wins = ?, Home_Losses = ?, Road_Wins = ?, Road_Losses = ?, Points_Scored = ?, Points_Allowed = ? WHERE Team_Id = ? AND Season = ? AND Bowl_Game = ?'
+      expect( team_stats.build_update ).to eq 'UPDATE Team_Stats_T SET Wins = :wins, Losses = :losses, Home_Wins = :home_wins, Home_Losses = :home_losses, Road_Wins = :road_wins, Road_Losses = :road_losses, Points_Scored = :points_scored, Points_Allowed = :points_allowed WHERE Team_Id = :team_id AND Season = :season AND Bowl_Game = :bowl_game'
     end
   end
 
   describe '#build_delete' do
-    it 'should return a well formed SQL update statement' do
+    it 'should return a well formed SQL delete statement' do
       team_stats = TeamStats.new
-      expect( team_stats.build_delete ).to eq 'DELETE FROM Team_Stats_T WHERE Team_Id = ? AND Season = ? AND Bowl_Game = ?'
+      expect( team_stats.build_delete ).to eq 'DELETE FROM Team_Stats_T WHERE Team_Id = :team_id AND Season = :season AND Bowl_Game = :bowl_game'
     end
   end
 

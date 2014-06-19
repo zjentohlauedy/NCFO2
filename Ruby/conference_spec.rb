@@ -7,28 +7,28 @@ describe Conference do
   describe '#build_insert' do
     it 'should return a well formed SQL insert statement' do
       conference = Conference.new
-      expect( conference.build_insert ).to eq 'INSERT INTO Conferences_T ( Conference_Id, Name ) VALUES ( ?, ? )'
+      expect( conference.build_insert ).to eq 'INSERT INTO Conferences_T ( Conference_Id, Name ) VALUES ( :conference_id, :name )'
     end
   end
 
   describe '#build_select' do
     it 'should return a well formed SQL select statement' do
       conference = Conference.new
-      expect( conference.build_select ).to eq 'SELECT Conference_Id, Name FROM Conferences_T WHERE Conference_Id = ?'
+      expect( conference.build_select ).to eq 'SELECT Conference_Id, Name FROM Conferences_T WHERE Conference_Id = :conference_id'
     end
   end
 
   describe '#build_update' do
     it 'should return a well formed SQL update statement' do
       conference = Conference.new
-      expect( conference.build_update ).to eq 'UPDATE Conferences_T SET Name = ? WHERE Conference_Id = ?'
+      expect( conference.build_update ).to eq 'UPDATE Conferences_T SET Name = :name WHERE Conference_Id = :conference_id'
     end
   end
 
   describe '#build_delete' do
-    it 'should return a well formed SQL update statement' do
+    it 'should return a well formed SQL delete statement' do
       conference = Conference.new
-      expect( conference.build_delete ).to eq 'DELETE FROM Conferences_T WHERE Conference_Id = ?'
+      expect( conference.build_delete ).to eq 'DELETE FROM Conferences_T WHERE Conference_Id = :conference_id'
     end
   end
 

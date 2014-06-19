@@ -7,7 +7,7 @@ describe TeamPlayer do
   describe '#build_insert' do
     it 'should return a well formed SQL insert statement' do
       team_player = TeamPlayer.new
-      expect( team_player.build_insert ).to eq 'INSERT INTO Team_Players_T ( Team_Id, Season, Player_Id ) VALUES ( ?, ?, ? )'
+      expect( team_player.build_insert ).to eq 'INSERT INTO Team_Players_T ( Team_Id, Season, Player_Id ) VALUES ( :team_id, :season, :player_id )'
     end
   end
 
@@ -15,14 +15,14 @@ describe TeamPlayer do
     it 'should return a well formed SQL select statement' do
       team_player = TeamPlayer.new
       result = team_player.build_select_by_team
-      expect( result ).to eq 'SELECT Team_Id, Season, Player_Id FROM Team_Players_T WHERE Team_Id = ?'
+      expect( result ).to eq 'SELECT Team_Id, Season, Player_Id FROM Team_Players_T WHERE Team_Id = :team_id'
     end
   end
 
   describe '#build_delete' do
-    it 'should return a well formed SQL update statement' do
+    it 'should return a well formed SQL delete statement' do
       team_player = TeamPlayer.new
-      expect( team_player.build_delete ).to eq 'DELETE FROM Team_Players_T WHERE Team_Id = ? AND Season = ? AND Player_Id = ?'
+      expect( team_player.build_delete ).to eq 'DELETE FROM Team_Players_T WHERE Team_Id = :team_id AND Season = :season AND Player_Id = :player_id'
     end
   end
 

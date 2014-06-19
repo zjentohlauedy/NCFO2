@@ -7,28 +7,28 @@ describe Team do
   describe '#build_insert' do
     it 'should return a well formed SQL insert statement' do
       team = Team.new
-      expect( team.build_insert ).to eq 'INSERT INTO Teams_T ( Team_Id, Name, Location, Abbreviation ) VALUES ( ?, ?, ?, ? )'
+      expect( team.build_insert ).to eq 'INSERT INTO Teams_T ( Team_Id, Name, Location, Abbreviation ) VALUES ( :team_id, :name, :location, :abbreviation )'
     end
   end
 
   describe '#build_select' do
     it 'should return a well formed SQL select statement' do
       team = Team.new
-      expect( team.build_select ).to eq 'SELECT Team_Id, Name, Location, Abbreviation FROM Teams_T WHERE Team_Id = ?'
+      expect( team.build_select ).to eq 'SELECT Team_Id, Name, Location, Abbreviation FROM Teams_T WHERE Team_Id = :team_id'
     end
   end
 
   describe '#build_update' do
     it 'should return a well formed SQL update statement' do
       team = Team.new
-      expect( team.build_update ).to eq 'UPDATE Teams_T SET Name = ?, Location = ?, Abbreviation = ? WHERE Team_Id = ?'
+      expect( team.build_update ).to eq 'UPDATE Teams_T SET Name = :name, Location = :location, Abbreviation = :abbreviation WHERE Team_Id = :team_id'
     end
   end
 
   describe '#build_delete' do
-    it 'should return a well formed SQL update statement' do
+    it 'should return a well formed SQL delete statement' do
       team = Team.new
-      expect( team.build_delete ).to eq 'DELETE FROM Teams_T WHERE Team_Id = ?'
+      expect( team.build_delete ).to eq 'DELETE FROM Teams_T WHERE Team_Id = :team_id'
     end
   end
 

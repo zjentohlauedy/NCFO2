@@ -7,28 +7,36 @@ describe TeamOffenseStats do
   describe '#build_insert' do
     it 'should return a well formed SQL insert statement' do
       team_offense_stats = TeamOffenseStats.new
-      expect( team_offense_stats.build_insert ).to eq 'INSERT INTO Team_Offense_Stats_T ( Team_Id, Season, Bowl_Game, Pass_Attempts, Completions, Interceptions, Pass_Yards, Pass_Touchdowns, Rush_Attempts, Rush_Yards, Rush_Touchdowns ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )'
+      expect( team_offense_stats.build_insert ).to eq 'INSERT INTO Team_Offense_Stats_T ( Team_Id, Season, Bowl_Game, Pass_Attempts, Completions, Interceptions, Pass_Yards, Pass_Touchdowns, Rush_Attempts, Rush_Yards, Rush_Touchdowns ) VALUES ( :team_id, :season, :bowl_game, :pass_attempts, :completions, :interceptions, :pass_yards, :pass_touchdowns, :rush_attempts, :rush_yards, :rush_touchdowns )'
     end
   end
 
   describe '#build_select' do
     it 'should return a well formed SQL select statement' do
       team_offense_stats = TeamOffenseStats.new
-      expect( team_offense_stats.build_select ).to eq 'SELECT Team_Id, Season, Bowl_Game, Pass_Attempts, Completions, Interceptions, Pass_Yards, Pass_Touchdowns, Rush_Attempts, Rush_Yards, Rush_Touchdowns FROM Team_Offense_Stats_T WHERE Team_Id = ? AND Season = ? AND Bowl_Game = ?'
+      expect( team_offense_stats.build_select ).to eq 'SELECT Team_Id, Season, Bowl_Game, Pass_Attempts, Completions, Interceptions, Pass_Yards, Pass_Touchdowns, Rush_Attempts, Rush_Yards, Rush_Touchdowns FROM Team_Offense_Stats_T WHERE Team_Id = :team_id AND Season = :season AND Bowl_Game = :bowl_game'
+    end
+  end
+
+  describe '#build_select_by_team' do
+    it 'should return a well formed SQL select statement' do
+      team_offense_stats = TeamOffenseStats.new
+      result = team_offense_stats.build_select_by_team
+      expect( result ).to eq 'SELECT Team_Id, Season, Bowl_Game, Pass_Attempts, Completions, Interceptions, Pass_Yards, Pass_Touchdowns, Rush_Attempts, Rush_Yards, Rush_Touchdowns FROM Team_Offense_Stats_T WHERE Team_Id = :team_id'
     end
   end
 
   describe '#build_update' do
     it 'should return a well formed SQL update statement' do
       team_offense_stats = TeamOffenseStats.new
-      expect( team_offense_stats.build_update ).to eq 'UPDATE Team_Offense_Stats_T SET Pass_Attempts = ?, Completions = ?, Interceptions = ?, Pass_Yards = ?, Pass_Touchdowns = ?, Rush_Attempts = ?, Rush_Yards = ?, Rush_Touchdowns = ? WHERE Team_Id = ? AND Season = ? AND Bowl_Game = ?'
+      expect( team_offense_stats.build_update ).to eq 'UPDATE Team_Offense_Stats_T SET Pass_Attempts = :pass_attempts, Completions = :completions, Interceptions = :interceptions, Pass_Yards = :pass_yards, Pass_Touchdowns = :pass_touchdowns, Rush_Attempts = :rush_attempts, Rush_Yards = :rush_yards, Rush_Touchdowns = :rush_touchdowns WHERE Team_Id = :team_id AND Season = :season AND Bowl_Game = :bowl_game'
     end
   end
 
   describe '#build_delete' do
-    it 'should return a well formed SQL update statement' do
+    it 'should return a well formed SQL delete statement' do
       team_offense_stats = TeamOffenseStats.new
-      expect( team_offense_stats.build_delete ).to eq 'DELETE FROM Team_Offense_Stats_T WHERE Team_Id = ? AND Season = ? AND Bowl_Game = ?'
+      expect( team_offense_stats.build_delete ).to eq 'DELETE FROM Team_Offense_Stats_T WHERE Team_Id = :team_id AND Season = :season AND Bowl_Game = :bowl_game'
     end
   end
 

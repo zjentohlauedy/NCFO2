@@ -7,28 +7,28 @@ describe Organization do
   describe '#build_insert' do
     it 'should return a well formed SQL insert statement' do
       organization = Organization.new
-      expect( organization.build_insert ).to eq 'INSERT INTO Organizations_T ( Organization_Id, Name, Abbreviation, Season ) VALUES ( ?, ?, ?, ? )'
+      expect( organization.build_insert ).to eq 'INSERT INTO Organizations_T ( Organization_Id, Name, Abbreviation, Season ) VALUES ( :organization_id, :name, :abbreviation, :season )'
     end
   end
 
   describe '#build_select' do
     it 'should return a well formed SQL select statement' do
       organization = Organization.new
-      expect( organization.build_select ).to eq 'SELECT Organization_Id, Name, Abbreviation, Season FROM Organizations_T WHERE Organization_Id = ?'
+      expect( organization.build_select ).to eq 'SELECT Organization_Id, Name, Abbreviation, Season FROM Organizations_T WHERE Organization_Id = :organization_id'
     end
   end
 
   describe '#build_update' do
     it 'should return a well formed SQL update statement' do
       organization = Organization.new
-      expect( organization.build_update ).to eq 'UPDATE Organizations_T SET Name = ?, Abbreviation = ?, Season = ? WHERE Organization_Id = ?'
+      expect( organization.build_update ).to eq 'UPDATE Organizations_T SET Name = :name, Abbreviation = :abbreviation, Season = :season WHERE Organization_Id = :organization_id'
     end
   end
 
   describe '#build_delete' do
-    it 'should return a well formed SQL update statement' do
+    it 'should return a well formed SQL delete statement' do
       organization = Organization.new
-      expect( organization.build_delete ).to eq 'DELETE FROM Organizations_T WHERE Organization_Id = ?'
+      expect( organization.build_delete ).to eq 'DELETE FROM Organizations_T WHERE Organization_Id = :organization_id'
     end
   end
 

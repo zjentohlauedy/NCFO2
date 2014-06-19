@@ -35,14 +35,14 @@ class Persistable
   end
 
   def insert_placeholders
-    @FieldNames.map{ |f| '?' }.join ', '
+    @FieldNames.map{ |f| ':' + f.downcase }.join ', '
   end
 
   def where_placeholders fields
-    fields.map{ |f| "#{f} = ?" }.join ' AND '
+    fields.map{ |f| "#{f} = :" + f.downcase }.join ' AND '
   end
 
   def set_placeholders fields
-    fields.map{ |f| "#{f} = ?" }.join ', '
+    fields.map{ |f| "#{f} = :" + f.downcase }.join ', '
   end
 end

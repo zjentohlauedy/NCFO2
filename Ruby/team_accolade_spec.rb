@@ -7,7 +7,7 @@ describe TeamAccolade do
   describe '#build_insert' do
     it 'should return a well formed SQL insert statement' do
       team_accolade = TeamAccolade.new
-      expect( team_accolade.build_insert ).to eq 'INSERT INTO Team_Accolades_T ( Team_Id, Season, Accolade ) VALUES ( ?, ?, ? )'
+      expect( team_accolade.build_insert ).to eq 'INSERT INTO Team_Accolades_T ( Team_Id, Season, Accolade ) VALUES ( :team_id, :season, :accolade )'
     end
   end
 
@@ -15,14 +15,14 @@ describe TeamAccolade do
     it 'should return a well formed SQL select statement' do
       team_accolade = TeamAccolade.new
       result = team_accolade.build_select_by_team
-      expect( result ).to eq 'SELECT Team_Id, Season, Accolade FROM Team_Accolades_T WHERE Team_Id = ?'
+      expect( result ).to eq 'SELECT Team_Id, Season, Accolade FROM Team_Accolades_T WHERE Team_Id = :team_id'
     end
   end
 
   describe '#build_delete' do
-    it 'should return a well formed SQL update statement' do
+    it 'should return a well formed SQL delete statement' do
       team_accolade = TeamAccolade.new
-      expect( team_accolade.build_delete ).to eq 'DELETE FROM Team_Accolades_T WHERE Team_Id = ? AND Season = ? AND Accolade = ?'
+      expect( team_accolade.build_delete ).to eq 'DELETE FROM Team_Accolades_T WHERE Team_Id = :team_id AND Season = :season AND Accolade = :accolade'
     end
   end
 

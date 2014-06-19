@@ -25,6 +25,10 @@ class TeamOffenseStats < Persistable
     @bowl_game = bowl_game
   end
 
+  def build_select_by_team
+    custom_select @TableName, @FieldNames, %w(Team_Id)
+  end
+
   def to_hash
     {
       team_id:         @team_id,

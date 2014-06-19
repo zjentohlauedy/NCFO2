@@ -7,7 +7,7 @@ describe ConferenceTeam do
   describe '#build_insert' do
     it 'should return a well formed SQL insert statement' do
       conference_team = ConferenceTeam.new
-      expect( conference_team.build_insert ).to eq 'INSERT INTO Conference_Teams_T ( Conference_Id, Team_Id ) VALUES ( ?, ? )'
+      expect( conference_team.build_insert ).to eq 'INSERT INTO Conference_Teams_T ( Conference_Id, Team_Id ) VALUES ( :conference_id, :team_id )'
     end
   end
 
@@ -15,14 +15,14 @@ describe ConferenceTeam do
     it 'should return a well formed SQL select statement' do
       conference_team = ConferenceTeam.new
       result = conference_team.build_select_by_conference
-      expect( result ).to eq 'SELECT Conference_Id, Team_Id FROM Conference_Teams_T WHERE Conference_Id = ?'
+      expect( result ).to eq 'SELECT Conference_Id, Team_Id FROM Conference_Teams_T WHERE Conference_Id = :conference_id'
     end
   end
 
   describe '#build_delete' do
-    it 'should return a well formed SQL update statement' do
+    it 'should return a well formed SQL delete statement' do
       conference_team = ConferenceTeam.new
-      expect( conference_team.build_delete ).to eq 'DELETE FROM Conference_Teams_T WHERE Conference_Id = ? AND Team_Id = ?'
+      expect( conference_team.build_delete ).to eq 'DELETE FROM Conference_Teams_T WHERE Conference_Id = :conference_id AND Team_Id = :team_id'
     end
   end
 

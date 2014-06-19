@@ -25,6 +25,10 @@ class ConferenceStats < Persistable
     @bowl_game     = bowl_game
   end
 
+  def build_select_by_conference
+    custom_select @TableName, @FieldNames, %w(Conference_Id)
+  end
+
   def to_hash
     {
       conference_id:  @conference_id,
