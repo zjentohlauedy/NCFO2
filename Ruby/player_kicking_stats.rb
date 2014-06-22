@@ -13,6 +13,23 @@ class PlayerKickingStats < Persistable
   @punts
   @punt_yards
 
+  def self.build id, season, bowl_game
+    player_kicking_stats = PlayerKickingStats.new
+    prng                 = Random.new
+
+    player_kicking_stats.player_id            = id
+    player_kicking_stats.season               = season
+    player_kicking_stats.bowl_game            = bowl_game
+    player_kicking_stats.extra_point_attempts = prng.rand  20
+    player_kicking_stats.extra_points_made    = prng.rand  20
+    player_kicking_stats.field_goal_attempts  = prng.rand  20
+    player_kicking_stats.field_goals_made     = prng.rand  20
+    player_kicking_stats.punts                = prng.rand  50
+    player_kicking_stats.punt_yards           = prng.rand 300
+
+    player_kicking_stats
+  end
+
   def initialize id = nil, season = nil, bowl_game = nil
     @TableName  = "Player_Kicking_Stats_T"
     @FieldNames = %w(Player_Id Season Bowl_Game Extra_Point_Attempts Extra_Points_Made Field_Goal_Attempts Field_Goals_Made Punts Punt_Yards)

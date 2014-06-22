@@ -2,8 +2,22 @@ location = File.dirname __FILE__
 $: << "#{location}"
 
 require 'player_accolade'
+require 'player_accolades'
 
 describe PlayerAccolade do
+  describe '::build' do
+    it 'should return a new PlayerAccolade instance with all field values set' do
+      player_accolade = PlayerAccolade.build 1, 4, PlayerAccolades::Great_Lake_Passing_Champion
+
+      expect( player_accolade ).to_not be_nil
+      expect( player_accolade ).to     be_a   PlayerAccolade
+
+      expect( player_accolade.player_id ).to eq 1
+      expect( player_accolade.season    ).to eq 4
+      expect( player_accolade.accolade  ).to eq PlayerAccolades::Great_Lake_Passing_Champion
+    end
+  end
+
   describe '#build_insert' do
     it 'should return a well formed SQL insert statement' do
       player_accolade = PlayerAccolade.new
@@ -28,34 +42,34 @@ describe PlayerAccolade do
 
   describe '#to_hash' do
     it 'should return a hash of all fields' do
-      player_accolade = PlayerAccolade.new 1, 4, 3
+      player_accolade = PlayerAccolade.new 1, 4, PlayerAccolades::Great_Lake_Passing_Champion
 
       result = player_accolade.to_hash
 
       expect( result.keys.length   ).to eq 3
       expect( result[ :player_id ] ).to eq 1
       expect( result[ :season    ] ).to eq 4
-      expect( result[ :accolade  ] ).to eq 3
+      expect( result[ :accolade  ] ).to eq PlayerAccolades::Great_Lake_Passing_Champion
     end
   end
 
   describe '#key_hash' do
     it 'should return a hash of the key fields' do
-      player_accolade = PlayerAccolade.new 1, 4, 3
+      player_accolade = PlayerAccolade.new 1, 4, PlayerAccolades::Great_Lake_Passing_Champion
 
       result = player_accolade.key_hash
 
       expect( result.keys.length   ).to eq 3
       expect( result[ :player_id ] ).to eq 1
       expect( result[ :season    ] ).to eq 4
-      expect( result[ :accolade  ] ).to eq 3
+      expect( result[ :accolade  ] ).to eq PlayerAccolades::Great_Lake_Passing_Champion
     end
   end
 
   describe '#from_hash' do
     it 'should set fields to values from given hash' do
       player_accolade = PlayerAccolade.new
-      hash = { player_id: 1, season: 4, accolade: 3 }
+      hash = { player_id: 1, season: 4, accolade: PlayerAccolades::Great_Lake_Passing_Champion }
 
       player_accolade.from_hash hash
 

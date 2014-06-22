@@ -4,6 +4,21 @@ $: << "#{location}"
 require 'player_quarterback_ratings'
 
 describe PlayerQuarterbackRatings do
+  describe '::build' do
+    it 'should return a new PlayerQuarterbackRatings instance with all field values set' do
+      player_quarterback_ratings = PlayerQuarterbackRatings.build 1
+
+      expect( player_quarterback_ratings ).to_not be_nil
+      expect( player_quarterback_ratings ).to     be_a   PlayerQuarterbackRatings
+
+      expect( player_quarterback_ratings.player_id        ).to eq 1
+      expect( player_quarterback_ratings.pass_speed       ).to be_a Integer
+      expect( player_quarterback_ratings.pass_control     ).to be_a Integer
+      expect( player_quarterback_ratings.pass_accuracy    ).to be_a Integer
+      expect( player_quarterback_ratings.avoid_pass_block ).to be_a Integer
+    end
+  end
+
   describe '#build_insert' do
     it 'should return a well formed SQL insert statement' do
       player_quarterback_ratings = PlayerQuarterbackRatings.new

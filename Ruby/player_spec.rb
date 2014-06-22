@@ -4,6 +4,24 @@ $: << "#{location}"
 require 'player'
 
 describe Player do
+  describe '::build' do
+    it 'should return a new Player instance with all field values set' do
+      player = Player.build 1
+
+      expect( player ).to_not be_nil
+      expect( player ).to     be_a   Player
+
+      expect( player.player_id       ).to eq 1
+      expect( player.first_name      ).to be_a String
+      expect( player.last_name       ).to be_a String
+      expect( player.face            ).to be_a Integer
+      expect( player.position        ).to be_a Integer
+      expect( player.number          ).to be_a Integer
+      expect( player.freshman_season ).to be_a Integer
+      expect( player.maturity        ).to be_a Integer
+    end
+  end
+
   describe '#build_insert' do
     it 'should return a well formed SQL insert statement' do
       player = Player.new

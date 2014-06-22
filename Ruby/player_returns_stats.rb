@@ -13,6 +13,23 @@ class PlayerReturnsStats < Persistable
   @punt_return_yards
   @punt_return_touchdowns
 
+  def self.build id, season, bowl_game
+    player_returns_stats = PlayerReturnsStats.new
+    prng                 = Random.new
+
+    player_returns_stats.player_id              = id
+    player_returns_stats.season                 = season
+    player_returns_stats.bowl_game              = bowl_game
+    player_returns_stats.kick_returns           = prng.rand   50
+    player_returns_stats.kick_return_yards      = prng.rand 1000
+    player_returns_stats.kick_return_touchdowns = prng.rand   10
+    player_returns_stats.punt_returns           = prng.rand   50
+    player_returns_stats.punt_return_yards      = prng.rand  500
+    player_returns_stats.punt_return_touchdowns = prng.rand   10
+
+    player_returns_stats
+  end
+
   def initialize id = nil, season = nil, bowl_game = nil
     @TableName  = "Player_Returns_Stats_T"
     @FieldNames = %w(Player_Id Season Bowl_Game Kick_Returns Kick_Return_Yards Kick_Return_Touchdowns Punt_Returns Punt_Return_Yards Punt_Return_Touchdowns)

@@ -9,6 +9,19 @@ class PlayerRatings < Persistable
   @max_speed
   @hit_power
 
+  def self.build id
+    player_ratings = PlayerRatings.new
+    prng           = Random.new
+
+    player_ratings.player_id  = id
+    player_ratings.run_speed  = prng.rand 16
+    player_ratings.rush_power = prng.rand 16
+    player_ratings.max_speed  = prng.rand 16
+    player_ratings.hit_power  = prng.rand 16
+
+    player_ratings
+  end
+
   def initialize id = nil
     @TableName  = "Player_Ratings_T"
     @FieldNames = %w(Player_Id Run_Speed Rush_Power Max_Speed Hit_Power)

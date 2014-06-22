@@ -4,6 +4,19 @@ $: << "#{location}"
 require 'player_kicking_ratings'
 
 describe PlayerKickingRatings do
+  describe '::build' do
+    it 'should return a new PlayerKickingRatings instance with all field values set' do
+      player_kicking_ratings = PlayerKickingRatings.build 1
+
+      expect( player_kicking_ratings ).to_not be_nil
+      expect( player_kicking_ratings ).to     be_a   PlayerKickingRatings
+
+      expect( player_kicking_ratings.player_id        ).to eq 1
+      expect( player_kicking_ratings.kicking_ability  ).to be_a Integer
+      expect( player_kicking_ratings.avoid_kick_block ).to be_a Integer
+    end
+  end
+
   describe '#build_insert' do
     it 'should return a well formed SQL insert statement' do
       player_kicking_ratings = PlayerKickingRatings.new

@@ -15,6 +15,25 @@ class TeamStats < Persistable
   @points_scored
   @points_allowed
 
+  def self.build id, season, bowl_game
+    team_stats = TeamStats.new
+    prng       = Random.new
+
+    team_stats.team_id        = id
+    team_stats.season         = season
+    team_stats.bowl_game      = bowl_game
+    team_stats.wins           = prng.rand  10
+    team_stats.losses         = prng.rand  10
+    team_stats.home_wins      = prng.rand   5
+    team_stats.home_losses    = prng.rand   5
+    team_stats.road_wins      = prng.rand   5
+    team_stats.road_losses    = prng.rand   5
+    team_stats.points_scored  = prng.rand 500
+    team_stats.points_allowed = prng.rand 500
+
+    team_stats
+  end
+
   def initialize id = nil, season = nil, bowl_game = nil
     @TableName  = "Team_Stats_T"
     @FieldNames = %w(Team_Id Season Bowl_Game Wins Losses Home_Wins Home_Losses Road_Wins Road_Losses Points_Scored Points_Allowed)
@@ -50,17 +69,17 @@ class TeamStats < Persistable
   end
 
   def from_hash hash
-    @team_id         = hash[ :team_id        ]
-    @season          = hash[ :season         ]
-    @bowl_game       = hash[ :bowl_game      ]
-    @wins            = hash[ :wins           ]
-    @losses          = hash[ :losses         ]
-    @home_wins       = hash[ :home_wins      ]
-    @home_losses     = hash[ :home_losses    ]
-    @road_wins       = hash[ :road_wins      ]
-    @road_losses     = hash[ :road_losses    ]
-    @points_scored   = hash[ :points_scored  ]
-    @points_allowed  = hash[ :points_allowed ]
+    @team_id        = hash[ :team_id        ]
+    @season         = hash[ :season         ]
+    @bowl_game      = hash[ :bowl_game      ]
+    @wins           = hash[ :wins           ]
+    @losses         = hash[ :losses         ]
+    @home_wins      = hash[ :home_wins      ]
+    @home_losses    = hash[ :home_losses    ]
+    @road_wins      = hash[ :road_wins      ]
+    @road_losses    = hash[ :road_losses    ]
+    @points_scored  = hash[ :points_scored  ]
+    @points_allowed = hash[ :points_allowed ]
   end
 
 end

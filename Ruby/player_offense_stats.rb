@@ -18,6 +18,28 @@ class PlayerOffenseStats < Persistable
   @receiving_yards
   @receiving_touchdowns
 
+  def self.build id, season, bowl_game
+    player_offense_stats = PlayerOffenseStats.new
+    prng                 = Random.new
+
+    player_offense_stats.player_id            = id
+    player_offense_stats.season               = season
+    player_offense_stats.bowl_game            = bowl_game
+    player_offense_stats.pass_attempts        = prng.rand  200
+    player_offense_stats.completions          = prng.rand  150
+    player_offense_stats.interceptions        = prng.rand  150
+    player_offense_stats.pass_yards           = prng.rand 3000
+    player_offense_stats.pass_touchdowns      = prng.rand   50
+    player_offense_stats.rush_attempts        = prng.rand  200
+    player_offense_stats.rush_yards           = prng.rand 1000
+    player_offense_stats.rush_touchdowns      = prng.rand   20
+    player_offense_stats.receptions           = prng.rand  100
+    player_offense_stats.receiving_yards      = prng.rand 1000
+    player_offense_stats.receiving_touchdowns = prng.rand   20
+
+    player_offense_stats
+  end
+
   def initialize id = nil, season = nil, bowl_game = nil
     @TableName  = "Player_Offense_Stats_T"
     @FieldNames = %w(Player_Id Season Bowl_Game Pass_Attempts Completions Interceptions Pass_Yards Pass_Touchdowns Rush_Attempts Rush_Yards Rush_Touchdowns Receptions Receiving_Yards Receiving_Touchdowns)

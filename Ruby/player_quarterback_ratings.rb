@@ -9,6 +9,19 @@ class PlayerQuarterbackRatings < Persistable
   @pass_accuracy
   @avoid_pass_block
 
+  def self.build id
+    player_quarterback_ratings = PlayerQuarterbackRatings.new
+    prng                       = Random.new
+
+    player_quarterback_ratings.player_id        = id
+    player_quarterback_ratings.pass_speed       = prng.rand 16
+    player_quarterback_ratings.pass_control     = prng.rand 16
+    player_quarterback_ratings.pass_accuracy    = prng.rand 16
+    player_quarterback_ratings.avoid_pass_block = prng.rand 16
+
+    player_quarterback_ratings
+  end
+
   def initialize id = nil
     @TableName  = "Player_Quarterback_Ratings_T"
     @FieldNames = %w(Player_Id Pass_Speed Pass_Control Pass_Accuracy Avoid_Pass_Block)

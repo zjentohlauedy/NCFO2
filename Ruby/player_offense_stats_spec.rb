@@ -1,9 +1,32 @@
 location = File.dirname __FILE__
 $: << "#{location}"
 
+require 'bowls'
 require 'player_offense_stats'
 
 describe PlayerOffenseStats do
+  it 'should return a new PlayerOffenseStats instance with all field values set' do
+    player_offense_stats = PlayerOffenseStats.build 1, 2, Bowls::RoseBowl
+
+    expect( player_offense_stats ).to_not be_nil
+    expect( player_offense_stats ).to     be_a   PlayerOffenseStats
+
+    expect( player_offense_stats.player_id            ).to eq 1
+    expect( player_offense_stats.season               ).to eq 2
+    expect( player_offense_stats.bowl_game            ).to eq Bowls::RoseBowl
+    expect( player_offense_stats.pass_attempts        ).to be_a Integer
+    expect( player_offense_stats.completions          ).to be_a Integer
+    expect( player_offense_stats.interceptions        ).to be_a Integer
+    expect( player_offense_stats.pass_yards           ).to be_a Integer
+    expect( player_offense_stats.pass_touchdowns      ).to be_a Integer
+    expect( player_offense_stats.rush_attempts        ).to be_a Integer
+    expect( player_offense_stats.rush_yards           ).to be_a Integer
+    expect( player_offense_stats.rush_touchdowns      ).to be_a Integer
+    expect( player_offense_stats.receptions           ).to be_a Integer
+    expect( player_offense_stats.receiving_yards      ).to be_a Integer
+    expect( player_offense_stats.receiving_touchdowns ).to be_a Integer
+  end
+
   describe '#build_insert' do
     it 'should return a well formed SQL insert statement' do
       player_offense_stats = PlayerOffenseStats.new
@@ -42,7 +65,7 @@ describe PlayerOffenseStats do
 
   describe '#to_hash' do
     it 'should return a hash of all fields' do
-      player_offense_stats = PlayerOffenseStats.new 1, 2, 3
+      player_offense_stats = PlayerOffenseStats.new 1, 2, Bowls::RoseBowl
 
       player_offense_stats.pass_attempts        = 314
       player_offense_stats.completions          = 268
@@ -61,7 +84,7 @@ describe PlayerOffenseStats do
       expect( result.keys.length              ).to eq 14
       expect( result[ :player_id            ] ).to eq 1
       expect( result[ :season               ] ).to eq 2
-      expect( result[ :bowl_game            ] ).to eq 3
+      expect( result[ :bowl_game            ] ).to eq Bowls::RoseBowl
       expect( result[ :pass_attempts        ] ).to eq 314
       expect( result[ :completions          ] ).to eq 268
       expect( result[ :interceptions        ] ).to eq 12
@@ -78,14 +101,14 @@ describe PlayerOffenseStats do
 
   describe '#key_hash' do
     it 'should return a hash of the key fields' do
-      player_offense_stats = PlayerOffenseStats.new 1, 2, 3
+      player_offense_stats = PlayerOffenseStats.new 1, 2, Bowls::RoseBowl
 
       result = player_offense_stats.key_hash
 
       expect( result.keys.length   ).to eq 3
       expect( result[ :player_id ] ).to eq 1
       expect( result[ :season    ] ).to eq 2
-      expect( result[ :bowl_game ] ).to eq 3
+      expect( result[ :bowl_game ] ).to eq Bowls::RoseBowl
     end
   end
 
@@ -95,7 +118,7 @@ describe PlayerOffenseStats do
       hash = {
         player_id:            1,
         season:               2,
-        bowl_game:            3,
+        bowl_game:            Bowls::RoseBowl,
         pass_attempts:        314,
         completions:          268,
         interceptions:        12,
