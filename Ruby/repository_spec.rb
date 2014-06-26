@@ -128,6 +128,18 @@ describe 'Repository' do
       expect( actual.points_allowed ).to eq 262
     end
 
+    it 'should return nil if the database record is not found' do
+      team_stats = TeamStats.new
+
+      team_stats.team_id   = 1
+      team_stats.season    = 2
+      team_stats.bowl_game = 3
+
+      actual = @repository.read team_stats
+
+      expect( actual ).to be_nil
+    end
+
     it 'should raise error if provided object is not Persistable' do
       expect { @repository.read 1 }.to raise_error 'object must be persistable'
     end

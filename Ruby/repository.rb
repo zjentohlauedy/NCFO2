@@ -31,6 +31,8 @@ class Repository
 
     data = @db.execute persistable.build_select, persistable.key_hash
 
+    if data.nil? or data.length == 0; return nil end
+
     result = transform_hash data
 
     persistable.from_hash result[0]
