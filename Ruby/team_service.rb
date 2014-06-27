@@ -5,6 +5,133 @@ class TeamService
     @player_service = player_service
   end
 
+  def get team_id
+    team = @repository.read Team.new team_id
+
+    unless team.nil?
+      get_accolades     team
+      get_players       team
+      get_stats         team
+      get_offense_stats team
+      get_defense_stats team
+      get_kicking_stats team
+    end
+
+    team
+  end
+
+  def get_accolades team
+    team_accolade = TeamAccolade.new
+
+    results = @repository.custom_read team_accolade.build_select_by_team, team.team_id
+
+    unless results.nil? or results.length == 0
+      team.accolades = []
+
+      results.each do |result|
+        team_accolade.from_hash result
+
+        team.accolades.push team_accolade
+
+        team_accolade = TeamAccolade.new
+      end
+    end
+  end
+
+  def get_players team
+    team_players = TeamPlayer.new
+
+    results = @repository.custom_read team_players.build_select_by_team, team.team_id
+
+    unless results.nil? or results.length == 0
+      team.players = []
+
+      results.each do |result|
+        team_players.from_hash result
+
+        unless team_players.player_id.nil?
+          team_players.player = @player_service.get team_players.player_id
+        end
+
+        team.players.push team_players
+
+        team_players = TeamPlayer.new
+      end
+    end
+  end
+
+  def get_stats team
+    team_stats = TeamStats.new
+
+    results = @repository.custom_read team_stats.build_select_by_team, team.team_id
+
+    unless results.nil? or results.length == 0
+      team.stats = []
+
+      results.each do |result|
+        team_stats.from_hash result
+
+        team.stats.push team_stats
+
+        team_stats = TeamStats.new
+      end
+    end
+  end
+
+  def get_offense_stats team
+    team_offense_stats = TeamOffenseStats.new
+
+    results = @repository.custom_read team_offense_stats.build_select_by_team, team.team_id
+
+    unless results.nil? or results.length == 0
+      team.offense_stats = []
+
+      results.each do |result|
+        team_offense_stats.from_hash result
+
+        team.offense_stats.push team_offense_stats
+
+        team_offense_stats = TeamOffenseStats.new
+      end
+    end
+  end
+
+  def get_defense_stats team
+    team_defense_stats = TeamDefenseStats.new
+
+    results = @repository.custom_read team_defense_stats.build_select_by_team, team.team_id
+
+    unless results.nil? or results.length == 0
+      team.defense_stats = []
+
+      results.each do |result|
+        team_defense_stats.from_hash result
+
+        team.defense_stats.push team_defense_stats
+
+        team_defense_stats = TeamDefenseStats.new
+      end
+    end
+  end
+
+  def get_kicking_stats team
+    team_kicking_stats = TeamKickingStats.new
+
+    results = @repository.custom_read team_kicking_stats.build_select_by_team, team.team_id
+
+    unless results.nil? or results.length == 0
+      team.kicking_stats = []
+
+      results.each do |result|
+        team_kicking_stats.from_hash result
+
+        team.kicking_stats.push team_kicking_stats
+
+        team_kicking_stats = TeamKickingStats.new
+      end
+    end
+  end
+
   def save team
     save_accolades     team.accolades
     save_players       team.players

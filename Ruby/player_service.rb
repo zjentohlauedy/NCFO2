@@ -1,4 +1,15 @@
 require 'positions'
+require 'player'
+require 'player_accolade'
+require 'player_ratings'
+require 'player_quarterback_ratings'
+require 'player_offense_ratings'
+require 'player_defense_ratings'
+require 'player_kicking_ratings'
+require 'player_offense_stats'
+require 'player_defense_stats'
+require 'player_kicking_stats'
+require 'player_returns_stats'
 
 class PlayerService
 
