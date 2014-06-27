@@ -15,6 +15,25 @@ class TeamOffenseStats < Persistable
   @rush_yards
   @rush_touchdowns
 
+  def self.build id, season, bowl_game
+    team_offense_stats = TeamOffenseStats.new
+    prng               = Random.new
+
+    team_offense_stats.team_id         = id
+    team_offense_stats.season          = season
+    team_offense_stats.bowl_game       = bowl_game
+    team_offense_stats.pass_attempts   = prng.rand  10
+    team_offense_stats.completions     = prng.rand  10
+    team_offense_stats.interceptions   = prng.rand   5
+    team_offense_stats.pass_yards      = prng.rand   5
+    team_offense_stats.pass_touchdowns = prng.rand   5
+    team_offense_stats.rush_attempts   = prng.rand   5
+    team_offense_stats.rush_yards      = prng.rand 500
+    team_offense_stats.rush_touchdowns = prng.rand 500
+
+    team_offense_stats
+  end
+
   def initialize id = nil, season = nil, bowl_game = nil
     @TableName  = "Team_Offense_Stats_T"
     @FieldNames = %w(Team_Id Season Bowl_Game Pass_Attempts Completions Interceptions Pass_Yards Pass_Touchdowns Rush_Attempts Rush_Yards Rush_Touchdowns)

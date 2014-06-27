@@ -2,10 +2,23 @@ require 'persistable'
 
 class TeamPlayer < Persistable
   attr_accessor :team_id, :season, :player_id
+  attr_accessor :player
 
   @team_id
   @season
   @player_id
+
+  @player
+
+  def self.build id, season, player_id
+    team_player = TeamPlayer.new
+
+    team_player.team_id   = id
+    team_player.season    = season
+    team_player.player_id = player_id
+
+    team_player
+  end
 
   def initialize team_id = nil, season = nil, player_id = nil
     @TableName  = 'Team_Players_T'

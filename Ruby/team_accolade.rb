@@ -7,6 +7,16 @@ class TeamAccolade < Persistable
   @season
   @accolade
 
+  def self.build id, season, accolade
+    team_accolade = TeamAccolade.new
+
+    team_accolade.team_id  = id
+    team_accolade.season   = season
+    team_accolade.accolade = accolade
+
+    team_accolade
+  end
+
   def initialize team_id = nil, season = nil, accolade = nil
     @TableName  = 'Team_Accolades_T'
     @FieldNames = %w(Team_Id Season Accolade)

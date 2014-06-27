@@ -4,6 +4,23 @@ $: << "#{location}"
 require 'team_defense_stats'
 
 describe TeamDefenseStats do
+  describe '::build' do
+    it 'should return a new TeamDefenseStats instance with all field values set' do
+      team_defense_stats = TeamDefenseStats.build 1, 2, 3
+
+      expect( team_defense_stats ).to_not be_nil
+      expect( team_defense_stats ).to     be_a   TeamDefenseStats
+
+      expect( team_defense_stats.team_id           ).to eq 1
+      expect( team_defense_stats.season            ).to eq 2
+      expect( team_defense_stats.bowl_game         ).to eq 3
+      expect( team_defense_stats.sacks             ).to be_a Integer
+      expect( team_defense_stats.interceptions     ).to be_a Integer
+      expect( team_defense_stats.return_yards      ).to be_a Integer
+      expect( team_defense_stats.return_touchdowns ).to be_a Integer
+    end
+  end
+
   describe '#build_insert' do
     it 'should return a well formed SQL insert statement' do
       team_defense_stats = TeamDefenseStats.new

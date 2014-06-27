@@ -4,6 +4,20 @@ $: << "#{location}"
 require 'team'
 
 describe Team do
+  describe '::build' do
+    it 'should return a new Team instance with all field values set' do
+      team = Team.build 1
+
+      expect( team ).to_not be_nil
+      expect( team ).to     be_a   Team
+
+      expect( team.team_id      ).to eq 1
+      expect( team.name         ).to be_a String
+      expect( team.location     ).to be_a String
+      expect( team.abbreviation ).to be_a String
+    end
+  end
+
   describe '#build_insert' do
     it 'should return a well formed SQL insert statement' do
       team = Team.new

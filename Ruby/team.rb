@@ -2,11 +2,30 @@ require 'persistable'
 
 class Team < Persistable
   attr_accessor :team_id, :name, :location, :abbreviation
+  attr_accessor :accolades, :players, :stats, :offense_stats, :defense_stats, :kicking_stats
 
   @team_id
   @name
   @location
   @abbreviation
+
+  @accolades
+  @players
+  @stats
+  @offense_stats
+  @defense_stats
+  @kicking_stats
+
+  def self.build id
+    team = Team.new
+
+    team.team_id      = id
+    team.name         = "Teamname#{id}"
+    team.location     = "Location#{id}"
+    team.abbreviation = "TN#{id}"
+
+    team
+  end
 
   def initialize id = nil
     @TableName  = "Teams_T"

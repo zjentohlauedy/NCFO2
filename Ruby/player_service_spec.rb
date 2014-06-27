@@ -482,9 +482,6 @@ describe 'PlayerService' do
 
       expect( player.returns_stats ).to be_nil
     end
-
-  # returns_stats
-
   end
 
   describe '#save' do

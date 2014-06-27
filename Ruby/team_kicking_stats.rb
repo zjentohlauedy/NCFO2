@@ -19,6 +19,29 @@ class TeamKickingStats < Persistable
   @punt_return_yards
   @punt_return_touchdowns
 
+  def self.build id, season, bowl_game
+    team_kicking_stats = TeamKickingStats.new
+    prng               = Random.new
+
+    team_kicking_stats.team_id                = id
+    team_kicking_stats.season                 = season
+    team_kicking_stats.bowl_game              = bowl_game
+    team_kicking_stats.extra_point_attempts   = prng.rand   75
+    team_kicking_stats.extra_points_made      = prng.rand   75
+    team_kicking_stats.field_goal_attempts    = prng.rand   30
+    team_kicking_stats.field_goals_made       = prng.rand   30
+    team_kicking_stats.punts                  = prng.rand   20
+    team_kicking_stats.punt_yards             = prng.rand  500
+    team_kicking_stats.kick_returns           = prng.rand  100
+    team_kicking_stats.kick_return_yards      = prng.rand 1000
+    team_kicking_stats.kick_return_touchdowns = prng.rand   10
+    team_kicking_stats.punt_returns           = prng.rand   20
+    team_kicking_stats.punt_return_yards      = prng.rand  200
+    team_kicking_stats.punt_return_touchdowns = prng.rand    5
+
+    team_kicking_stats
+  end
+
   def initialize id = nil, season = nil, bowl_game = nil
     @TableName  = "Team_Kicking_Stats_T"
     @FieldNames = %w(Team_Id Season Bowl_Game Extra_Point_Attempts Extra_Points_Made Field_Goal_Attempts Field_Goals_Made Punts Punt_Yards Kick_Returns Kick_Return_Yards Kick_Return_Touchdowns Punt_Returns Punt_Return_Yards Punt_Return_Touchdowns)

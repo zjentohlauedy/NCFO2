@@ -11,6 +11,21 @@ class TeamDefenseStats < Persistable
   @return_yards
   @return_touchdowns
 
+  def self.build id, season, bowl_game
+    team_defense_stats = TeamDefenseStats.new
+    prng               = Random.new
+
+    team_defense_stats.team_id           = id
+    team_defense_stats.season            = season
+    team_defense_stats.bowl_game         = bowl_game
+    team_defense_stats.sacks             = prng.rand  20
+    team_defense_stats.interceptions     = prng.rand  10
+    team_defense_stats.return_yards      = prng.rand 500
+    team_defense_stats.return_touchdowns = prng.rand  10
+
+    team_defense_stats
+  end
+
   def initialize id = nil, season = nil, bowl_game = nil
     @TableName  = "Team_Defense_Stats_T"
     @FieldNames = %w(Team_Id Season Bowl_Game Sacks Interceptions Return_Yards Return_Touchdowns)
