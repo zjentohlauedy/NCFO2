@@ -2,11 +2,26 @@ require 'persistable'
 
 class Organization < Persistable
   attr_accessor :organization_id, :name, :abbreviation, :season
+  attr_accessor :conferences
 
   @organization_id
   @name
   @abbreviation
   @season
+
+  @conferences
+
+  def self.build id
+    organization = Organization.new
+    prng         = Random.new
+
+    organization.organization_id = id
+    organization.name            = "Orgname#{id}"
+    organization.abbreviation    = "ON#{id}"
+    organization.season          = prng.rand 100
+
+    organization
+  end
 
   def initialize id = nil
     @TableName  = "Organizations_T"

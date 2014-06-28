@@ -2,9 +2,21 @@ require 'persistable'
 
 class OrganizationConference < Persistable
   attr_accessor :organization_id, :conference_id
+  attr_accessor :conference
 
   @organization_id
   @conference_id
+
+  @conference
+
+  def self.build id, conference_id
+    organization_conference = OrganizationConference.new
+
+    organization_conference.organization_id = id
+    organization_conference.conference_id   = conference_id
+
+    organization_conference
+  end
 
   def initialize organization_id = nil, conference_id = nil
     @TableName  = 'Organization_Conferences_T'

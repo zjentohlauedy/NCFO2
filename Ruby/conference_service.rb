@@ -1,3 +1,8 @@
+require 'conference_accolade'
+require 'conference_accolades'
+require 'conference_stats'
+require 'conference_team'
+
 class ConferenceService
 
   def initialize repository, team_service

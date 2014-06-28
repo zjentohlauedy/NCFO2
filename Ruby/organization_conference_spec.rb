@@ -4,6 +4,18 @@ $: << "#{location}"
 require 'organization_conference'
 
 describe OrganizationConference do
+  describe '::build' do
+    it 'should return a new OrganizationConference instance with all field values set' do
+      organization_conference = OrganizationConference.build 1, 2
+
+      expect( organization_conference ).to_not be_nil
+      expect( organization_conference ).to     be_a   OrganizationConference
+
+      expect( organization_conference.organization_id ).to eq 1
+      expect( organization_conference.conference_id   ).to eq 2
+    end
+  end
+
   describe '#build_insert' do
     it 'should return a well formed SQL insert statement' do
       organization_conference = OrganizationConference.new
