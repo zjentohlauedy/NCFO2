@@ -6,14 +6,14 @@ require 'team_offense_stats'
 describe TeamOffenseStats do
   describe '::build' do
     it 'should return a new TeamOffenseStats instance with all field values set' do
-      team_offense_stats = TeamOffenseStats.build 1, 2, 3
+      team_offense_stats = TeamOffenseStats.build 1, 2, Bowls::NCFOChampionship
 
       expect( team_offense_stats ).to_not be_nil
       expect( team_offense_stats ).to     be_a   TeamOffenseStats
 
       expect( team_offense_stats.team_id         ).to eq 1
       expect( team_offense_stats.season          ).to eq 2
-      expect( team_offense_stats.bowl_game       ).to eq 3
+      expect( team_offense_stats.bowl_game       ).to eq Bowls::NCFOChampionship
       expect( team_offense_stats.pass_attempts   ).to be_a Integer
       expect( team_offense_stats.completions     ).to be_a Integer
       expect( team_offense_stats.interceptions   ).to be_a Integer
@@ -63,7 +63,7 @@ describe TeamOffenseStats do
 
   describe '#to_hash' do
     it 'should return a hash of all fields' do
-      team_offense_stats = TeamOffenseStats.new 1, 2, 3
+      team_offense_stats = TeamOffenseStats.new 1, 2, Bowls::NCFOChampionship
 
       team_offense_stats.pass_attempts   = 314
       team_offense_stats.completions     = 268
@@ -79,7 +79,7 @@ describe TeamOffenseStats do
       expect( result.keys.length         ).to eq 11
       expect( result[ :team_id         ] ).to eq 1
       expect( result[ :season          ] ).to eq 2
-      expect( result[ :bowl_game       ] ).to eq 3
+      expect( result[ :bowl_game       ] ).to eq Bowls::NCFOChampionship
       expect( result[ :pass_attempts   ] ).to eq 314
       expect( result[ :completions     ] ).to eq 268
       expect( result[ :interceptions   ] ).to eq 12
@@ -93,14 +93,14 @@ describe TeamOffenseStats do
 
   describe '#key_hash' do
     it 'should return a hash of the key fields' do
-      team_offense_stats = TeamOffenseStats.new 1, 2, 3
+      team_offense_stats = TeamOffenseStats.new 1, 2, Bowls::NCFOChampionship
 
       result = team_offense_stats.key_hash
 
       expect( result.keys.length   ).to eq 3
       expect( result[ :team_id   ] ).to eq 1
       expect( result[ :season    ] ).to eq 2
-      expect( result[ :bowl_game ] ).to eq 3
+      expect( result[ :bowl_game ] ).to eq Bowls::NCFOChampionship
     end
   end
 
@@ -110,7 +110,7 @@ describe TeamOffenseStats do
       hash = {
         team_id:         1,
         season:          2,
-        bowl_game:       3,
+        bowl_game:       Bowls::NCFOChampionship,
         pass_attempts:   314,
         completions:     268,
         interceptions:   12,

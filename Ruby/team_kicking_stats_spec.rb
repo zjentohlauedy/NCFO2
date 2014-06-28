@@ -6,14 +6,14 @@ require 'team_kicking_stats'
 describe TeamKickingStats do
   describe '::build' do
     it 'should return a new TeamKickingStats instance with all field values set' do
-      team_kicking_stats = TeamKickingStats.build 1, 2, 3
+      team_kicking_stats = TeamKickingStats.build 1, 2, Bowls::OrangeBowl
 
       expect( team_kicking_stats ).to_not be_nil
       expect( team_kicking_stats ).to     be_a   TeamKickingStats
 
       expect( team_kicking_stats.team_id                ).to eq 1
       expect( team_kicking_stats.season                 ).to eq 2
-      expect( team_kicking_stats.bowl_game              ).to eq 3
+      expect( team_kicking_stats.bowl_game              ).to eq Bowls::OrangeBowl
       expect( team_kicking_stats.extra_point_attempts   ).to be_a Integer
       expect( team_kicking_stats.extra_points_made      ).to be_a Integer
       expect( team_kicking_stats.field_goal_attempts    ).to be_a Integer
@@ -67,7 +67,7 @@ describe TeamKickingStats do
 
   describe '#to_hash' do
     it 'should return a hash of all fields' do
-      team_kicking_stats = TeamKickingStats.new 1, 2, 3
+      team_kicking_stats = TeamKickingStats.new 1, 2, Bowls::OrangeBowl
 
       team_kicking_stats.extra_point_attempts   = 21
       team_kicking_stats.extra_points_made      = 20
@@ -87,7 +87,7 @@ describe TeamKickingStats do
       expect( result.keys.length                ).to eq 15
       expect( result[ :team_id                ] ).to eq 1
       expect( result[ :season                 ] ).to eq 2
-      expect( result[ :bowl_game              ] ).to eq 3
+      expect( result[ :bowl_game              ] ).to eq Bowls::OrangeBowl
       expect( result[ :extra_point_attempts   ] ).to eq 21
       expect( result[ :extra_points_made      ] ).to eq 20
       expect( result[ :field_goal_attempts    ] ).to eq 25
@@ -105,14 +105,14 @@ describe TeamKickingStats do
 
   describe '#key_hash' do
     it 'should return a hash of the key fields' do
-      team_kicking_stats = TeamKickingStats.new 1, 2, 3
+      team_kicking_stats = TeamKickingStats.new 1, 2, Bowls::OrangeBowl
 
       result = team_kicking_stats.key_hash
 
       expect( result.keys.length   ).to eq 3
       expect( result[ :team_id   ] ).to eq 1
       expect( result[ :season    ] ).to eq 2
-      expect( result[ :bowl_game ] ).to eq 3
+      expect( result[ :bowl_game ] ).to eq Bowls::OrangeBowl
     end
   end
 
@@ -122,7 +122,7 @@ describe TeamKickingStats do
       hash = {
         team_id:                1,
         season:                 2,
-        bowl_game:              3,
+        bowl_game:              Bowls::OrangeBowl,
         extra_point_attempts:   21,
         extra_points_made:      20,
         field_goal_attempts:    25,

@@ -6,14 +6,14 @@ require 'team_stats'
 describe TeamStats do
   describe '::build' do
     it 'should return a new TeamStats instance with all field values set' do
-      team_stats = TeamStats.build 1, 2, 3
+      team_stats = TeamStats.build 1, 2, Bowls::None
 
       expect( team_stats ).to_not be_nil
       expect( team_stats ).to     be_a   TeamStats
 
       expect( team_stats.team_id        ).to eq 1
       expect( team_stats.season         ).to eq 2
-      expect( team_stats.bowl_game      ).to eq 3
+      expect( team_stats.bowl_game      ).to eq Bowls::None
       expect( team_stats.wins           ).to be_a Integer
       expect( team_stats.losses         ).to be_a Integer
       expect( team_stats.home_wins      ).to be_a Integer
@@ -63,7 +63,7 @@ describe TeamStats do
 
   describe '#to_hash' do
     it 'should return a hash of all fields' do
-      team_stats = TeamStats.new 1, 2, 3
+      team_stats = TeamStats.new 1, 2, Bowls::None
 
       team_stats.wins           = 8
       team_stats.losses         = 6
@@ -79,7 +79,7 @@ describe TeamStats do
       expect( result.keys.length        ).to eq 11
       expect( result[ :team_id        ] ).to eq 1
       expect( result[ :season         ] ).to eq 2
-      expect( result[ :bowl_game      ] ).to eq 3
+      expect( result[ :bowl_game      ] ).to eq Bowls::None
       expect( result[ :wins           ] ).to eq 8
       expect( result[ :losses         ] ).to eq 6
       expect( result[ :home_wins      ] ).to eq 5
@@ -93,14 +93,14 @@ describe TeamStats do
 
   describe '#key_hash' do
     it 'should return a hash of the key fields' do
-      team_stats = TeamStats.new 1, 2, 3
+      team_stats = TeamStats.new 1, 2, Bowls::None
 
       result = team_stats.key_hash
 
       expect( result.keys.length   ).to eq 3
       expect( result[ :team_id   ] ).to eq 1
       expect( result[ :season    ] ).to eq 2
-      expect( result[ :bowl_game ] ).to eq 3
+      expect( result[ :bowl_game ] ).to eq Bowls::None
     end
   end
 
@@ -110,7 +110,7 @@ describe TeamStats do
       hash = {
         team_id:        1,
         season:         2,
-        bowl_game:      3,
+        bowl_game:      Bowls::None,
         wins:           8,
         losses:         6,
         home_wins:      5,

@@ -2,18 +2,19 @@ location = File.dirname __FILE__
 $: << "#{location}"
 
 require 'team_defense_stats'
+require 'bowls'
 
 describe TeamDefenseStats do
   describe '::build' do
     it 'should return a new TeamDefenseStats instance with all field values set' do
-      team_defense_stats = TeamDefenseStats.build 1, 2, 3
+      team_defense_stats = TeamDefenseStats.build 1, 2, Bowls::SugarBowl
 
       expect( team_defense_stats ).to_not be_nil
       expect( team_defense_stats ).to     be_a   TeamDefenseStats
 
       expect( team_defense_stats.team_id           ).to eq 1
       expect( team_defense_stats.season            ).to eq 2
-      expect( team_defense_stats.bowl_game         ).to eq 3
+      expect( team_defense_stats.bowl_game         ).to eq Bowls::SugarBowl
       expect( team_defense_stats.sacks             ).to be_a Integer
       expect( team_defense_stats.interceptions     ).to be_a Integer
       expect( team_defense_stats.return_yards      ).to be_a Integer
@@ -59,7 +60,7 @@ describe TeamDefenseStats do
 
   describe '#to_hash' do
     it 'should return a hash of all fields' do
-      team_defense_stats = TeamDefenseStats.new 1, 2, 3
+      team_defense_stats = TeamDefenseStats.new 1, 2, Bowls::SugarBowl
 
       team_defense_stats.sacks             = 18
       team_defense_stats.interceptions     = 7
@@ -71,7 +72,7 @@ describe TeamDefenseStats do
       expect( result.keys.length           ).to eq 7
       expect( result[ :team_id           ] ).to eq 1
       expect( result[ :season            ] ).to eq 2
-      expect( result[ :bowl_game         ] ).to eq 3
+      expect( result[ :bowl_game         ] ).to eq Bowls::SugarBowl
       expect( result[ :sacks             ] ).to eq 18
       expect( result[ :interceptions     ] ).to eq 7
       expect( result[ :return_yards      ] ).to eq 118
@@ -81,14 +82,14 @@ describe TeamDefenseStats do
 
   describe '#key_hash' do
     it 'should return a hash of the key fields' do
-      team_defense_stats = TeamDefenseStats.new 1, 2, 3
+      team_defense_stats = TeamDefenseStats.new 1, 2, Bowls::SugarBowl
 
       result = team_defense_stats.key_hash
 
       expect( result.keys.length   ).to eq 3
       expect( result[ :team_id   ] ).to eq 1
       expect( result[ :season    ] ).to eq 2
-      expect( result[ :bowl_game ] ).to eq 3
+      expect( result[ :bowl_game ] ).to eq Bowls::SugarBowl
     end
   end
 
@@ -98,7 +99,7 @@ describe TeamDefenseStats do
       hash = {
         team_id:           1,
         season:            2,
-        bowl_game:         3,
+        bowl_game:         Bowls::SugarBowl,
         sacks:             18,
         interceptions:     7,
         return_yards:      118,

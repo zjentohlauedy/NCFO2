@@ -2,6 +2,7 @@ location = File.dirname __FILE__
 $: << "#{location}"
 
 require 'sqlite3'
+require 'bowls'
 require 'repository'
 require 'player'
 require 'team_stats'
@@ -107,17 +108,17 @@ describe 'Repository' do
     it 'should return the object from the database matching the provided key' do
       team_stats = TeamStats.new
 
-      db.execute 'insert into team_stats_t values ( 1, 2, 3, 8, 2, 5, 0, 3, 2, 341, 262 )'
+      db.execute "insert into team_stats_t values ( 1, 2, #{Bowls::RoseBowl}, 8, 2, 5, 0, 3, 2, 341, 262 )"
 
       team_stats.team_id   = 1
       team_stats.season    = 2
-      team_stats.bowl_game = 3
+      team_stats.bowl_game = Bowls::RoseBowl
 
       actual = @repository.read team_stats
 
       expect( actual.team_id        ).to eq 1
       expect( actual.season         ).to eq 2
-      expect( actual.bowl_game      ).to eq 3
+      expect( actual.bowl_game      ).to eq Bowls::RoseBowl
       expect( actual.wins           ).to eq 8
       expect( actual.losses         ).to eq 2
       expect( actual.home_wins      ).to eq 5
@@ -133,7 +134,7 @@ describe 'Repository' do
 
       team_stats.team_id   = 1
       team_stats.season    = 2
-      team_stats.bowl_game = 3
+      team_stats.bowl_game = Bowls::RoseBowl
 
       actual = @repository.read team_stats
 
@@ -171,13 +172,13 @@ describe 'Repository' do
 
   describe '#update' do
     it 'should update the record in the database with the provided object values' do
-      team_stats = TeamStats.build 1, 2, 3
+      team_stats = TeamStats.build 1, 2, Bowls::LibertyBowl
 
-      db.execute 'insert into team_stats_t values ( 1, 2, 3, 8, 2, 5, 0, 3, 2, 341, 262 )'
+      db.execute "insert into team_stats_t values ( 1, 2, #{Bowls::LibertyBowl}, 8, 2, 5, 0, 3, 2, 341, 262 )"
 
       @repository.update team_stats
 
-      actual = db.execute 'select * from team_stats_t where team_id = 1 and season = 2 and bowl_game = 3'
+      actual = db.execute "select * from team_stats_t where team_id = 1 and season = 2 and bowl_game = #{Bowls::LibertyBowl}"
 
       expect( actual[0][ 'Team_Id'        ] ).to eq team_stats.team_id
       expect( actual[0][ 'Season'         ] ).to eq team_stats.season
@@ -199,22 +200,22 @@ describe 'Repository' do
 
   describe '#custom_update' do
     it 'should execute the provided update query' do
-      db.execute 'insert into conference_stats_t values ( 1, 2, 3, 8, 2, 5, 0, 3, 2, 341, 262 )'
+      db.execute "insert into conference_stats_t values ( 1, 2, #{Bowls::CottonBowl}, 8, 2, 5, 0, 3, 2, 341, 262 )"
 
       @repository.custom_update 'update conference_stats_t set wins = :wins, losses = :losses where conference_id = :conference_id', { conference_id: 1, wins: 7, losses: 3 }
 
-      actual = db.execute 'select * from conference_stats_t where conference_id = 1 and season = 2 and bowl_game = 3'
+      actual = db.execute "select * from conference_stats_t where conference_id = 1 and season = 2 and bowl_game = #{Bowls::CottonBowl}"
 
       expect( actual[0][ 'Wins'   ] ).to eq 7
       expect( actual[0][ 'Losses' ] ).to eq 3
     end
 
     it 'should execute the provided update query without parameters' do
-      db.execute 'insert into conference_stats_t values ( 1, 2, 3, 8, 2, 5, 0, 3, 2, 341, 262 )'
+      db.execute "insert into conference_stats_t values ( 1, 2, #{Bowls::CottonBowl}, 8, 2, 5, 0, 3, 2, 341, 262 )"
 
       @repository.custom_update 'update conference_stats_t set points_scored = 347, points_allowed = 282 where season = 2'
 
-      actual = db.execute 'select * from conference_stats_t where conference_id = 1 and season = 2 and bowl_game = 3'
+      actual = db.execute "select * from conference_stats_t where conference_id = 1 and season = 2 and bowl_game = #{Bowls::CottonBowl}"
 
       expect( actual[0][ 'Points_Scored'  ] ).to eq 347
       expect( actual[0][ 'Points_Allowed' ] ).to eq 282

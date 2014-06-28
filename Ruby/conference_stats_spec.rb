@@ -2,18 +2,19 @@ location = File.dirname __FILE__
 $: << "#{location}"
 
 require 'conference_stats'
+require 'bowls'
 
 describe ConferenceStats do
   describe '::build' do
     it 'should return a new ConferenceStats instance with all field values set' do
-      conference_stats = ConferenceStats.build 1, 2, 3
+      conference_stats = ConferenceStats.build 1, 2, Bowls::FiestaBowl
 
       expect( conference_stats ).to_not be_nil
       expect( conference_stats ).to     be_a   ConferenceStats
 
       expect( conference_stats.conference_id  ).to eq 1
       expect( conference_stats.season         ).to eq 2
-      expect( conference_stats.bowl_game      ).to eq 3
+      expect( conference_stats.bowl_game      ).to eq Bowls::FiestaBowl
       expect( conference_stats.wins           ).to be_a Integer
       expect( conference_stats.losses         ).to be_a Integer
       expect( conference_stats.home_wins      ).to be_a Integer
@@ -63,7 +64,7 @@ describe ConferenceStats do
 
   describe '#to_hash' do
     it 'should return a hash of all fields' do
-      conference_stats = ConferenceStats.new 1, 2, 3
+      conference_stats = ConferenceStats.new 1, 2, Bowls::FiestaBowl
 
       conference_stats.wins           = 8
       conference_stats.losses         = 6
@@ -79,7 +80,7 @@ describe ConferenceStats do
       expect( result.keys.length        ).to eq 11
       expect( result[ :conference_id  ] ).to eq 1
       expect( result[ :season         ] ).to eq 2
-      expect( result[ :bowl_game      ] ).to eq 3
+      expect( result[ :bowl_game      ] ).to eq Bowls::FiestaBowl
       expect( result[ :wins           ] ).to eq 8
       expect( result[ :losses         ] ).to eq 6
       expect( result[ :home_wins      ] ).to eq 5
@@ -93,14 +94,14 @@ describe ConferenceStats do
 
   describe '#key_hash' do
     it 'should return a hash of the key fields' do
-      conference_stats = ConferenceStats.new 1, 2, 3
+      conference_stats = ConferenceStats.new 1, 2, Bowls::FiestaBowl
 
       result = conference_stats.key_hash
 
       expect( result.keys.length       ).to eq 3
       expect( result[ :conference_id ] ).to eq 1
       expect( result[ :season        ] ).to eq 2
-      expect( result[ :bowl_game     ] ).to eq 3
+      expect( result[ :bowl_game     ] ).to eq Bowls::FiestaBowl
     end
   end
 
@@ -110,7 +111,7 @@ describe ConferenceStats do
       hash = {
         conference_id:  1,
         season:         2,
-        bowl_game:      3,
+        bowl_game:      Bowls::FiestaBowl,
         wins:           8,
         losses:         6,
         home_wins:      5,
