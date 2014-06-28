@@ -4,6 +4,27 @@ $: << "#{location}"
 require 'conference_stats'
 
 describe ConferenceStats do
+  describe '::build' do
+    it 'should return a new ConferenceStats instance with all field values set' do
+      conference_stats = ConferenceStats.build 1, 2, 3
+
+      expect( conference_stats ).to_not be_nil
+      expect( conference_stats ).to     be_a   ConferenceStats
+
+      expect( conference_stats.conference_id  ).to eq 1
+      expect( conference_stats.season         ).to eq 2
+      expect( conference_stats.bowl_game      ).to eq 3
+      expect( conference_stats.wins           ).to be_a Integer
+      expect( conference_stats.losses         ).to be_a Integer
+      expect( conference_stats.home_wins      ).to be_a Integer
+      expect( conference_stats.home_losses    ).to be_a Integer
+      expect( conference_stats.road_wins      ).to be_a Integer
+      expect( conference_stats.road_losses    ).to be_a Integer
+      expect( conference_stats.points_scored  ).to be_a Integer
+      expect( conference_stats.points_allowed ).to be_a Integer
+    end
+  end
+
   describe '#build_insert' do
     it 'should return a well formed SQL insert statement' do
       conference_stats = ConferenceStats.new

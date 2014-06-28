@@ -1,3 +1,11 @@
+require 'team_accolade'
+require 'team_accolades'
+require 'team_player'
+require 'team_stats'
+require 'team_offense_stats'
+require 'team_defense_stats'
+require 'team_kicking_stats'
+
 class TeamService
 
   def initialize repository, player_service

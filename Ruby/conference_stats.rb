@@ -15,6 +15,25 @@ class ConferenceStats < Persistable
   @points_scored
   @points_allowed
 
+  def self.build id, season, bowl_game
+    conference_stats = ConferenceStats.new
+    prng             = Random.new
+
+    conference_stats.conference_id  = id
+    conference_stats.season         = season
+    conference_stats.bowl_game      = bowl_game
+    conference_stats.wins           = prng.rand  10
+    conference_stats.losses         = prng.rand  10
+    conference_stats.home_wins      = prng.rand   5
+    conference_stats.home_losses    = prng.rand   5
+    conference_stats.road_wins      = prng.rand   5
+    conference_stats.road_losses    = prng.rand   5
+    conference_stats.points_scored  = prng.rand 500
+    conference_stats.points_allowed = prng.rand 500
+
+    conference_stats
+  end
+
   def initialize id = nil, season = nil, bowl_game = nil
     @TableName  = "Conference_Stats_T"
     @FieldNames = %w(Conference_Id Season Bowl_Game Wins Losses Home_Wins Home_Losses Road_Wins Road_Losses Points_Scored Points_Allowed)

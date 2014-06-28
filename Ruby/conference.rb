@@ -2,9 +2,23 @@ require 'persistable'
 
 class Conference < Persistable
   attr_accessor :conference_id, :name
+  attr_accessor :accolades, :stats, :teams
 
   @conference_id
   @name
+
+  @accolades
+  @stats
+  @teams
+
+  def self.build id
+    conference = Conference.new
+
+    conference.conference_id = id
+    conference.name          = "Confname#{id}"
+
+    conference
+  end
 
   def initialize id = nil
     @TableName  = "Conferences_T"
