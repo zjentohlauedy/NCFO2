@@ -57,7 +57,7 @@ describe Player do
       player.first_name      = 'First Name'
       player.last_name       = 'Last Name'
       player.face            = 123
-      player.position        = 2
+      player.position        = Positions::Runningback
       player.number          = 13
       player.freshman_season = 1
       player.maturity        = 3
@@ -69,7 +69,7 @@ describe Player do
       expect( result[ :first_name      ] ).to eq 'First Name'
       expect( result[ :last_name       ] ).to eq 'Last Name'
       expect( result[ :face            ] ).to eq 123
-      expect( result[ :position        ] ).to eq 2
+      expect( result[ :position        ] ).to eq Positions::Runningback
       expect( result[ :number          ] ).to eq 13
       expect( result[ :freshman_season ] ).to eq 1
       expect( result[ :maturity        ] ).to eq 3
@@ -95,7 +95,7 @@ describe Player do
         first_name:      'First Name',
         last_name:       'Last Name',
         face:            123,
-        position:        2,
+        position:        Positions::Runningback,
         number:          13,
         freshman_season: 1,
         maturity:        3
