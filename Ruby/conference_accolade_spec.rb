@@ -6,14 +6,14 @@ require 'conference_accolade'
 describe ConferenceAccolade do
   describe '::build' do
     it 'should return a new ConferenceAccolade instance with all field values set' do
-      conference_accolade = ConferenceAccolade.build 1, 2, 3
+      conference_accolade = ConferenceAccolade.build 1, 2, ConferenceAccolades::FiestaBowlChampions
 
       expect( conference_accolade ).to_not be_nil
       expect( conference_accolade ).to     be_a   ConferenceAccolade
 
       expect( conference_accolade.conference_id ).to eq 1
       expect( conference_accolade.season        ).to eq 2
-      expect( conference_accolade.accolade      ).to eq 3
+      expect( conference_accolade.accolade      ).to eq ConferenceAccolades::FiestaBowlChampions
     end
   end
 
@@ -41,34 +41,34 @@ describe ConferenceAccolade do
 
   describe '#to_hash' do
     it 'should return a hash of all fields' do
-      conference_accolade = ConferenceAccolade.new 1, 4, 3
+      conference_accolade = ConferenceAccolade.new 1, 4, ConferenceAccolades::FiestaBowlChampions
 
       result = conference_accolade.to_hash
 
       expect( result.keys.length       ).to eq 3
       expect( result[ :conference_id ] ).to eq 1
       expect( result[ :season        ] ).to eq 4
-      expect( result[ :accolade      ] ).to eq 3
+      expect( result[ :accolade      ] ).to eq ConferenceAccolades::FiestaBowlChampions
     end
   end
 
   describe '#key_hash' do
     it 'should return a hash of the key fields' do
-      conference_accolade = ConferenceAccolade.new 1, 4, 3
+      conference_accolade = ConferenceAccolade.new 1, 4, ConferenceAccolades::FiestaBowlChampions
 
       result = conference_accolade.key_hash
 
       expect( result.keys.length       ).to eq 3
       expect( result[ :conference_id ] ).to eq 1
       expect( result[ :season        ] ).to eq 4
-      expect( result[ :accolade      ] ).to eq 3
+      expect( result[ :accolade      ] ).to eq ConferenceAccolades::FiestaBowlChampions
     end
   end
 
   describe '#from_hash' do
     it 'should set fields to values from given hash' do
       conference_accolade = ConferenceAccolade.new
-      hash = { conference_id: 1, season: 4, accolade: 3 }
+      hash = { conference_id: 1, season: 4, accolade: ConferenceAccolades::FiestaBowlChampions }
 
       conference_accolade.from_hash hash
 

@@ -6,14 +6,14 @@ require 'team_accolade'
 describe TeamAccolade do
   describe '::build' do
     it 'should return a new TeamAccolade instance with all field values set' do
-      team_accolade = TeamAccolade.build 1, 2, 3
+      team_accolade = TeamAccolade.build 1, 2, TeamAccolades::OrangeBowlChampions
 
       expect( team_accolade ).to_not be_nil
       expect( team_accolade ).to     be_a   TeamAccolade
 
       expect( team_accolade.team_id  ).to eq 1
       expect( team_accolade.season   ).to eq 2
-      expect( team_accolade.accolade ).to eq 3
+      expect( team_accolade.accolade ).to eq TeamAccolades::OrangeBowlChampions
     end
   end
 
@@ -41,34 +41,34 @@ describe TeamAccolade do
 
   describe '#to_hash' do
     it 'should return a hash of all fields' do
-      team_accolade = TeamAccolade.new 1, 4, 3
+      team_accolade = TeamAccolade.new 1, 4, TeamAccolades::OrangeBowlChampions
 
       result = team_accolade.to_hash
 
       expect( result.keys.length   ).to eq 3
       expect( result[ :team_id   ] ).to eq 1
       expect( result[ :season    ] ).to eq 4
-      expect( result[ :accolade  ] ).to eq 3
+      expect( result[ :accolade  ] ).to eq TeamAccolades::OrangeBowlChampions
     end
   end
 
   describe '#key_hash' do
     it 'should return a hash of the key fields' do
-      team_accolade = TeamAccolade.new 1, 4, 3
+      team_accolade = TeamAccolade.new 1, 4, TeamAccolades::OrangeBowlChampions
 
       result = team_accolade.key_hash
 
       expect( result.keys.length   ).to eq 3
       expect( result[ :team_id   ] ).to eq 1
       expect( result[ :season    ] ).to eq 4
-      expect( result[ :accolade  ] ).to eq 3
+      expect( result[ :accolade  ] ).to eq TeamAccolades::OrangeBowlChampions
     end
   end
 
   describe '#from_hash' do
     it 'should set fields to values from given hash' do
       team_accolade = TeamAccolade.new
-      hash = { team_id: 1, season: 4, accolade: 3 }
+      hash = { team_id: 1, season: 4, accolade: TeamAccolades::OrangeBowlChampions }
 
       team_accolade.from_hash hash
 
