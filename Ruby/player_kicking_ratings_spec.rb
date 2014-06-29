@@ -17,6 +17,23 @@ describe PlayerKickingRatings do
     end
   end
 
+  describe '::generate' do
+    it 'should return a new PlayerRatings instance with generated field values' do
+      player_kicking_ratings = PlayerKickingRatings.generate 1
+
+      expect( player_kicking_ratings ).to_not be_nil
+      expect( player_kicking_ratings ).to     be_a   PlayerKickingRatings
+
+      expect( player_kicking_ratings.player_id        ).to eq 1
+      expect( player_kicking_ratings.kicking_ability  ).to be_a Integer
+      expect( player_kicking_ratings.kicking_ability  ).to be >=  0
+      expect( player_kicking_ratings.kicking_ability  ).to be <= 15
+      expect( player_kicking_ratings.avoid_kick_block ).to be_a Integer
+      expect( player_kicking_ratings.avoid_kick_block ).to be >=  0
+      expect( player_kicking_ratings.avoid_kick_block ).to be <= 15
+    end
+  end
+
   describe '#build_insert' do
     it 'should return a well formed SQL insert statement' do
       player_kicking_ratings = PlayerKickingRatings.new
