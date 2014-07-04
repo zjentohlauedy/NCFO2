@@ -124,6 +124,7 @@ require 'team_player'
 
 @next_player_id = 0
 @pg = PlayerGenerator.new
+@prng = Random.new
 
 def get_next_player_id
   @next_player_id += 1
@@ -135,7 +136,9 @@ def generate_players team_id, positions
   positions.each do |pos|
     number = @pg.choose_number pos, result
 
-    player = @pg.generate_player get_next_player_id, pos, number, @organization[:season]
+    freshman_season = @organization[:season] - @prng.rand(4)
+
+    player = @pg.generate_player get_next_player_id, pos, number, freshman_season
 
     team_player = TeamPlayer.new team_id, @organization[:season], player.player_id
 
