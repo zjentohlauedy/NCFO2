@@ -74,6 +74,14 @@ runTestProg test_team_service
 runTestProg test_conference_service
 runTestProg test_organization_service
 
+TESTARGS="."
+
+runTestProg test_file_utils
+
+TESTARGS=""
+
+runTestProg test_populate_roms
+
 if [ $FAIL -ne 0 ]; then
 
     echo

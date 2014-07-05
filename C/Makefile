@@ -7,6 +7,8 @@ LDFLAGS = -L. -lm -lsqlite3
 progs = \
 
 tests = \
+   test_file_utils \
+   test_populate_roms \
    test_organizations_t \
    test_organization_conferences_t \
    test_conferences_t \
@@ -41,6 +43,12 @@ ALL: PROGS TESTS
 PROGS: $(progs) TAGS
 
 TESTS: $(tests) ncfo_test.db TAGS
+
+test_file_utils: test_file_utils.o file_utils.o
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
+
+test_populate_roms: test_populate_roms.o populate_roms.o file_utils.o libncfodata.a libncfobuilders.a
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfodata -lncfobuilders
 
 test_organizations_t: test_organizations_t.o organizations_t.o sql_query.o libncfobuilders.a libncfocompares.a
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfobuilders -lncfocompares
