@@ -75,11 +75,11 @@ static void injectData( tsbrom_s *rom, player_s **players )
                const player_s *player = players[(i * 30) + j];
 
                // always update the pointer
-               int2pointer( 0x80ca + offset, &(rom->player_pointers[i][j]) );
+               int2pointer( 0x86ca + offset, &(rom->player_pointers[i][j]) );
 
                if ( player == NULL ) continue;
 
-               rom->player_identifiers[offset++] = player->number;
+               rom->player_identifiers[offset++] = number2hex( player->number );
 
                memcpy( rom->player_identifiers + offset, lowercase( player->first_name ), strlen(player->first_name) ); offset += strlen(player->first_name);
                memcpy( rom->player_identifiers + offset, uppercase( player->last_name  ), strlen(player->last_name)  ); offset += strlen(player->last_name);
@@ -137,12 +137,13 @@ static void injectData( tsbrom_s *rom, player_s **players )
      }
 }
 
-static boolean_e processPlayers( player_s **rom_players, const team_player_s *players, const int team_idx )
+static boolean_e processPlayers( player_s **rom_players, const team_player_s *players, const int team_id )
 {
      if ( players == NULL ) return bl_True;
 
      int player_pos_counts[] = { 0, 2, 4, 4, 2, 5, 3, 4, 2, 2, 1, 1 }; // number of players needed by position
      int player_count        =   0;                                    // total number of players used
+     int start_idx           =  (team_id - 1) % 24;
 
      for ( int i = 0; players[i].player != NULL; ++i )
      {
@@ -150,17 +151,16 @@ static boolean_e processPlayers( player_s **rom_players, const team_player_s *pl
 
           if ( player_pos_counts[player->position] > 0 )
           {
-               rom_players[(team_idx * 30) + player_count] = player;
+               rom_players[(start_idx * 30) + player_count] = player;
 
                player_count++;
                player_pos_counts[player->position]--;
           }
      }
 
-     // if player count != 30 it's an error
      if ( player_count != 30 )
      {
-          sprintf( error_message, "%d/30 Players Qualified for Team %d\n", player_count, team_idx );
+          sprintf( error_message, "%d/30 Players Qualified for Team %d\n", player_count, team_id );
 
           return bl_False;
      }
@@ -176,7 +176,7 @@ static boolean_e processTeams( player_s **rom_players, const conference_team_s *
      {
           team_s *team = teams[i].team;
 
-          if ( ! processPlayers( rom_players, team->players, i) ) return bl_False;
+          if ( ! processPlayers( rom_players, team->players, team->team_id) ) return bl_False;
      }
 
      return bl_True;

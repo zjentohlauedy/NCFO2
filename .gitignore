@@ -42,3 +42,4 @@ C/test_conference_service
 C/test_organization_service
 C/test_file_utils
 C/test_populate_roms
+C/export_season

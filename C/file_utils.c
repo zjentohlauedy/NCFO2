@@ -171,3 +171,24 @@ void int2pointer( const int value, nes_pointer_s *ptr )
      ptr->value[0] = (value & 0x000000ff);
      ptr->value[1] = (value & 0x0000ff00)>>8;
 }
+
+
+int number2hex( const int number )
+{
+     if ( number > 99 ) return -1;
+
+     return ((number / 10) << 4) + (number % 10);
+}
+
+
+int hex2number( const int hex )
+{
+     if ( hex > 0x99 ) return -1;
+
+     int tens = hex >>    4;
+     int ones = hex  & 0x0f;
+
+     if ( ones > 9  ||  tens > 9 ) return -1;
+
+     return (tens * 10) + ones;
+}

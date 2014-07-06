@@ -34,8 +34,8 @@ int organization_conferences_t_create(               sqlite3 *db,               
 int organization_conferences_t_read_by_organization( sqlite3 *db, const int organization_id,       data_list_s               *organization_conferences );
 int organization_conferences_t_delete(               sqlite3 *db,                            const organization_conference_s *organization_conference  );
 
-organization_s *get_organization(  sqlite3 *db, const int             season       );
-int             save_organization( sqlite3 *db, const organization_s *organization );
-void            free_organization(                    organization_s *organization );
+organization_s *get_organization(  sqlite3 *db, const int             organization_id );
+int             save_organization( sqlite3 *db, const organization_s *organization    );
+void            free_organization(                    organization_s *organization    );
 
 #endif

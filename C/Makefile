@@ -5,6 +5,7 @@ CFLAGS = -std=c99 -g -Werror-implicit-function-declaration
 LDFLAGS = -L. -lm -lsqlite3
 
 progs = \
+   export_season
 
 tests = \
    test_file_utils \
@@ -41,6 +42,9 @@ tests = \
 ALL: PROGS TESTS
 
 PROGS: $(progs) TAGS
+
+export_season: export_season.o file_utils.o populate_roms.o libncfodata.a
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfodata
 
 TESTS: $(tests) ncfo_test.db TAGS
 

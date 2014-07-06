@@ -73,6 +73,37 @@ static char *int2pointer_ShouldSetTheNesPointerValue_GivenANesPointerAndAnInToCo
      return NULL;
 }
 
+static char *number2hex_ShouldReturnTheHexValueEquivalent_GivenANumber()
+{
+     assertEquals( 0x01, number2hex(  1 ) );
+     assertEquals( 0x32, number2hex( 32 ) );
+     assertEquals( 0x57, number2hex( 57 ) );
+     assertEquals( 0x64, number2hex( 64 ) );
+     assertEquals( 0x80, number2hex( 80 ) );
+     assertEquals( 0x99, number2hex( 99 ) );
+
+     return NULL;
+}
+
+static char *number2hex_ShouldReturnLessThanZero_GivenAnInvalidNumber()
+{
+     assertEquals( -1, number2hex( 100 ) );
+
+     return NULL;
+}
+
+static char *hex2number_ShouldReturnTheNumberValue_GivenAHexValue()
+{
+     assertEquals(  1, hex2number( 0x01 ) );
+     assertEquals( 32, hex2number( 0x32 ) );
+     assertEquals( 57, hex2number( 0x57 ) );
+     assertEquals( 64, hex2number( 0x64 ) );
+     assertEquals( 80, hex2number( 0x80 ) );
+     assertEquals( 99, hex2number( 0x99 ) );
+
+     return NULL;
+}
+
 static void check_file_utils_error()
 {
      printf( "file utils error: %s\n", getFileUtilsError() );
@@ -88,6 +119,10 @@ static void run_all_tests()
 
      run_test( pointer2int_ShouldReturnTheConvertedIntValue_GivenANesPointer,            null );
      run_test( int2pointer_ShouldSetTheNesPointerValue_GivenANesPointerAndAnInToConvert, null );
+
+     run_test( number2hex_ShouldReturnTheHexValueEquivalent_GivenANumber, null );
+     run_test( number2hex_ShouldReturnLessThanZero_GivenAnInvalidNumber,  null );
+     run_test( hex2number_ShouldReturnTheNumberValue_GivenAHexValue,      null );
 }
 
 

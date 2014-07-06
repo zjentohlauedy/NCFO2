@@ -13,12 +13,18 @@ static char *result;
 static organization_s *get_test_org()
 {
      organization_s            *organization         = buildOrganization( 1 );
-     organization_conference_s *org_confs            = malloc( sizeof(organization_conference_s) * 2 );
+     organization_conference_s *org_confs            = malloc( sizeof(organization_conference_s) * 6 );
      organization_conference_s  org_conf_sentinel    = ORGANIZATION_CONFERENCE_SENTINEL;
      conference_s              *conference1          = buildConference( 1 );
-     conference_team_s         *conf_teams           = malloc( sizeof(conference_team_s) * 2 );
+     conference_s              *conference2          = buildConference( 2 );
+     conference_s              *conference3          = buildConference( 3 );
+     conference_s              *conference4          = buildConference( 4 );
+     conference_s              *conference5          = buildConference( 5 );
+     conference_team_s         *conf_teams1          = malloc( sizeof(conference_team_s) * 2 );
+     conference_team_s         *conf_teams5          = malloc( sizeof(conference_team_s) * 2 );
      conference_team_s          conf_team_sentinel   = CONFERENCE_TEAM_SENTINEL;
-     team_s                    *team1                = buildTeam( 1 );
+     team_s                    *team1                = buildTeam(  1 );
+     team_s                    *team25               = buildTeam( 25 );
      team_player_s             *team_players         = malloc( sizeof(team_player_s) * 33);
      team_player_s              team_player_sentinel = TEAM_PLAYER_SENTINEL;
      player_s                  *player01              = buildPlayer(  1 );
@@ -56,7 +62,7 @@ static organization_s *get_test_org()
 
      buildIntoOrganizationConference( &org_confs[0], 1, 1 );
 
-     buildIntoConferenceTeam( &conf_teams[0], 1, 1 );
+     buildIntoConferenceTeam( &conf_teams1[0], 1, 1 );
 
      buildIntoTeamPlayer( &team_players[0], 1, organization->season, 1 );
      buildIntoTeamPlayer( &team_players[1], 1, organization->season, 2 );
@@ -128,15 +134,25 @@ static organization_s *get_test_org()
      team_players[31].player = player32;
      team_players[32]        = team_player_sentinel;
 
-     team1->players = team_players;
+     team1 ->players = team_players;
+     team25->players = team_players;
 
-     conf_teams[0].team = team1;
-     conf_teams[1]      = conf_team_sentinel;
+     conf_teams1[0].team = team1;
+     conf_teams1[1]      = conf_team_sentinel;
 
-     conference1->teams = conf_teams;
+     conference1->teams = conf_teams1;
+
+     conf_teams5[0].team = team25;
+     conf_teams5[1]      = conf_team_sentinel;
+
+     conference5->teams = conf_teams5;
 
      org_confs[0].conference = conference1;
-     org_confs[1]            = org_conf_sentinel;
+     org_confs[1].conference = conference2;
+     org_confs[2].conference = conference3;
+     org_confs[3].conference = conference4;
+     org_confs[4].conference = conference5;
+     org_confs[5]            = org_conf_sentinel;
 
      organization->conferences = org_confs;
 
@@ -176,7 +192,7 @@ static char *populateRoms_ShouldWriteThePlayerIdentifiersInThePlayerIdentifiersS
      tsbrom_s        tsbrom2 = { 0 };
      organization_s *org     = get_test_org();
 
-     populateRoms( &tsbrom1, &tsbrom2, org );
+     assertEquals( bl_True, populateRoms( &tsbrom1, &tsbrom2, org ) );
 
      player_s *player1 = org->conferences[0].conference->teams[0].team->players[0].player;
      player_s *player2 = org->conferences[0].conference->teams[0].team->players[1].player;
@@ -185,11 +201,11 @@ static char *populateRoms_ShouldWriteThePlayerIdentifiersInThePlayerIdentifiersS
 
      int idx = 0;
 
-     expected[idx++] = player1->number;
+     expected[idx++] = number2hex( player1->number );
 
      idx += sprintf( expected + idx, "%s%s", lowercase( player1->first_name ), uppercase( player1->last_name ) );
 
-     expected[idx++] = player2->number;
+     expected[idx++] = number2hex( player2->number );
 
      idx += sprintf( expected + idx, "%s%s", lowercase( player2->first_name ), uppercase( player2->last_name ) );
 
@@ -206,13 +222,13 @@ static char *populateRoms_ShouldWriteTheOffsetsInThePlayerPointersSection_GivenA
      tsbrom_s        tsbrom2 = { 0 };
      organization_s *org     = get_test_org();
 
-     populateRoms( &tsbrom1, &tsbrom2, org );
+     assertEquals( bl_True, populateRoms( &tsbrom1, &tsbrom2, org ) );
 
      player_s *player1     = org->conferences[0].conference->teams[0].team->players[0].player;
      int       player1_len = strlen( player1->first_name ) + strlen( player1->last_name ) + 1; //+1 for the number
 
-     assertEquals( 0x80ca,               pointer2int( &(tsbrom1.player_pointers[0][0]) ) );
-     assertEquals( 0x80ca + player1_len, pointer2int( &(tsbrom1.player_pointers[0][1]) ) );
+     assertEquals( 0x86ca,               pointer2int( &(tsbrom1.player_pointers[0][0]) ) );
+     assertEquals( 0x86ca + player1_len, pointer2int( &(tsbrom1.player_pointers[0][1]) ) );
 
      free_organization( org );
 
@@ -228,16 +244,13 @@ static char *populateRoms_ShouldWriteThePlayerRatingsInTheTeamPlayerRatingsSecti
      player_s *player1 = org->conferences[0].conference->teams[0].team->players[0].player;
      player_s *player2 = org->conferences[0].conference->teams[0].team->players[1].player;
 
-     player1->position = pos_Quarterback;
-     player2->position = pos_Quarterback;
-
      player1->ratings = buildPlayerRatings( player1->player_id );
      player2->ratings = buildPlayerRatings( player2->player_id );
 
      player1->extra_ratings.quarterback = buildPlayerQuarterbackRatings( player1->player_id );
      player2->extra_ratings.quarterback = buildPlayerQuarterbackRatings( player2->player_id );
 
-     populateRoms( &tsbrom1, &tsbrom2, org );
+     assertEquals( bl_True, populateRoms( &tsbrom1, &tsbrom2, org ) );
 
      assertEquals( player1->face,                tsbrom1.team_player_ratings[0].qb1.player.face[0]            );
      assertEquals( player1->ratings->run_speed,  tsbrom1.team_player_ratings[0].qb1.player.ratings[0]  & 0x0f );
@@ -266,6 +279,44 @@ static char *populateRoms_ShouldWriteThePlayerRatingsInTheTeamPlayerRatingsSecti
      return NULL;
 }
 
+static char *populateRoms_ShouldPopulateBothRoms_GivenTwoTsbRomsAndOrganization()
+{
+     tsbrom_s        tsbrom1 = { 0 };
+     tsbrom_s        tsbrom2 = { 0 };
+     organization_s *org     = get_test_org();
+
+     player_s *player1 = org->conferences[4].conference->teams[0].team->players[0].player;
+     player_s *player2 = org->conferences[4].conference->teams[0].team->players[1].player;
+     int       player1_len = strlen( player1->first_name ) + strlen( player1->last_name ) + 1; //+1 for the number
+
+     player1->ratings = buildPlayerRatings( player1->player_id );
+     player2->ratings = buildPlayerRatings( player2->player_id );
+
+     player1->extra_ratings.quarterback = buildPlayerQuarterbackRatings( player1->player_id );
+     player2->extra_ratings.quarterback = buildPlayerQuarterbackRatings( player2->player_id );
+
+     assertEquals( bl_True, populateRoms( &tsbrom1, &tsbrom2, org ) );
+
+     char expected[100] = { 0 };
+
+     int idx = 0;
+
+     expected[idx++] = number2hex( player1->number );
+
+     idx += sprintf( expected + idx, "%s%s", lowercase( player1->first_name ), uppercase( player1->last_name ) );
+
+     expected[idx++] = number2hex( player2->number );
+
+     idx += sprintf( expected + idx, "%s%s", lowercase( player2->first_name ), uppercase( player2->last_name ) );
+
+     assertEqualsBfr( expected, tsbrom2.player_identifiers, idx );
+
+     assertEquals( 0x86ca,               pointer2int( &(tsbrom2.player_pointers[0][0]) ) );
+     assertEquals( 0x86ca + player1_len, pointer2int( &(tsbrom2.player_pointers[0][1]) ) );
+
+     return NULL;
+}
+
 static void check_populate_roms_error()
 {
      printf( "populate roms error: %s\n", getPopulateRomsError() );
@@ -278,6 +329,7 @@ static void run_all_tests()
      run_test( populateRoms_ShouldWriteThePlayerIdentifiersInThePlayerIdentifiersSection_GivenATsbRomAndOrganization, check_populate_roms_error );
      run_test( populateRoms_ShouldWriteTheOffsetsInThePlayerPointersSection_GivenATsbRomAndOrganization,              check_populate_roms_error );
      run_test( populateRoms_ShouldWriteThePlayerRatingsInTheTeamPlayerRatingsSection_GivenATsbRomAndOrganization,     check_populate_roms_error );
+     run_test( populateRoms_ShouldPopulateBothRoms_GivenTwoTsbRomsAndOrganization,                                    check_populate_roms_error );
 }
 
 

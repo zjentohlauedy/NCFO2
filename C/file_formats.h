@@ -210,4 +210,7 @@ char *uppercase( const char *s );
 int  pointer2int(                  const nes_pointer_s *ptr );
 void int2pointer( const int value,       nes_pointer_s *ptr );
 
+int number2hex( const int number );
+int hex2number( const int hex    );
+
 #endif
