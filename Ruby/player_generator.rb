@@ -22,8 +22,8 @@ class PlayerGenerator
     player.position        = position
     player.number          = number
     player.freshman_season = season
-    player.first_name      = "#{Positions::string_value position}#{number}"
-    player.last_name       = "Player#{id}"
+    player.first_name      = Positions::string_value position # temporary test value
+    player.last_name       = (65 + rand(26)).chr + (0..(5 + rand(7))).map { (97 + rand(26)).chr }.join # temporary test value
     player.face            = (face > 81) ? face + 46 : face
     player.maturity        = prng.rand( 4 ) + 1
     player.ratings         = PlayerRatings.generate id
