@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "file_formats.h"
 
@@ -67,9 +68,14 @@ static void injectData( tsbrom_s *rom, player_s **players )
 {
      unsigned char *ratings_ptr = (unsigned char *)rom->team_player_ratings;
      size_t         offset      = 0;
+     char           fname[20 + 1] = { 0 };
+     char           lname[20 + 1] = { 0 };
 
      for ( int i = 0; i < 28; ++i )
      {
+          struct { int index; int score; } kick_returner = { 0 };
+          struct { int index; int score; } punt_returner = { 0 };
+
           for ( int j = 0; j < 30; ++j )
           {
                const player_s *player = players[(i * 30) + j];
@@ -81,8 +87,25 @@ static void injectData( tsbrom_s *rom, player_s **players )
 
                rom->player_identifiers[offset++] = number2hex( player->number );
 
-               memcpy( rom->player_identifiers + offset, lowercase( player->first_name ), strlen(player->first_name) ); offset += strlen(player->first_name);
-               memcpy( rom->player_identifiers + offset, uppercase( player->last_name  ), strlen(player->last_name)  ); offset += strlen(player->last_name);
+               strcpy( fname, player->first_name );
+               strcpy( lname, player->last_name  );
+
+               while ( (strlen(fname) + strlen(lname)) > 16 )
+               {
+                    if ( strlen(fname) > 2 )
+                    {
+                         // Change fname to be first initial and a "."
+                         fname[1] = '.';
+                         fname[2] = '\0';
+                    }
+                    else
+                    {
+                         lname[16 - strlen(fname)] = '\0';
+                    }
+               }
+
+               memcpy( rom->player_identifiers + offset, lowercase( fname ), strlen(fname) ); offset += strlen(fname);
+               memcpy( rom->player_identifiers + offset, uppercase( lname ), strlen(lname) ); offset += strlen(lname);
 
                switch ( player->position )
                {
@@ -96,6 +119,16 @@ static void injectData( tsbrom_s *rom, player_s **players )
                }
                case pos_Runningback:
                case pos_WideReceiver:
+                    if ( player->ratings != NULL  &&  player->extra_ratings.offense != NULL )
+                    {
+                         int kr_score  = (player->ratings->max_speed * 3) + player->extra_ratings.offense->ball_control;
+                         int pr_score  = (player->ratings->max_speed * 2) + player->extra_ratings.offense->ball_control;
+                         /**/pr_score += (player->ratings->run_speed > player->ratings->rush_power) ? player->ratings->run_speed : player->ratings->rush_power;
+
+                         if ( kr_score > kick_returner.score ) { kick_returner.index = j; kick_returner.score = kr_score; }
+                         if ( pr_score > punt_returner.score ) { punt_returner.index = j; punt_returner.score = pr_score; }
+                    }
+                    // Intentional Fallthrough...
                case pos_TightEnd:
                {
                     tsb_off_ratings_s off = { 0 };
@@ -134,12 +167,272 @@ static void injectData( tsbrom_s *rom, player_s **players )
                }
                }
           }
+
+          rom->kick_and_punt_returners1[i] = (kick_returner.index << 4) + punt_returner.index;
+          rom->kick_and_punt_returners2[i] = rom->kick_and_punt_returners1[i];
      }
 }
 
-static boolean_e processPlayers( player_s **rom_players, const team_player_s *players, const int team_id )
+static int getMaturityAdjustment( const int class, const int maturity )
+{
+     if      ( class <= 0 ) // freshman
+     {
+          switch ( maturity )
+          {
+          case 4:  return 0;
+          case 3:  return 1;
+          case 2:  return 2;
+          case 1:  return 3;
+          }
+     }
+     else if ( class == 1 ) // sophomore
+     {
+          switch ( maturity )
+          {
+          case 4:  return 0;
+          case 3:  return 1;
+          case 2:  return 1;
+          case 1:  return 2;
+          }
+     }
+     else if ( class == 2 ) // junior
+     {
+          switch ( maturity )
+          {
+          case 4:  return 0;
+          case 3:  return 0;
+          case 2:  return 1;
+          case 1:  return 1;
+          }
+     }
+     else if ( class >= 3 ) // senior
+     {
+          return 0;
+     }
+
+     return 0;
+}
+
+static void applyMaturityAdjustment( player_s *player, const int season )
+{
+     int adjustment = getMaturityAdjustment( season - player->freshman_season, player->maturity );
+
+     if ( player->ratings != NULL )
+     {
+          if ( (player->ratings->run_speed  -= adjustment) < 0 ) player->ratings->run_speed  = 0;
+          if ( (player->ratings->rush_power -= adjustment) < 0 ) player->ratings->rush_power = 0;
+          if ( (player->ratings->max_speed  -= adjustment) < 0 ) player->ratings->max_speed  = 0;
+          if ( (player->ratings->hit_power  -= adjustment) < 0 ) player->ratings->hit_power  = 0;
+     }
+
+     switch ( player->position )
+     {
+     case pos_Quarterback:
+          if ( player->extra_ratings.quarterback == NULL ) break;
+
+          if ( (player->extra_ratings.quarterback->pass_speed       -= adjustment) < 0 ) player->extra_ratings.quarterback->pass_speed       = 0;
+          if ( (player->extra_ratings.quarterback->pass_control     -= adjustment) < 0 ) player->extra_ratings.quarterback->pass_control     = 0;
+          if ( (player->extra_ratings.quarterback->pass_accuracy    -= adjustment) < 0 ) player->extra_ratings.quarterback->pass_accuracy    = 0;
+          if ( (player->extra_ratings.quarterback->avoid_pass_block -= adjustment) < 0 ) player->extra_ratings.quarterback->avoid_pass_block = 0;
+
+          break;
+     case pos_Runningback:
+     case pos_WideReceiver:
+     case pos_TightEnd:
+          if ( player->extra_ratings.offense == NULL ) break;
+
+          if ( (player->extra_ratings.offense->ball_control -= adjustment) < 0 ) player->extra_ratings.offense->ball_control = 0;
+          if ( (player->extra_ratings.offense->receiving    -= adjustment) < 0 ) player->extra_ratings.offense->receiving    = 0;
+
+          break;
+     case pos_DefensiveLine:
+     case pos_Linebacker:
+     case pos_Cornerback:
+     case pos_Safety:
+          if ( player->extra_ratings.defense == NULL ) break;
+
+          if ( (player->extra_ratings.defense->interceptions -= adjustment) < 0 ) player->extra_ratings.defense->interceptions = 0;
+          if ( (player->extra_ratings.defense->quickness     -= adjustment) < 0 ) player->extra_ratings.defense->quickness     = 0;
+
+          break;
+     case pos_Kicker:
+     case pos_Punter:
+          if ( player->extra_ratings.kicking == NULL ) break;
+
+          if ( (player->extra_ratings.kicking->kicking_ability  -= adjustment) < 0 ) player->extra_ratings.kicking->kicking_ability  = 0;
+          if ( (player->extra_ratings.kicking->avoid_kick_block -= adjustment) < 0 ) player->extra_ratings.kicking->avoid_kick_block = 0;
+
+          break;
+     }
+}
+
+static void calcPlayerScore( player_s *player, const int season )
+{
+     if ( player->ratings == NULL ) return;
+
+     applyMaturityAdjustment( player, season );
+
+     int acceleration = (player->ratings->run_speed > player->ratings->rush_power) ? player->ratings->run_speed : player->ratings->rush_power;
+
+     switch ( player->position )
+     {
+     case pos_Quarterback:
+          if ( player->extra_ratings.quarterback == NULL ) break;
+
+          player->score  = player->extra_ratings.quarterback->pass_control     * 8;
+          player->score += player->      ratings->            max_speed        * 5;
+          player->score += player->extra_ratings.quarterback->pass_speed       * 3;
+          player->score += player->      ratings->            hit_power;
+          player->score += player->extra_ratings.quarterback->pass_accuracy;
+          player->score += player->extra_ratings.quarterback->avoid_pass_block;
+          player->score +=                                    acceleration;
+
+          break;
+     case pos_Runningback:
+          if ( player->extra_ratings.offense == NULL ) break;
+
+          player->score  = player->      ratings->        max_speed    * 8;
+          player->score += player->      ratings->        hit_power    * 5;
+          player->score += player->extra_ratings.offense->receiving    * 3;
+          player->score += player->extra_ratings.offense->ball_control * 2;
+          player->score +=                                acceleration * 2;
+
+          break;
+     case pos_WideReceiver:
+          if ( player->extra_ratings.offense == NULL ) break;
+
+          player->score  = player->extra_ratings.offense->receiving    * 8;
+          player->score += player->      ratings->        max_speed    * 6;
+          player->score += player->extra_ratings.offense->ball_control * 2;
+          player->score += player->      ratings->        hit_power    * 2;
+          player->score +=                                acceleration * 2;
+
+          break;
+     case pos_TightEnd:
+          if ( player->extra_ratings.offense == NULL ) break;
+
+          player->score  = player->      ratings->        hit_power    * 7;
+          player->score += player->extra_ratings.offense->receiving    * 7;
+          player->score += player->      ratings->        max_speed    * 3;
+          player->score += player->extra_ratings.offense->ball_control * 2;
+          player->score +=                                acceleration;
+
+          break;
+     case pos_OffensiveLine:
+          player->score  = player-> ratings-> hit_power    * 13;
+          player->score += player-> ratings-> max_speed    *  5;
+          player->score +=                    acceleration *  2;
+
+          break;
+     case pos_DefensiveLine:
+          if ( player->extra_ratings.defense == NULL ) break;
+
+          player->score  = player->      ratings->        hit_power     * 11;
+          player->score += player->      ratings->        max_speed     *  5;
+          player->score += player->extra_ratings.defense->interceptions;
+          player->score += player->extra_ratings.defense->quickness;
+          player->score +=                                acceleration  *  2;
+
+          break;
+     case pos_Linebacker:
+          if ( player->extra_ratings.defense == NULL ) break;
+
+          player->score  = player->      ratings->        hit_power     * 8;
+          player->score += player->      ratings->        max_speed     * 5;
+          player->score += player->extra_ratings.defense->interceptions * 3;
+          player->score += player->extra_ratings.defense->quickness;
+          player->score +=                                acceleration  *  2;
+
+          break;
+     case pos_Cornerback:
+          if ( player->extra_ratings.defense == NULL ) break;
+
+          player->score  = player->      ratings->        max_speed     * 8;
+          player->score += player->extra_ratings.defense->interceptions * 5;
+          player->score += player->      ratings->        hit_power     * 2;
+          player->score += player->extra_ratings.defense->quickness;
+          player->score +=                                acceleration  * 3;
+
+          break;
+     case pos_Safety:
+          if ( player->extra_ratings.defense == NULL ) break;
+
+          player->score  = player->      ratings->        max_speed     * 7;
+          player->score += player->extra_ratings.defense->interceptions * 6;
+          player->score += player->      ratings->        hit_power     * 3;
+          player->score += player->extra_ratings.defense->quickness;
+          player->score +=                                acceleration  * 2;
+
+          break;
+     case pos_Kicker:
+     case pos_Punter:
+          if ( player->extra_ratings.kicking == NULL ) break;
+
+          player->score  = player->extra_ratings.kicking->kicking_ability  * 15;
+          player->score += player->      ratings->        max_speed        *  3;
+          player->score += player->extra_ratings.kicking->avoid_kick_block;
+          player->score += player->      ratings->        hit_power;
+
+          break;
+     default:
+          player->score = 0;
+     }
+}
+
+static int orderByPositionAscendingAndScoreDescending( const void *a, const void *b )
+{
+     if ( a == NULL )
+     {
+          if ( b == NULL ) return 0;
+
+          return 1;
+     }
+
+     if ( b == NULL ) return -1;
+
+     const team_player_s *team_player_a = (team_player_s *)a;
+     const team_player_s *team_player_b = (team_player_s *)b;
+
+     const player_s *player_a = team_player_a->player;
+     const player_s *player_b = team_player_b->player;
+
+     if ( player_a == NULL )
+     {
+          if ( player_b == NULL ) return 0;
+
+          return 1;
+     }
+
+     if ( player_b == NULL ) return -1;
+
+     if ( player_a->position != player_b->position ) return player_a->position - player_b->position;
+
+     if ( player_a->score != player_b->score ) return player_b->score - player_a->score;
+
+     return 0;
+}
+
+static void organizePlayers( team_player_s *players, const int season )
+{
+     int members = 0;
+
+     for ( int i = 0; players[i].player != NULL; ++i )
+     {
+          player_s *player = players[i].player;
+
+          calcPlayerScore( player, season );
+
+          members++;
+     }
+
+     qsort( players, members, sizeof(team_player_s), orderByPositionAscendingAndScoreDescending );
+}
+
+static boolean_e processPlayers( player_s **rom_players, team_player_s *players, const int team_id, const int season )
 {
      if ( players == NULL ) return bl_True;
+
+     organizePlayers( players, season );
 
      int player_pos_counts[] = { 0, 2, 4, 4, 2, 5, 3, 4, 2, 2, 1, 1 }; // number of players needed by position
      int player_count        =   0;                                    // total number of players used
@@ -168,7 +461,7 @@ static boolean_e processPlayers( player_s **rom_players, const team_player_s *pl
      return bl_True;
 }
 
-static boolean_e processTeams( player_s **rom_players, const conference_team_s *teams )
+static boolean_e processTeams( player_s **rom_players, const conference_team_s *teams, const int season )
 {
      if ( teams == NULL ) return bl_True;
 
@@ -176,7 +469,7 @@ static boolean_e processTeams( player_s **rom_players, const conference_team_s *
      {
           team_s *team = teams[i].team;
 
-          if ( ! processPlayers( rom_players, team->players, team->team_id) ) return bl_False;
+          if ( ! processPlayers( rom_players, team->players, team->team_id, season ) ) return bl_False;
      }
 
      return bl_True;
@@ -214,7 +507,7 @@ boolean_e populateRoms( tsbrom_s *rom1, tsbrom_s *rom2, const organization_s *or
      {
           conference_s *conference = organization->conferences[i].conference;
 
-          if ( ! processTeams( (i < 4) ? rom1_players : rom2_players, conference->teams ) ) return bl_False;
+          if ( ! processTeams( (i < 4) ? rom1_players : rom2_players, conference->teams, organization->season ) ) return bl_False;
      }
 
      injectData( rom1, rom1_players );

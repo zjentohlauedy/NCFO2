@@ -252,6 +252,10 @@ static char *populateRoms_ShouldWriteThePlayerRatingsInTheTeamPlayerRatingsSecti
 
      assertEquals( bl_True, populateRoms( &tsbrom1, &tsbrom2, org ) );
 
+     // populateRoms can change the player order so get them again...
+     player1 = org->conferences[0].conference->teams[0].team->players[0].player;
+     player2 = org->conferences[0].conference->teams[0].team->players[1].player;
+
      assertEquals( player1->face,                tsbrom1.team_player_ratings[0].qb1.player.face[0]            );
      assertEquals( player1->ratings->run_speed,  tsbrom1.team_player_ratings[0].qb1.player.ratings[0]  & 0x0f );
      assertEquals( player1->ratings->rush_power, tsbrom1.team_player_ratings[0].qb1.player.ratings[0] >>    4 );
@@ -279,6 +283,51 @@ static char *populateRoms_ShouldWriteThePlayerRatingsInTheTeamPlayerRatingsSecti
      return NULL;
 }
 
+static char *populateRoms_ShouldWriteTheKickAndPuntReturnersForEveryTeam()
+{
+     tsbrom_s        tsbrom1 = { 0 };
+     tsbrom_s        tsbrom2 = { 0 };
+     organization_s *org     = get_test_org();
+
+     org->conferences[4].conference = NULL;
+
+     player_s *kr = org->conferences[0].conference->teams[0].team->players[5].player;
+     player_s *pr = org->conferences[0].conference->teams[0].team->players[9].player;
+
+     kr->ratings = buildPlayerRatings( kr->player_id );
+     pr->ratings = buildPlayerRatings( pr->player_id );
+
+     kr->extra_ratings.offense = buildPlayerOffenseRatings( kr->player_id );
+     pr->extra_ratings.offense = buildPlayerOffenseRatings( pr->player_id );
+
+     kr->maturity                            =  4;
+     kr->ratings->max_speed                  = 15;
+     kr->ratings->run_speed                  =  1;
+     kr->ratings->rush_power                 =  1;
+     kr->extra_ratings.offense->ball_control = 15;
+
+     pr->maturity                            =  4;
+     pr->ratings->max_speed                  = 14;
+     pr->ratings->run_speed                  = 15;
+     pr->ratings->rush_power                 = 15;
+     pr->extra_ratings.offense->ball_control = 15;
+
+     assertEquals( bl_True, populateRoms( &tsbrom1, &tsbrom2, org ) );
+
+     // Note: kr should be sorted to the top of RB section, and the same for pr in the WR section
+
+     assertEquals( 0x26, tsbrom1.kick_and_punt_returners1[0] );
+     assertEquals( 0x26, tsbrom1.kick_and_punt_returners2[0] );
+
+     // No kr or pr should have been picked for the next team
+     assertEquals( 0,    tsbrom1.kick_and_punt_returners1[1] );
+     assertEquals( 0,    tsbrom1.kick_and_punt_returners2[1] );
+
+     free_organization( org );
+
+     return NULL;
+}
+
 static char *populateRoms_ShouldPopulateBothRoms_GivenTwoTsbRomsAndOrganization()
 {
      tsbrom_s        tsbrom1 = { 0 };
@@ -287,7 +336,6 @@ static char *populateRoms_ShouldPopulateBothRoms_GivenTwoTsbRomsAndOrganization(
 
      player_s *player1 = org->conferences[4].conference->teams[0].team->players[0].player;
      player_s *player2 = org->conferences[4].conference->teams[0].team->players[1].player;
-     int       player1_len = strlen( player1->first_name ) + strlen( player1->last_name ) + 1; //+1 for the number
 
      player1->ratings = buildPlayerRatings( player1->player_id );
      player2->ratings = buildPlayerRatings( player2->player_id );
@@ -296,6 +344,12 @@ static char *populateRoms_ShouldPopulateBothRoms_GivenTwoTsbRomsAndOrganization(
      player2->extra_ratings.quarterback = buildPlayerQuarterbackRatings( player2->player_id );
 
      assertEquals( bl_True, populateRoms( &tsbrom1, &tsbrom2, org ) );
+
+     // populateRoms can change the player order so get them again...
+     player1 = org->conferences[0].conference->teams[0].team->players[0].player;
+     player2 = org->conferences[0].conference->teams[0].team->players[1].player;
+
+     int player1_len = strlen( player1->first_name ) + strlen( player1->last_name ) + 1; //+1 for the number
 
      char expected[100] = { 0 };
 
@@ -314,6 +368,217 @@ static char *populateRoms_ShouldPopulateBothRoms_GivenTwoTsbRomsAndOrganization(
      assertEquals( 0x86ca,               pointer2int( &(tsbrom2.player_pointers[0][0]) ) );
      assertEquals( 0x86ca + player1_len, pointer2int( &(tsbrom2.player_pointers[0][1]) ) );
 
+     free_organization( org );
+
+     return NULL;
+}
+
+static char *populateRoms_ShouldAdjustPlayerRatingsBasedOnMaturity()
+{
+     tsbrom_s        tsbrom1 = { 0 };
+     tsbrom_s        tsbrom2 = { 0 };
+     organization_s *org     = get_test_org();
+
+     org->season = 4;
+     org->conferences[4].conference = NULL;
+
+     // maturity 4
+     player_s *player01 = org->conferences[0].conference->teams[0].team->players[0].player;
+     player_s *player02 = org->conferences[0].conference->teams[0].team->players[1].player;
+     player_s *player03 = org->conferences[0].conference->teams[0].team->players[2].player;
+     player_s *player04 = org->conferences[0].conference->teams[0].team->players[3].player;
+
+     player01->ratings             = buildPlayerRatings( player01->player_id );
+     player01->freshman_season     = 4; // freshman
+     player01->maturity            = 4;
+     player01->ratings->run_speed  = 8;
+     player01->ratings->rush_power = 0;
+
+     player02->ratings             = buildPlayerRatings( player02->player_id );
+     player02->freshman_season     = 3; // sophomore
+     player02->maturity            = 4;
+     player02->ratings->run_speed  = 8;
+     player02->ratings->rush_power = 0;
+
+     player03->ratings             = buildPlayerRatings( player03->player_id );
+     player03->freshman_season     = 2; // junior
+     player03->maturity            = 4;
+     player03->ratings->run_speed  = 8;
+     player03->ratings->rush_power = 0;
+
+     player04->ratings             = buildPlayerRatings( player04->player_id );
+     player04->freshman_season     = 1; // senior
+     player04->maturity            = 4;
+     player04->ratings->run_speed  = 8;
+     player04->ratings->rush_power = 0;
+
+     // maturity 3
+     player_s *player05 = org->conferences[0].conference->teams[0].team->players[4].player;
+     player_s *player06 = org->conferences[0].conference->teams[0].team->players[5].player;
+     player_s *player07 = org->conferences[0].conference->teams[0].team->players[6].player;
+     player_s *player08 = org->conferences[0].conference->teams[0].team->players[7].player;
+
+     player05->ratings             = buildPlayerRatings( player05->player_id );
+     player05->freshman_season     = 4; // freshman
+     player05->maturity            = 3;
+     player05->ratings->run_speed  = 8;
+     player05->ratings->rush_power = 0;
+
+     player06->ratings             = buildPlayerRatings( player06->player_id );
+     player06->freshman_season     = 3; // sophomore
+     player06->maturity            = 3;
+     player06->ratings->run_speed  = 8;
+     player06->ratings->rush_power = 0;
+
+     player07->ratings             = buildPlayerRatings( player07->player_id );
+     player07->freshman_season     = 2; // junior
+     player07->maturity            = 3;
+     player07->ratings->run_speed  = 8;
+     player07->ratings->rush_power = 0;
+
+     player08->ratings             = buildPlayerRatings( player08->player_id );
+     player08->freshman_season     = 1; // senior
+     player08->maturity            = 3;
+     player08->ratings->run_speed  = 8;
+     player08->ratings->rush_power = 0;
+
+     // maturity 2
+     player_s *player09 = org->conferences[0].conference->teams[0].team->players[ 8].player;
+     player_s *player10 = org->conferences[0].conference->teams[0].team->players[ 9].player;
+     player_s *player11 = org->conferences[0].conference->teams[0].team->players[10].player;
+     player_s *player12 = org->conferences[0].conference->teams[0].team->players[11].player;
+
+     player09->ratings             = buildPlayerRatings( player09->player_id );
+     player09->freshman_season     = 4; // freshman
+     player09->maturity            = 2;
+     player09->ratings->run_speed  = 8;
+     player09->ratings->rush_power = 0;
+
+     player10->ratings             = buildPlayerRatings( player10->player_id );
+     player10->freshman_season     = 3; // sophomore
+     player10->maturity            = 2;
+     player10->ratings->run_speed  = 8;
+     player10->ratings->rush_power = 0;
+
+     player11->ratings             = buildPlayerRatings( player11->player_id );
+     player11->freshman_season     = 2; // junior
+     player11->maturity            = 2;
+     player11->ratings->run_speed  = 8;
+     player11->ratings->rush_power = 0;
+
+     player12->ratings             = buildPlayerRatings( player12->player_id );
+     player12->freshman_season     = 1; // senior
+     player12->maturity            = 2;
+     player12->ratings->run_speed  = 8;
+     player12->ratings->rush_power = 0;
+
+     // maturity 1
+     player_s *player13 = org->conferences[0].conference->teams[0].team->players[12].player;
+     player_s *player14 = org->conferences[0].conference->teams[0].team->players[13].player;
+     player_s *player15 = org->conferences[0].conference->teams[0].team->players[14].player;
+     player_s *player16 = org->conferences[0].conference->teams[0].team->players[15].player;
+
+     player13->ratings             = buildPlayerRatings( player13->player_id );
+     player13->freshman_season     = 4; // freshman
+     player13->maturity            = 1;
+     player13->ratings->run_speed  = 8;
+     player13->ratings->rush_power = 0;
+
+     player14->ratings             = buildPlayerRatings( player14->player_id );
+     player14->freshman_season     = 3; // sophomore
+     player14->maturity            = 1;
+     player14->ratings->run_speed  = 8;
+     player14->ratings->rush_power = 0;
+
+     player15->ratings             = buildPlayerRatings( player15->player_id );
+     player15->freshman_season     = 2; // junior
+     player15->maturity            = 1;
+     player15->ratings->run_speed  = 8;
+     player15->ratings->rush_power = 0;
+
+     player16->ratings             = buildPlayerRatings( player16->player_id );
+     player16->freshman_season     = 1; // senior
+     player16->maturity            = 1;
+     player16->ratings->run_speed  = 8;
+     player16->ratings->rush_power = 0;
+
+     assertEquals( bl_True, populateRoms( &tsbrom1, &tsbrom2, org ) );
+
+     assertEquals( 8, player01->ratings->run_speed  );
+     assertEquals( 0, player01->ratings->rush_power );
+
+     assertEquals( 8, player02->ratings->run_speed  );
+     assertEquals( 0, player02->ratings->rush_power );
+
+     assertEquals( 8, player03->ratings->run_speed  );
+     assertEquals( 0, player03->ratings->rush_power );
+
+     assertEquals( 8, player04->ratings->run_speed  );
+     assertEquals( 0, player04->ratings->rush_power );
+
+     assertEquals( 7, player05->ratings->run_speed  );
+     assertEquals( 0, player05->ratings->rush_power );
+
+     assertEquals( 7, player06->ratings->run_speed  );
+     assertEquals( 0, player06->ratings->rush_power );
+
+     assertEquals( 8, player07->ratings->run_speed  );
+     assertEquals( 0, player07->ratings->rush_power );
+
+     assertEquals( 8, player08->ratings->run_speed  );
+     assertEquals( 0, player08->ratings->rush_power );
+
+     assertEquals( 6, player09->ratings->run_speed  );
+     assertEquals( 0, player09->ratings->rush_power );
+
+     assertEquals( 7, player10->ratings->run_speed  );
+     assertEquals( 0, player10->ratings->rush_power );
+
+     assertEquals( 7, player11->ratings->run_speed  );
+     assertEquals( 0, player11->ratings->rush_power );
+
+     assertEquals( 8, player12->ratings->run_speed  );
+     assertEquals( 0, player12->ratings->rush_power );
+
+     assertEquals( 5, player13->ratings->run_speed  );
+     assertEquals( 0, player13->ratings->rush_power );
+
+     assertEquals( 6, player14->ratings->run_speed  );
+     assertEquals( 0, player14->ratings->rush_power );
+
+     assertEquals( 7, player15->ratings->run_speed  );
+     assertEquals( 0, player15->ratings->rush_power );
+
+     assertEquals( 8, player16->ratings->run_speed  );
+     assertEquals( 0, player16->ratings->rush_power );
+
+     free_organization( org );
+
+     return NULL;
+}
+
+static char *populateRoms_ShouldLimitPlayerNamesTo16Chars()
+{
+     tsbrom_s        tsbrom1 = { 0 };
+     tsbrom_s        tsbrom2 = { 0 };
+     organization_s *org     = get_test_org();
+
+     player_s *player1 = org->conferences[4].conference->teams[0].team->players[0].player;
+     player_s *player2 = org->conferences[4].conference->teams[0].team->players[1].player;
+
+     /**/     player1->number    =  20;
+     sprintf( player1->first_name, "Waldorff" );
+     sprintf( player1->last_name,  "Johanneson" );
+     /**/     player2->number    =  20;
+     sprintf( player2->first_name, "Gregory" );
+     sprintf( player2->last_name,  "Ivanistoyanovich" );
+
+     assertEquals( bl_True, populateRoms( &tsbrom1, &tsbrom2, org ) );
+
+     char *expected = " w.JOHANNESON g.IVANISTOYANOVI";
+
+     assertEqualsBfr( expected, tsbrom1.player_identifiers, strlen(expected) );
+
      return NULL;
 }
 
@@ -329,7 +594,10 @@ static void run_all_tests()
      run_test( populateRoms_ShouldWriteThePlayerIdentifiersInThePlayerIdentifiersSection_GivenATsbRomAndOrganization, check_populate_roms_error );
      run_test( populateRoms_ShouldWriteTheOffsetsInThePlayerPointersSection_GivenATsbRomAndOrganization,              check_populate_roms_error );
      run_test( populateRoms_ShouldWriteThePlayerRatingsInTheTeamPlayerRatingsSection_GivenATsbRomAndOrganization,     check_populate_roms_error );
+     run_test( populateRoms_ShouldWriteTheKickAndPuntReturnersForEveryTeam,                                           check_populate_roms_error );
      run_test( populateRoms_ShouldPopulateBothRoms_GivenTwoTsbRomsAndOrganization,                                    check_populate_roms_error );
+     run_test( populateRoms_ShouldAdjustPlayerRatingsBasedOnMaturity,                                                 check_populate_roms_error );
+     run_test( populateRoms_ShouldLimitPlayerNamesTo16Chars,                                                          check_populate_roms_error );
 }
 
 

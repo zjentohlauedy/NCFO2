@@ -241,6 +241,8 @@ typedef struct
      extra_player_ratings_u  extra_ratings;
      player_accolade_s      *accolades;
      player_stats_s          stats;
+     // internal use:
+     int                     score;
 
 } player_s;
 

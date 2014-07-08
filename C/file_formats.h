@@ -168,7 +168,9 @@ typedef struct
      nes_pointer_s      unknown_pointers1           [     4 ];          // 0x1fcd8 - 0x1fcdf
      nes_pointer_s      misc_name_pointers          [    16 ];          // 0x1fce0 - 0x1fcff
      unsigned char      team_conference_names       [   784 ];          // 0x1fd00 - 0x2000f
-     unsigned char      unknown18                   [ 16384 ];          // 0x20010 - 0x2400f
+     unsigned char      unknown18a                  [ 14787 ];          // 0x20010 - 0x239d2
+     unsigned char      kick_and_punt_returners1    [    28 ];          // 0x239d3 - 0x239ee - 1 byte per team by nibble: [KR, PR]
+     unsigned char      unknown18b                  [  1569 ];          // 0x239ef - 0x2400f
      unsigned char      unknown19                   [  8192 ];          // 0x24010 - 0x2600f
      unsigned char      unknown20                   [  2048 ];          // 0x26010 - 0x2680f
      unsigned char      unknown21                   [  6144 ];          // 0x26810 - 0x2800f
@@ -177,7 +179,9 @@ typedef struct
      unsigned char      unknown24                   [  4096 ];          // 0x2d010 - 0x2e00f
      unsigned char      unknown25                   [  8192 ];          // 0x2e010 - 0x3000f
      unsigned char      unknown26                   [  8192 ];          // 0x30010 - 0x3200f
-     unsigned char      unknown27                   [  8192 ];          // 0x32010 - 0x3400f
+     unsigned char      unknown27a                  [  2243 ];          // 0x32010 - 0x328d2
+     unsigned char      kick_and_punt_returners2    [    28 ];          // 0x328d3 - 0x328ee - 1 byte per team by nibble: [KR, PR]
+     unsigned char      unknown27b                  [  5921 ];          // 0x328ef - 0x3400f
      unsigned char      unknown28                   [  7168 ];          // 0x34010 - 0x35c0f
      unsigned char      unknown29                   [  1024 ];          // 0x35c10 - 0x3600f
      unsigned char      unknown30                   [  8192 ];          // 0x36010 - 0x3800f
