@@ -49,7 +49,7 @@ export_season: export_season.o file_utils.o populate_roms.o generate_schedule.o 
 
 TESTS: $(tests) ncfo_test.db TAGS
 
-test_file_utils: test_file_utils.o file_utils.o
+test_file_utils: test_file_utils.o file_utils.o generate_schedule.o
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
 
 test_populate_roms: test_populate_roms.o populate_roms.o file_utils.o libncfodata.a libncfobuilders.a

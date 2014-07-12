@@ -15,8 +15,9 @@ int main( const int argc, const char const *argv[] )
      /**/  tsbrom_s       *rom1;
      /**/  tsbrom_s       *rom2;
      /**/  sqlite3        *db;
-     /**/  char            rom1_output_file[FILENAME_MAX + 1] = { 0 };
-     /**/  char            rom2_output_file[FILENAME_MAX + 1] = { 0 };
+     /**/  char            rom1_output_file     [FILENAME_MAX + 1] = { 0 };
+     /**/  char            rom2_output_file     [FILENAME_MAX + 1] = { 0 };
+     /**/  char            schedule_output_file [FILENAME_MAX + 1] = { 0 };
 
      if ( argc < 4 )
      {
@@ -29,8 +30,9 @@ int main( const int argc, const char const *argv[] )
      rom2_filename = argv[2];
      db_filename   = argv[3];
 
-     sprintf( rom1_output_file, "%s/ncfo1.nes", argv[4] );
-     sprintf( rom2_output_file, "%s/ncfo2.nes", argv[4] );
+     sprintf( rom1_output_file,     "%s/ncfo1.nes",    argv[4] );
+     sprintf( rom2_output_file,     "%s/ncfo2.nes",    argv[4] );
+     sprintf( schedule_output_file, "%s/schedule.csv", argv[4] );
 
      srand( time( NULL ) );
 
@@ -111,6 +113,22 @@ int main( const int argc, const char const *argv[] )
      if ( ! writeTsbRom( rom2_output_file, rom2 ) )
      {
           printf( "Unable to write to file %s: %s\n", rom2_output_file, getFileUtilsError() );
+
+          free( rom1 );
+          free( rom2 );
+          freeSchedule( schedule );
+          free_organization( organization );
+
+          sqlite3_close( db );
+
+          return EXIT_FAILURE;
+     }
+
+     printf( "Creating Schedule File %s\n", schedule_output_file );
+
+     if ( ! writeSchedule( schedule_output_file, schedule ) )
+     {
+          printf( "Unable to write to file %s: %s\n", schedule_output_file, getFileUtilsError() );
 
           free( rom1 );
           free( rom2 );

@@ -2,10 +2,12 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include "file_formats.h"
+#include "schedule.h"
 #include "unit_test.h"
 
 static char *result;
 static char  tsbrom_file_name  [50];
+static char  schedule_file_name[50];
 
 static char *readTsbRom_ShouldReturnAPointerToATsbRomObject_GivenAFilename()
 {
@@ -104,6 +106,22 @@ static char *hex2number_ShouldReturnTheNumberValue_GivenAHexValue()
      return NULL;
 }
 
+static char *writeSchedule_ShouldCreateAScheduleCSVFile_GivenAScheduleAndAFilename()
+{
+     schedule_s *schedule               = generateSchedule( NULL, NULL );
+     char       temp_file_name[999 + 1] = { 0 };
+
+     sprintf( temp_file_name, "%s.tmp", schedule_file_name );
+
+     assertEquals( bl_True, writeSchedule( temp_file_name, schedule ) );
+
+     assertEquals( 0, access( temp_file_name, F_OK ) );
+
+     unlink( temp_file_name );
+
+     return NULL;
+}
+
 static void check_file_utils_error()
 {
      printf( "file utils error: %s\n", getFileUtilsError() );
@@ -123,6 +141,8 @@ static void run_all_tests()
      run_test( number2hex_ShouldReturnTheHexValueEquivalent_GivenANumber, null );
      run_test( number2hex_ShouldReturnLessThanZero_GivenAnInvalidNumber,  null );
      run_test( hex2number_ShouldReturnTheNumberValue_GivenAHexValue,      null );
+
+     run_test( writeSchedule_ShouldCreateAScheduleCSVFile_GivenAScheduleAndAFilename, check_file_utils_error );
 }
 
 
@@ -135,7 +155,8 @@ int main( int argc, char *argv[] )
           return EXIT_FAILURE;
      }
 
-     sprintf( tsbrom_file_name, "%s/%s", argv[1], "tsb_test.nes" );
+     sprintf( tsbrom_file_name,   "%s/%s", argv[1], "tsb_test.nes"     );
+     sprintf( schedule_file_name, "%s/%s", argv[1], "tsb_schedule.csv" );
 
      run_all_tests();
 
