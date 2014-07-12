@@ -10,6 +10,7 @@ progs = \
 tests = \
    test_file_utils \
    test_populate_roms \
+   test_generate_schedule \
    test_organizations_t \
    test_organization_conferences_t \
    test_conferences_t \
@@ -43,7 +44,7 @@ ALL: PROGS TESTS
 
 PROGS: $(progs) TAGS
 
-export_season: export_season.o file_utils.o populate_roms.o libncfodata.a
+export_season: export_season.o file_utils.o populate_roms.o generate_schedule.o libncfodata.a
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfodata
 
 TESTS: $(tests) ncfo_test.db TAGS
@@ -53,6 +54,9 @@ test_file_utils: test_file_utils.o file_utils.o
 
 test_populate_roms: test_populate_roms.o populate_roms.o file_utils.o libncfodata.a libncfobuilders.a
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfodata -lncfobuilders
+
+test_generate_schedule: test_generate_schedule.o generate_schedule.o file_utils.o
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
 
 test_organizations_t: test_organizations_t.o organizations_t.o sql_query.o libncfobuilders.a libncfocompares.a
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfobuilders -lncfocompares

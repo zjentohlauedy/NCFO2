@@ -123,6 +123,31 @@ typedef struct
 
 typedef struct
 {
+     unsigned char road [ 1 ];
+     unsigned char home [ 1 ];
+
+} tsb_schedule_game_s;
+
+typedef struct
+{
+     nes_pointer_s       week_pointers  [   17 ];
+     unsigned char       games_per_week [   10 ];
+     unsigned char       unused_weeks   [    7 ];
+     unsigned char       separator      [    1 ];
+     tsb_schedule_game_s games          [   10 ][ 12 ];
+     unsigned char       filler         [ 5445 ];
+
+} tsb_schedule_s;
+
+typedef union
+{
+     unsigned char  bytes[ 5737 ];
+     tsb_schedule_s ncfo;
+
+} tsb_schedule_u;
+
+typedef struct
+{
      nes_header_s       header;                                         // 0x00000 - 0x0000f
      nes_pointer_s      team_pointers               [    28 ];          // 0x00010 - 0x00047
      nes_pointer_s      player_pointers             [    28 ][ 30 ];    // 0x00048 - 0x006d7
@@ -181,7 +206,8 @@ typedef struct
      unsigned char      unknown26                   [  8192 ];          // 0x30010 - 0x3200f
      unsigned char      unknown27a                  [  2243 ];          // 0x32010 - 0x328d2
      unsigned char      kick_and_punt_returners2    [    28 ];          // 0x328d3 - 0x328ee - 1 byte per team by nibble: [KR, PR]
-     unsigned char      unknown27b                  [  5921 ];          // 0x328ef - 0x3400f
+     unsigned char      unknown27b                  [   184 ];          // 0x328ef - 0x329a6
+     tsb_schedule_u     schedule                    [     1 ];          // 0x329a7 - 0x3400f
      unsigned char      unknown28                   [  7168 ];          // 0x34010 - 0x35c0f
      unsigned char      unknown29                   [  1024 ];          // 0x35c10 - 0x3600f
      unsigned char      unknown30                   [  8192 ];          // 0x36010 - 0x3800f

@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sqlite3.h>
+#include <time.h>
 #include "file_formats.h"
+#include "schedule.h"
 
 int main( const int argc, const char const *argv[] )
 {
@@ -9,6 +11,7 @@ int main( const int argc, const char const *argv[] )
      const char           *rom2_filename;
      const char           *db_filename;
      /**/  organization_s *organization;
+     /**/  schedule_s     *schedule;
      /**/  tsbrom_s       *rom1;
      /**/  tsbrom_s       *rom2;
      /**/  sqlite3        *db;
@@ -28,6 +31,8 @@ int main( const int argc, const char const *argv[] )
 
      sprintf( rom1_output_file, "%s/ncfo1.nes", argv[4] );
      sprintf( rom2_output_file, "%s/ncfo2.nes", argv[4] );
+
+     srand( time( NULL ) );
 
      if ( (rom1 = readTsbRom( rom1_filename )) == NULL )
      {
@@ -72,6 +77,19 @@ int main( const int argc, const char const *argv[] )
           return EXIT_FAILURE;
      }
 
+     if ( (schedule = generateSchedule( rom1, rom2 )) == NULL )
+     {
+          printf( "Error generating schedule: %s\n", getGenerateScheduleError() );
+
+          free( rom1 );
+          free( rom2 );
+          free_organization( organization );
+
+          sqlite3_close( db );
+
+          return EXIT_FAILURE;
+     }
+
      printf( "Creating TSB Rom File %s\n", rom1_output_file );
 
      if ( ! writeTsbRom( rom1_output_file, rom1 ) )
@@ -80,6 +98,7 @@ int main( const int argc, const char const *argv[] )
 
           free( rom1 );
           free( rom2 );
+          freeSchedule( schedule );
           free_organization( organization );
 
           sqlite3_close( db );
@@ -95,6 +114,7 @@ int main( const int argc, const char const *argv[] )
 
           free( rom1 );
           free( rom2 );
+          freeSchedule( schedule );
           free_organization( organization );
 
           sqlite3_close( db );
@@ -104,6 +124,7 @@ int main( const int argc, const char const *argv[] )
 
      free( rom1 );
      free( rom2 );
+     freeSchedule( schedule );
      free_organization( organization );
 
      sqlite3_close( db );
