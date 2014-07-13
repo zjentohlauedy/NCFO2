@@ -328,6 +328,133 @@ static char *populateRoms_ShouldWriteTheKickAndPuntReturnersForEveryTeam()
      return NULL;
 }
 
+static char *populateRoms_ShouldWriteThePlayerAndTeamSimData_GivenATsbRomAndOrganization()
+{
+     tsbrom_s        tsbrom1 = { 0 };
+     tsbrom_s        tsbrom2 = { 0 };
+     organization_s *org     = get_test_org();
+
+     player_s *player01 = org->conferences[0].conference->teams[0].team->players[ 0].player;
+     player_s *player02 = org->conferences[0].conference->teams[0].team->players[ 1].player;
+     player_s *player03 = org->conferences[0].conference->teams[0].team->players[ 2].player;
+     player_s *player04 = org->conferences[0].conference->teams[0].team->players[ 3].player;
+     player_s *player05 = org->conferences[0].conference->teams[0].team->players[ 4].player;
+     player_s *player06 = org->conferences[0].conference->teams[0].team->players[ 5].player;
+     player_s *player07 = org->conferences[0].conference->teams[0].team->players[ 6].player;
+     player_s *player08 = org->conferences[0].conference->teams[0].team->players[ 7].player;
+     player_s *player09 = org->conferences[0].conference->teams[0].team->players[ 8].player;
+     player_s *player10 = org->conferences[0].conference->teams[0].team->players[ 9].player;
+     player_s *player11 = org->conferences[0].conference->teams[0].team->players[10].player;
+     player_s *player12 = org->conferences[0].conference->teams[0].team->players[11].player;
+     player_s *player13 = org->conferences[0].conference->teams[0].team->players[12].player;
+     player_s *player14 = org->conferences[0].conference->teams[0].team->players[13].player;
+     player_s *player15 = org->conferences[0].conference->teams[0].team->players[14].player;
+     player_s *player16 = org->conferences[0].conference->teams[0].team->players[15].player;
+     player_s *player17 = org->conferences[0].conference->teams[0].team->players[16].player;
+     player_s *player18 = org->conferences[0].conference->teams[0].team->players[17].player;
+     player_s *player19 = org->conferences[0].conference->teams[0].team->players[18].player;
+     player_s *player20 = org->conferences[0].conference->teams[0].team->players[19].player;
+     player_s *player21 = org->conferences[0].conference->teams[0].team->players[20].player;
+     player_s *player22 = org->conferences[0].conference->teams[0].team->players[21].player;
+     player_s *player23 = org->conferences[0].conference->teams[0].team->players[22].player;
+     player_s *player24 = org->conferences[0].conference->teams[0].team->players[23].player;
+     player_s *player25 = org->conferences[0].conference->teams[0].team->players[24].player;
+     player_s *player26 = org->conferences[0].conference->teams[0].team->players[25].player;
+     player_s *player27 = org->conferences[0].conference->teams[0].team->players[26].player;
+     player_s *player28 = org->conferences[0].conference->teams[0].team->players[27].player;
+     player_s *player29 = org->conferences[0].conference->teams[0].team->players[28].player;
+     player_s *player30 = org->conferences[0].conference->teams[0].team->players[29].player;
+     player_s *player31 = org->conferences[0].conference->teams[0].team->players[30].player;
+     player_s *player32 = org->conferences[0].conference->teams[0].team->players[31].player;
+
+     player01->ratings = buildPlayerRatings( player01->player_id );
+     player02->ratings = buildPlayerRatings( player02->player_id );
+     player03->ratings = buildPlayerRatings( player03->player_id );
+     player04->ratings = buildPlayerRatings( player04->player_id );
+     player05->ratings = buildPlayerRatings( player05->player_id );
+     player06->ratings = buildPlayerRatings( player06->player_id );
+     player07->ratings = buildPlayerRatings( player07->player_id );
+     player08->ratings = buildPlayerRatings( player08->player_id );
+     player09->ratings = buildPlayerRatings( player09->player_id );
+     player10->ratings = buildPlayerRatings( player10->player_id );
+     player11->ratings = buildPlayerRatings( player11->player_id );
+     player12->ratings = buildPlayerRatings( player12->player_id );
+     player13->ratings = buildPlayerRatings( player13->player_id );
+     player14->ratings = buildPlayerRatings( player14->player_id );
+     player15->ratings = buildPlayerRatings( player15->player_id );
+     player16->ratings = buildPlayerRatings( player16->player_id );
+     player17->ratings = buildPlayerRatings( player17->player_id );
+     player18->ratings = buildPlayerRatings( player18->player_id );
+     player19->ratings = buildPlayerRatings( player19->player_id );
+     player20->ratings = buildPlayerRatings( player20->player_id );
+     player21->ratings = buildPlayerRatings( player21->player_id );
+     player22->ratings = buildPlayerRatings( player22->player_id );
+     player23->ratings = buildPlayerRatings( player23->player_id );
+     player24->ratings = buildPlayerRatings( player24->player_id );
+     player25->ratings = buildPlayerRatings( player25->player_id );
+     player26->ratings = buildPlayerRatings( player26->player_id );
+     player27->ratings = buildPlayerRatings( player27->player_id );
+     player28->ratings = buildPlayerRatings( player28->player_id );
+     player29->ratings = buildPlayerRatings( player29->player_id );
+     player30->ratings = buildPlayerRatings( player30->player_id );
+     player31->ratings = buildPlayerRatings( player31->player_id );
+     player32->ratings = buildPlayerRatings( player32->player_id );
+
+     player01->extra_ratings.quarterback = buildPlayerQuarterbackRatings( player01->player_id );
+     player02->extra_ratings.quarterback = buildPlayerQuarterbackRatings( player02->player_id );
+     player03->extra_ratings.offense     = buildPlayerOffenseRatings(     player03->player_id );
+     player04->extra_ratings.offense     = buildPlayerOffenseRatings(     player04->player_id );
+     player05->extra_ratings.offense     = buildPlayerOffenseRatings(     player05->player_id );
+     player06->extra_ratings.offense     = buildPlayerOffenseRatings(     player06->player_id );
+     player07->extra_ratings.offense     = buildPlayerOffenseRatings(     player07->player_id );
+     player08->extra_ratings.offense     = buildPlayerOffenseRatings(     player08->player_id );
+     player09->extra_ratings.offense     = buildPlayerOffenseRatings(     player09->player_id );
+     player10->extra_ratings.offense     = buildPlayerOffenseRatings(     player10->player_id );
+     player11->extra_ratings.offense     = buildPlayerOffenseRatings(     player11->player_id );
+     player12->extra_ratings.offense     = buildPlayerOffenseRatings(     player12->player_id );
+     player13->extra_ratings.offense     = buildPlayerOffenseRatings(     player13->player_id );
+     player14->extra_ratings.offense     = buildPlayerOffenseRatings(     player14->player_id );
+     player20->extra_ratings.defense     = buildPlayerDefenseRatings(     player20->player_id );
+     player21->extra_ratings.defense     = buildPlayerDefenseRatings(     player21->player_id );
+     player22->extra_ratings.defense     = buildPlayerDefenseRatings(     player22->player_id );
+     player23->extra_ratings.defense     = buildPlayerDefenseRatings(     player23->player_id );
+     player24->extra_ratings.defense     = buildPlayerDefenseRatings(     player24->player_id );
+     player25->extra_ratings.defense     = buildPlayerDefenseRatings(     player25->player_id );
+     player26->extra_ratings.defense     = buildPlayerDefenseRatings(     player26->player_id );
+     player27->extra_ratings.defense     = buildPlayerDefenseRatings(     player27->player_id );
+     player28->extra_ratings.defense     = buildPlayerDefenseRatings(     player28->player_id );
+     player29->extra_ratings.defense     = buildPlayerDefenseRatings(     player29->player_id );
+     player30->extra_ratings.defense     = buildPlayerDefenseRatings(     player30->player_id );
+     player31->extra_ratings.kicking     = buildPlayerKickingRatings(     player31->player_id );
+     player32->extra_ratings.kicking     = buildPlayerKickingRatings(     player32->player_id );
+
+     assertEquals( bl_True, populateRoms( &tsbrom1, &tsbrom2, org ) );
+
+     tsb_sim_data_s *sim_data = &(tsbrom1.sim_data[0]);
+
+     assertEquals( bl_True, sim_data->quarterbacks[0][0] > 0 );
+     assertEquals( bl_True, sim_data->quarterbacks[1][0] > 0 );
+
+     for ( int i = 0; i < 10; ++i )
+     {
+          assertEquals( bl_True, sim_data->offense[i][0] > 0 );
+          assertEquals( bl_True, sim_data->offense[i][1] > 0 );
+     }
+
+     for ( int i = 0; i < 11; ++i )
+     {
+          assertEquals( bl_True, sim_data->defense_pass_rush[i] > 0 );
+          assertEquals( bl_True, sim_data->defense_coverage [i] > 0 );
+     }
+
+     assertEquals( bl_True, sim_data->kicking[0] > 0 );
+     assertEquals( bl_True, sim_data->team   [0] > 0 );
+
+     free_organization( org );
+
+     return NULL;
+}
+
 static char *populateRoms_ShouldPopulateBothRoms_GivenTwoTsbRomsAndOrganization()
 {
      tsbrom_s        tsbrom1 = { 0 };
@@ -595,6 +722,7 @@ static void run_all_tests()
      run_test( populateRoms_ShouldWriteTheOffsetsInThePlayerPointersSection_GivenATsbRomAndOrganization,              check_populate_roms_error );
      run_test( populateRoms_ShouldWriteThePlayerRatingsInTheTeamPlayerRatingsSection_GivenATsbRomAndOrganization,     check_populate_roms_error );
      run_test( populateRoms_ShouldWriteTheKickAndPuntReturnersForEveryTeam,                                           check_populate_roms_error );
+     run_test( populateRoms_ShouldWriteThePlayerAndTeamSimData_GivenATsbRomAndOrganization,                           check_populate_roms_error );
      run_test( populateRoms_ShouldPopulateBothRoms_GivenTwoTsbRomsAndOrganization,                                    check_populate_roms_error );
      run_test( populateRoms_ShouldAdjustPlayerRatingsBasedOnMaturity,                                                 check_populate_roms_error );
      run_test( populateRoms_ShouldLimitPlayerNamesTo16Chars,                                                          check_populate_roms_error );

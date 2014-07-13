@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include "file_formats.h"
 
 
@@ -15,6 +16,141 @@ static void clearErrorMessage( void )
 char *getPopulateRomsError( void )
 {
      return error_message;
+}
+
+
+static int getPlayerAcceleration( const player_s *player )
+{
+     if ( player->ratings == NULL ) return 0;
+
+     return (player->ratings->run_speed > player->ratings->rush_power) ? player->ratings->run_speed : player->ratings->rush_power;
+}
+
+static void setQuarterbackSimData( unsigned char *sim_data, const player_s *player )
+{
+     if ( player->ratings                   == NULL ) return;
+     if ( player->extra_ratings.quarterback == NULL ) return;
+
+     player_quarterback_ratings_s *qb = player->extra_ratings.quarterback;
+
+     int rush = (int)round( (double)((player->ratings->max_speed * 3) + getPlayerAcceleration( player )) / 4.0 );
+     int pass = (int)round( (double)((qb->pass_control * 2) + qb->pass_speed + qb->pass_accuracy) / 4.0 );
+
+     int pocket = 0;
+
+     if ( rush > pass )
+     {
+          if ( pass > 0 ) pocket = 2 - (int)round( (double)rush / (double)pass );
+
+          if ( pocket < 0 ) pocket = 0;
+     }
+
+     if ( pass >= rush )
+     {
+          if ( rush > 0 )
+          {
+               pocket = 1 + (int)round( (double)rush / (double)pass );
+          }
+          else
+          {
+               pocket = 3;
+          }
+
+          if ( pocket > 3 ) pocket = 3;
+     }
+
+     sim_data[0] = (rush<<4) + pass;
+     sim_data[1] = pocket;
+}
+
+static void setOffenseSimData( unsigned char *sim_data, const player_s *player )
+{
+     if ( player->ratings               == NULL ) return;
+     if ( player->extra_ratings.offense == NULL ) return;
+
+     player_offense_ratings_s *offense = player->extra_ratings.offense;
+
+     int rush   = 0;
+     int recv   = 0;
+     int yards  = 0;
+     int target = 0;
+
+     switch ( player->position )
+     {
+     case pos_Runningback:
+          rush   = (int)round( (double)((player->ratings->max_speed * 2) + player->ratings->hit_power + getPlayerAcceleration( player )) / 4.0 );
+          recv   = (int)round( (double)((offense->receiving * 3) + player->ratings->max_speed) / 4.0 );
+          yards  = (int)round( (double)player->score / 20.0 );
+          target = recv;
+          break;
+
+     case pos_WideReceiver:
+          rush   = 1;
+          recv   = (int)round( (double)((offense->receiving * 3) + player->ratings->max_speed) / 4.0 );
+          yards  = (int)round( (double)player->score / 20.0 );
+          target = recv;
+          break;
+
+     case pos_TightEnd:
+          rush   = 1;
+          recv   = (int)round( (double)((offense->receiving * 3) + player->ratings->max_speed) / 4.0 );
+          yards  = (int)round( (double)player->score / 20.0 );
+          target = recv;
+          break;
+     }
+
+     sim_data[0] = (rush<<4) + recv;
+     sim_data[1] = (yards<<4) + target;
+}
+
+static void setDefenseSimData( unsigned char *pass_rush, unsigned char *coverage, const player_s *player )
+{
+     if ( player->ratings               == NULL ) return;
+     if ( player->extra_ratings.defense == NULL ) return;
+
+     player_defense_ratings_s *defense = player->extra_ratings.defense;
+
+     switch ( player->position )
+     {
+     case pos_DefensiveLine:
+          *pass_rush = (player->ratings->hit_power * 2) + getPlayerAcceleration( player ) + defense->quickness;
+          *coverage  = defense->interceptions;
+          break;
+
+     case pos_Linebacker:
+          *pass_rush = (player->ratings->hit_power * 2) + getPlayerAcceleration( player ) + defense->quickness;
+          *coverage  = player->ratings->max_speed + defense->interceptions;
+          break;
+
+     case pos_Cornerback:
+          *pass_rush = 1;
+          *coverage  = (defense->interceptions * 2) + player->ratings->max_speed + defense->quickness;
+          break;
+
+     case pos_Safety:
+          *pass_rush = 1;
+          *coverage  = (defense->interceptions * 2) + player->ratings->max_speed + defense->quickness;
+          break;
+     }
+}
+
+static void setKickingSimData( unsigned char *sim_data, const player_s *player )
+{
+     if ( player->ratings               == NULL ) return;
+     if ( player->extra_ratings.kicking == NULL ) return;
+
+     player_kicking_ratings_s *kicking = player->extra_ratings.kicking;
+
+     switch ( player->position )
+     {
+     case pos_Kicker:
+          *sim_data |= (kicking->kicking_ability<<4);
+          break;
+
+     case pos_Punter:
+          *sim_data |= kicking->kicking_ability;
+          break;
+     }
 }
 
 static void setPlayerRatings( tsb_player_ratings_s *player_ratings, const player_s *player )
@@ -76,6 +212,9 @@ static void injectData( tsbrom_s *rom, player_s **players )
           struct { int index; int score; } kick_returner = { 0 };
           struct { int index; int score; } punt_returner = { 0 };
 
+          int team_sim_offense = 0;
+          int team_sim_defense = 0;
+
           for ( int j = 0; j < 30; ++j )
           {
                const player_s *player = players[(i * 30) + j];
@@ -115,6 +254,7 @@ static void injectData( tsbrom_s *rom, player_s **players )
                     setQbRatings( &qb, player );
                     memcpy( ratings_ptr, &qb, sizeof(tsb_qb_ratings_s) );
                     ratings_ptr += sizeof(tsb_qb_ratings_s);
+                    setQuarterbackSimData( rom->sim_data[i].quarterbacks[j], player );
                     break;
                }
                case pos_Runningback:
@@ -123,7 +263,7 @@ static void injectData( tsbrom_s *rom, player_s **players )
                     {
                          int kr_score  = (player->ratings->max_speed * 3) + player->extra_ratings.offense->ball_control;
                          int pr_score  = (player->ratings->max_speed * 2) + player->extra_ratings.offense->ball_control;
-                         /**/pr_score += (player->ratings->run_speed > player->ratings->rush_power) ? player->ratings->run_speed : player->ratings->rush_power;
+                         /**/pr_score += getPlayerAcceleration( player );
 
                          if ( kr_score > kick_returner.score ) { kick_returner.index = j; kick_returner.score = kr_score; }
                          if ( pr_score > punt_returner.score ) { punt_returner.index = j; punt_returner.score = pr_score; }
@@ -135,6 +275,7 @@ static void injectData( tsbrom_s *rom, player_s **players )
                     setOffRatings( &off, player );
                     memcpy( ratings_ptr, &off, sizeof(tsb_off_ratings_s) );
                     ratings_ptr += sizeof(tsb_off_ratings_s);
+                    setOffenseSimData( rom->sim_data[i].offense[j - 2], player );
                     break;
                }
                case pos_OffensiveLine:
@@ -154,6 +295,7 @@ static void injectData( tsbrom_s *rom, player_s **players )
                     setDefRatings( &def, player );
                     memcpy( ratings_ptr, &def, sizeof(tsb_def_ratings_s) );
                     ratings_ptr += sizeof(tsb_def_ratings_s);
+                    setDefenseSimData( &(rom->sim_data[i].defense_pass_rush[j - 17]), &(rom->sim_data[i].defense_coverage[j - 17]), player );
                     break;
                }
                case pos_Kicker:
@@ -163,10 +305,47 @@ static void injectData( tsbrom_s *rom, player_s **players )
                     setKickRatings( &kick, player );
                     memcpy( ratings_ptr, &kick, sizeof(tsb_kick_ratings_s) );
                     ratings_ptr += sizeof(tsb_kick_ratings_s);
+                    setKickingSimData( rom->sim_data[i].kicking, player );
                     break;
                }
                }
+
+               switch ( j )
+               {
+               case  0: // qb
+               case  2: // rb1
+               case  3: // rb2
+               case  6: // wr1
+               case  7: // wr2
+               case 10: // te
+               case 12: // oline
+               case 13:
+               case 14:
+               case 16:
+               case 17:
+                    team_sim_offense += player->score;
+                    break;
+
+               case 18: // dline
+               case 19:
+               case 20:
+               case 21: // lbs
+               case 22:
+               case 23:
+               case 24:
+               case 25: // cb
+               case 26:
+               case 27: // sf
+               case 28:
+                    team_sim_defense += player->score;
+                    break;
+               }
           }
+
+          team_sim_offense = (int)round( (double)team_sim_offense / (20.0 * 11.0) );
+          team_sim_defense = (int)round( (double)team_sim_defense / (20.0 * 11.0) );
+
+          rom->sim_data[i].team[0] = (team_sim_offense << 4) + team_sim_defense;
 
           rom->kick_and_punt_returners1[i] = (kick_returner.index << 4) + punt_returner.index;
           rom->kick_and_punt_returners2[i] = rom->kick_and_punt_returners1[i];
@@ -272,7 +451,7 @@ static void calcPlayerScore( player_s *player, const int season )
 
      applyMaturityAdjustment( player, season );
 
-     int acceleration = (player->ratings->run_speed > player->ratings->rush_power) ? player->ratings->run_speed : player->ratings->rush_power;
+     int acceleration = getPlayerAcceleration( player );
 
      switch ( player->position )
      {
@@ -479,6 +658,7 @@ void initializeRom( tsbrom_s *rom )
 {
      memset( rom->player_identifiers,  0xff, sizeof(rom->player_identifiers)  );
      memset( rom->team_player_ratings, 0xff, sizeof(rom->team_player_ratings) );
+     memset( rom->sim_data,            0x00, sizeof(rom->sim_data)            );
 
      for ( int i = 0; i < 28; ++i )
      {

@@ -148,6 +148,17 @@ typedef union
 
 typedef struct
 {
+     unsigned char quarterbacks      [ 2][2]; // [Rush, Pass], [0,   Pckt]
+     unsigned char offense           [10][2]; // [Rush, Recv], [Yds, Targ]
+     unsigned char defense_pass_rush [11];    // One byte for each player 0-255
+     unsigned char defense_coverage  [11];    // One byte for each player 0-255
+     unsigned char kicking           [ 1];    // [K-KA, P-KA]
+     unsigned char team              [ 1];    // [Off,  Def ]
+
+} tsb_sim_data_s;
+
+typedef struct
+{
      nes_header_s       header;                                         // 0x00000 - 0x0000f
      nes_pointer_s      team_pointers               [    28 ];          // 0x00010 - 0x00047
      nes_pointer_s      player_pointers             [    28 ][ 30 ];    // 0x00048 - 0x006d7
@@ -169,7 +180,9 @@ typedef struct
      unsigned char      unknown08                   [  4096 ];          // 0x14010 - 0x1500f
      unsigned char      unknown09                   [  4096 ];          // 0x15010 - 0x1600f
      unsigned char      unknown10                   [  4096 ];          // 0x16010 - 0x1700f
-     unsigned char      unknown11                   [ 12288 ];          // 0x17010 - 0x1a00f
+     unsigned char      unknown11a                  [  4435 ];          // 0x17010 - 0x18162
+     tsb_sim_data_s     sim_data                    [    28 ];          // 0x18163 - 0x186a2
+     unsigned char      unknown11b                  [  6509 ];          // 0x186a3 - 0x1a00f
      unsigned char      unknown12                   [  1536 ];          // 0x1a010 - 0x1a60f
      unsigned char      unknown13                   [  1536 ];          // 0x1a610 - 0x1ac0f
      unsigned char      unknown14                   [  1024 ];          // 0x1ac10 - 0x1b00f
