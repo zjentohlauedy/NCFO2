@@ -303,8 +303,12 @@ static char *generateSchedule_ShouldUpdateTheRomsWithTheGeneratedSchedule_GivenT
           assertEquals( 12, tsbrom2.schedule[0].ncfo.games_per_week[i] );
      }
 
-     // unused weeks are zeroed out
-     for ( int i = 0; i < 7; ++i )
+     // unused week 1 is set to 1
+     assertEquals( 1, tsbrom1.schedule[0].ncfo.unused_weeks[0] );
+     assertEquals( 1, tsbrom2.schedule[0].ncfo.unused_weeks[0] );
+
+     // rest of unused weeks are zeroed out
+     for ( int i = 1; i < 7; ++i )
      {
           assertEquals( 0, tsbrom1.schedule[0].ncfo.unused_weeks[i] );
           assertEquals( 0, tsbrom2.schedule[0].ncfo.unused_weeks[i] );

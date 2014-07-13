@@ -150,6 +150,10 @@ static void injectSchedule( tsbrom_s *rom, const schedule_s *schedule )
      for ( int i = 0; i < 10; ++i ) rom->schedule[0].ncfo.games_per_week[i] = 12;
      for ( int i = 0; i <  7; ++i ) rom->schedule[0].ncfo.unused_weeks[i]   =  0;
 
+     // set first unused week game count to 1 because there's a bug that sets the
+     // first team's player stats all to max values
+     rom->schedule[0].ncfo.unused_weeks[0] = 1;
+
      rom->schedule[0].ncfo.separator[0] = 0xff;
 
      int pointer = 0x89cb;
