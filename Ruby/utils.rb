@@ -12,7 +12,7 @@ module Utils
   end
 
   def self.get_db file
-    db = SQLite3::Database.new 'ncfo_test.db'
+    db = SQLite3::Database.new file
 
     db.results_as_hash  = true
     db.type_translation = true

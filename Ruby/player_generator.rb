@@ -26,14 +26,14 @@ class PlayerGenerator
     player.last_name       = (65 + rand(26)).chr + (1..(3 + rand(9))).map { (97 + rand(26)).chr }.join # temporary test value
     player.face            = (face > 81) ? face + 46 : face
     player.maturity        = prng.rand( 4 ) + 1
-    player.ratings         = PlayerRatings.generate id
+    player.ratings         = PlayerRatings.generate id, position
 
     if position == Positions::Quarterback
       player.quarterback_ratings = PlayerQuarterbackRatings.generate id
     elsif @OffensePositions.include? position
-      player.offense_ratings = PlayerOffenseRatings.generate id
+      player.offense_ratings = PlayerOffenseRatings.generate id, position
     elsif @DefensePositions.include? position
-      player.defense_ratings = PlayerDefenseRatings.generate id
+      player.defense_ratings = PlayerDefenseRatings.generate id, position
     elsif @KickingPositions.include? position
       player.kicking_ratings = PlayerKickingRatings.generate id
     end

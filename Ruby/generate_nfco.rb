@@ -17,6 +17,12 @@ require 'conference_team'
 require 'team'
 require 'team_player'
 
+
+if ARGV.length != 1
+  abort "Usage: #{__FILE__} <filename>\n"
+end
+
+
 @organization = { organization_id: 1, name: 'National College Football Organization', abbreviation: 'NCFO', season: 1 }
 
 @conferences = [ { conference_id: 1, name: 'New England' },
@@ -203,7 +209,9 @@ ncfo.from_hash @organization
 ncfo.conferences = generate_conferences ncfo.organization_id, @conferences
 
 
-repo = Repository.new Utils::get_db "ncfo_test.db"
+filename = ARGV[0]
+
+repo = Repository.new Utils::get_db filename
 ps = PlayerService.new repo
 ts = TeamService.new repo, ps
 cs = ConferenceService.new repo, ts
@@ -215,7 +223,9 @@ repo.start_transaction
 begin
   os.save ncfo
   repo.end_transaction
-rescue
+  puts "Done."
+rescue Exception => e
   repo.cancel_transaction
+  puts "Error." + e.message
   exit
 end
