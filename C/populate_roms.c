@@ -229,7 +229,7 @@ static void injectData( tsbrom_s *rom, player_s **players )
                strcpy( fname, player->first_name );
                strcpy( lname, player->last_name  );
 
-               while ( (strlen(fname) + strlen(lname)) > 16 )
+               while ( (strlen(fname) + strlen(lname)) > 15 )
                {
                     if ( strlen(fname) > 2 )
                     {
@@ -239,7 +239,7 @@ static void injectData( tsbrom_s *rom, player_s **players )
                     }
                     else
                     {
-                         lname[16 - strlen(fname)] = '\0';
+                         lname[15 - strlen(fname)] = '\0';
                     }
                }
 

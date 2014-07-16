@@ -684,7 +684,7 @@ static char *populateRoms_ShouldAdjustPlayerRatingsBasedOnMaturity()
      return NULL;
 }
 
-static char *populateRoms_ShouldLimitPlayerNamesTo16Chars()
+static char *populateRoms_ShouldLimitPlayerNamesTo15Chars()
 {
      tsbrom_s        tsbrom1 = { 0 };
      tsbrom_s        tsbrom2 = { 0 };
@@ -702,7 +702,7 @@ static char *populateRoms_ShouldLimitPlayerNamesTo16Chars()
 
      assertEquals( bl_True, populateRoms( &tsbrom1, &tsbrom2, org ) );
 
-     char *expected = " w.JOHANNESON g.IVANISTOYANOVI";
+     char *expected = " w.JOHANNESON g.IVANISTOYANOV";
 
      assertEqualsBfr( expected, tsbrom1.player_identifiers, strlen(expected) );
 
@@ -725,7 +725,7 @@ static void run_all_tests()
      run_test( populateRoms_ShouldWriteThePlayerAndTeamSimData_GivenATsbRomAndOrganization,                           check_populate_roms_error );
      run_test( populateRoms_ShouldPopulateBothRoms_GivenTwoTsbRomsAndOrganization,                                    check_populate_roms_error );
      run_test( populateRoms_ShouldAdjustPlayerRatingsBasedOnMaturity,                                                 check_populate_roms_error );
-     run_test( populateRoms_ShouldLimitPlayerNamesTo16Chars,                                                          check_populate_roms_error );
+     run_test( populateRoms_ShouldLimitPlayerNamesTo15Chars,                                                          check_populate_roms_error );
 }
 
 
