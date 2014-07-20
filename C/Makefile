@@ -2,10 +2,11 @@ AR = ar
 ARFLAGS = -rc
 CC = cc
 CFLAGS = -std=c99 -g -Werror-implicit-function-declaration
-LDFLAGS = -L. -lm -lsqlite3
+LDFLAGS = -L. -lm -lsqlite3 -lz
 
 progs = \
-   export_season
+   export_season \
+   decompress_save_state
 
 tests = \
    test_file_utils \
@@ -46,6 +47,9 @@ PROGS: $(progs) TAGS
 
 export_season: export_season.o file_utils.o populate_roms.o generate_schedule.o libncfodata.a
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfodata
+
+decompress_save_state: decompress_save_state.o file_utils.o
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
 
 TESTS: $(tests) ncfo_test.db TAGS
 

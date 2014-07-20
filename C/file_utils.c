@@ -6,8 +6,12 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <zlib.h>
 #include "file_formats.h"
 #include "schedule.h"
+
+#define MEMCMP( A, OP, B, L ) (memcmp( (A), (B), (L) ) OP 0)
+
 
 static char error_message[999 + 1] = { 0 };
 
@@ -174,6 +178,12 @@ void int2pointer( const int value, nes_pointer_s *ptr )
 }
 
 
+int dword2int( const unsigned char *dword )
+{
+     return (dword[3] << 24) + (dword[2] << 16) + (dword[1] << 8) + dword[0];
+}
+
+
 int number2hex( const int number )
 {
      if ( number > 99 ) return -1;
@@ -254,6 +264,8 @@ boolean_e writeSchedule( const char *filename, const schedule_s *schedule )
 {
      FILE *schedule_file;
 
+     clearErrorMessage();
+
      if ( (schedule_file = fopen( filename, "w+" )) == NULL )
      {
           sprintf( error_message, "Cannot open file <%s>: %s", filename, strerror(errno) );
@@ -293,4 +305,406 @@ boolean_e writeSchedule( const char *filename, const schedule_s *schedule )
      }
 
      return bl_True;
+}
+
+
+static char *zerror( const int error )
+{
+     switch ( error )
+     {
+     case Z_OK:         return "Success";
+     case Z_MEM_ERROR:  return "Not enough memory";
+     case Z_BUF_ERROR:  return "Destination buffer not large enough to inflated data";
+     case Z_DATA_ERROR: return "Data cannot be uncompressed possibly corrupted or incomplete";
+     default:           return "Unknown error";
+     }
+}
+
+static boolean_e loadSaveState( unsigned char *save_state, int *save_state_size, const unsigned char *data, const size_t datasize )
+{
+     const unsigned char      *p_data             = data;
+     /**/  unsigned char      *p_save_state       = save_state;
+     const unsigned char      *section_header     = NULL;
+     /**/           int        section_length     = 0;
+     /**/           boolean_e  inside_img_section = bl_False;
+
+     while ( (p_data - data) < datasize )
+     {
+          section_header = p_data;
+          section_length = dword2int( p_data + 4 );
+
+          memcpy( p_save_state, p_data, 8 );
+
+          p_data       += 8;
+          p_save_state += 8;
+
+          if      ( MEMCMP( section_header, ==, "NST\x1A", 4 ) )
+          {
+               // do nothing - file header
+          }
+          else if ( MEMCMP( section_header, ==, "CPU", 3 ) )
+          {
+               // do nothing - parent section header
+               inside_img_section = bl_False;
+          }
+          else if ( MEMCMP( section_header, ==, "APU", 3 ) )
+          {
+               // do nothing - parent section header
+               inside_img_section = bl_False;
+          }
+          else if ( MEMCMP( section_header, ==, "PPU", 3 ) )
+          {
+               // do nothing - parent section header
+               inside_img_section = bl_False;
+          }
+          else if ( MEMCMP( section_header, ==, "IMG", 3 ) )
+          {
+               // do nothing - parent section header
+               inside_img_section = bl_True;
+          }
+          else if ( MEMCMP( section_header, ==, "SQ0", 3 ) )
+          {
+               // do nothing - parent section header
+          }
+          else if ( MEMCMP( section_header, ==, "SQ1", 3 ) )
+          {
+               // do nothing - parent section header
+          }
+          else if ( MEMCMP( section_header, ==, "TRI", 3 ) )
+          {
+               // do nothing - parent section header
+          }
+          else if ( MEMCMP( section_header, ==, "NOI", 3 ) )
+          {
+               // do nothing - parent section header
+          }
+          else if ( MEMCMP( section_header, ==, "DMC", 3 ) )
+          {
+               // do nothing - parent section header
+          }
+          else if ( MEMCMP( section_header, ==, "MPR", 3 ) )
+          {
+               // do nothing - parent section header
+          }
+          else if ( MEMCMP( section_header, ==, "PRG", 3 ) )
+          {
+               // do nothing - parent section header
+          }
+          else if ( MEMCMP( section_header, ==, "CHR", 3 ) )
+          {
+               // do nothing - parent section header
+          }
+          else if ( MEMCMP( section_header, ==, "WRK", 3 ) )
+          {
+               // do nothing - parent section header
+          }
+          else if ( MEMCMP( section_header, ==, "POW", 3 ) )
+          {
+               // do nothing - does not contain data - seems to be just a trigger
+          }
+          else if ( MEMCMP( section_header, ==, "NFO", 3 ) )
+          {
+               inside_img_section = bl_False;
+
+               memcpy( p_save_state, p_data, section_length );
+
+               p_data       += section_length;
+               p_save_state += section_length;
+          }
+          else if ( MEMCMP( section_header, ==, "REG", 3 ) )
+          {
+               memcpy( p_save_state, p_data, section_length );
+
+               p_data       += section_length;
+               p_save_state += section_length;
+          }
+          else if ( MEMCMP( section_header, ==, "FRM", 3 ) )
+          {
+               memcpy( p_save_state, p_data, section_length );
+
+               p_data       += section_length;
+               p_save_state += section_length;
+          }
+          else if ( MEMCMP( section_header, ==, "CLK", 3 ) )
+          {
+               memcpy( p_save_state, p_data, section_length );
+
+               p_data       += section_length;
+               p_save_state += section_length;
+          }
+          else if ( MEMCMP( section_header, ==, "IRQ", 3 ) )
+          {
+               memcpy( p_save_state, p_data, section_length );
+
+               p_data       += section_length;
+               p_save_state += section_length;
+          }
+          else if ( MEMCMP( section_header, ==, "EXT", 3 ) )
+          {
+               memcpy( p_save_state, p_data, section_length );
+
+               p_data       += section_length;
+               p_save_state += section_length;
+          }
+          else if ( MEMCMP( section_header, ==, "LEN", 3 ) )
+          {
+               memcpy( p_save_state, p_data, section_length );
+
+               p_data       += section_length;
+               p_save_state += section_length;
+          }
+          else if ( MEMCMP( section_header, ==, "ENV", 3 ) )
+          {
+               memcpy( p_save_state, p_data, section_length );
+
+               p_data       += section_length;
+               p_save_state += section_length;
+          }
+          else if ( MEMCMP( section_header, ==, "VSS", 3 ) )
+          {
+               memcpy( p_save_state, p_data, section_length );
+
+               p_data       += section_length;
+               p_save_state += section_length;
+          }
+          else if ( MEMCMP( section_header, ==, "ACC", 3 ) )
+          {
+               memcpy( p_save_state, p_data, section_length );
+
+               p_data       += section_length;
+               p_save_state += section_length;
+          }
+          else if ( MEMCMP( section_header, ==, "BNK", 3 ) )
+          {
+               memcpy( p_save_state, p_data, section_length );
+
+               p_data       += section_length;
+               p_save_state += section_length;
+          }
+          else if ( MEMCMP( section_header, ==, "PRT", 3 ) )
+          {
+               inside_img_section = bl_False;
+
+               memcpy( p_save_state, p_data, section_length );
+
+               p_data       += section_length;
+               p_save_state += section_length;
+          }
+          else if ( MEMCMP( section_header, ==, "RAM", 3 ) )
+          {
+               uLongf dest_len = 50000 - (p_save_state - save_state);
+               int    ret;
+
+               if ( *p_data )
+               {
+                    *p_save_state = *p_data;
+                    p_save_state++;
+
+                    if ( (ret = uncompress( p_save_state, &dest_len, p_data + 1, section_length - 1)) != Z_OK )
+                    {
+                         sprintf( error_message, "Cannot uncompress RAM data: %s", zerror(ret) );
+
+                         return bl_False;
+                    }
+
+                    p_data       += section_length;
+                    p_save_state += dest_len;
+               }
+               else
+               {
+                    p_data       += section_length;
+                    p_save_state += section_length;
+               }
+          }
+          else if ( MEMCMP( section_header, ==, "PAL", 3 ) )
+          {
+               uLongf dest_len = 50000 - (p_save_state - save_state);
+               int    ret;
+
+               if ( *p_data )
+               {
+                    *p_save_state = *p_data;
+                    p_save_state++;
+
+                    if ( (ret = uncompress( p_save_state, &dest_len, p_data + 1, section_length - 1)) != Z_OK )
+                    {
+                         sprintf( error_message, "Cannot uncompress PAL data: %s", zerror(ret) );
+
+                         return bl_False;
+                    }
+
+                    p_data       += section_length;
+                    p_save_state += dest_len;
+               }
+               else
+               {
+                    p_data       += section_length;
+                    p_save_state += section_length;
+               }
+          }
+          else if ( MEMCMP( section_header, ==, "OAM", 3 ) )
+          {
+               uLongf dest_len = 50000 - (p_save_state - save_state);
+               int    ret;
+
+               if ( *p_data )
+               {
+                    *p_save_state = *p_data;
+                    p_save_state++;
+
+                    if ( (ret = uncompress( p_save_state, &dest_len, p_data + 1, section_length - 1)) != Z_OK )
+                    {
+                         sprintf( error_message, "Cannot uncompress OAM data: %s", zerror(ret) );
+
+                         return bl_False;
+                    }
+
+                    p_data       += section_length;
+                    p_save_state += dest_len;
+               }
+               else
+               {
+                    p_data       += section_length;
+                    p_save_state += section_length;
+               }
+          }
+          else if ( MEMCMP( section_header, ==, "NMT", 3 ) )
+          {
+               //********************* MAY BE A PARENT SECTION HEADER OR DATA HEADER ********************
+               if ( ! inside_img_section )
+               {
+                    uLongf dest_len = 50000 - (p_save_state - save_state);
+                    int    ret;
+
+                    if ( *p_data )
+                    {
+                         *p_save_state = *p_data;
+                         p_save_state++;
+
+                         if ( (ret = uncompress( p_save_state, &dest_len, p_data + 1, section_length - 1)) != Z_OK )
+                         {
+                              sprintf( error_message, "Cannot uncompress NMT data: %s", zerror(ret) );
+
+                              return bl_False;
+                         }
+
+                         p_data       += section_length;
+                         p_save_state += dest_len;
+                    }
+                    else
+                    {
+                         p_data       += section_length;
+                         p_save_state += section_length;
+                    }
+               }
+          }
+          else if ( MEMCMP( section_header, ==, "WRM", 3 ) )
+          {
+               uLongf dest_len = 50000 - (p_save_state - save_state);
+               int    ret;
+
+               if ( *p_data )
+               {
+                    *p_save_state = *p_data;
+                    p_save_state++;
+
+                    if ( (ret = uncompress( p_save_state, &dest_len, p_data + 1, section_length - 1)) != Z_OK )
+                    {
+                         sprintf( error_message, "Cannot uncompress WRM data: %s", zerror(ret) );
+
+                         return bl_False;
+                    }
+
+                    p_data       += section_length;
+                    p_save_state += dest_len;
+               }
+               else
+               {
+                    p_data       += section_length;
+                    p_save_state += section_length;
+               }
+          }
+          else if ( MEMCMP( section_header, ==, "VRM", 3 ) )
+          {
+               uLongf dest_len = 50000 - (p_save_state - save_state);
+               int    ret;
+
+               if ( *p_data )
+               {
+                    *p_save_state = *p_data;
+                    p_save_state++;
+
+                    if ( (ret = uncompress( p_save_state, &dest_len, p_data + 1, section_length - 1)) != Z_OK )
+                    {
+                         sprintf( error_message, "Cannot uncompress VRM data: %s", zerror(ret) );
+
+                         return bl_False;
+                    }
+
+                    p_data       += section_length;
+                    p_save_state += dest_len;
+               }
+               else
+               {
+                    p_data       += section_length;
+                    p_save_state += dest_len;
+               }
+          }
+          else
+          {
+               memcpy( p_save_state, p_data, section_length );
+
+               p_data       += section_length;
+               p_save_state += section_length;
+          }
+     }
+
+     *save_state_size = p_save_state - save_state;
+}
+
+unsigned char *readNstSaveState( const char *filename, int *save_state_size )
+{
+     unsigned char *save_state = NULL;
+     unsigned char *filedata   = NULL;
+     struct   stat  filestats  = { 0 };
+     /**/     int   filesize   = 0;
+
+     clearErrorMessage();
+
+     if ( stat( filename, &filestats ) < 0 )
+     {
+          sprintf( error_message, "Cannot stat file <%s>: %s", filename, strerror(errno) );
+
+          return NULL;
+     }
+
+     filesize = filestats.st_size;
+
+     if ( (filedata = readFile( filename, filesize )) == NULL ) return NULL;
+
+     if ( (save_state = malloc( 50000 )) == NULL )
+     {
+          sprintf( error_message, "Cannot allocate memory for save state data" );
+
+          free( filedata );
+
+          return NULL;
+     }
+
+     if ( ! loadSaveState( save_state, save_state_size, filedata, filesize ) )
+     {
+          free( filedata   );
+          free( save_state );
+
+          return NULL;
+     }
+
+     free( filedata );
+
+     return save_state;
+}
+
+boolean_e writeNstSaveState( const char *filename, const unsigned char *save_state, const size_t size )
+{
+     return writeFile( filename, save_state, size );
 }

@@ -2,12 +2,15 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include "file_formats.h"
+#include "save_state.h"
 #include "schedule.h"
 #include "unit_test.h"
 
 static char *result;
-static char  tsbrom_file_name  [50];
-static char  schedule_file_name[50];
+static char  tsbrom_file_name        [50];
+static char  schedule_file_name      [50];
+static char  save_state_file_name    [50];
+static char  compressed_ss_file_name [50];
 
 static char *readTsbRom_ShouldReturnAPointerToATsbRomObject_GivenAFilename()
 {
@@ -122,6 +125,44 @@ static char *writeSchedule_ShouldCreateAScheduleCSVFile_GivenAScheduleAndAFilena
      return NULL;
 }
 
+static char *readNstSaveState_ShouldReturnAPointerToABufferContainingTheSaveState_GivenAFilename()
+{
+     int len;
+
+     assertNotNull( readNstSaveState( save_state_file_name, &len ) );
+
+     assertEquals( 13165, len );
+
+     return NULL;
+}
+
+static char *readNstSaveState_ShouldUncompressASaveStateThatIsCompressed_GivenAFilenameContainingCompressedSaveState()
+{
+     int len;
+
+     assertNotNull( readNstSaveState( compressed_ss_file_name, &len ) );
+
+     assertEquals( 13165, len );
+
+     return NULL;
+}
+
+static char *writeNstSaveState_ShouldCreateASaveState_GivenASaveStateALengthAndFilename()
+{
+     unsigned char save_state[13165];
+     /**/     char temp_file_name[999 + 1] = { 0 };
+
+     sprintf( temp_file_name, "%s.tmp", save_state_file_name );
+
+     assertEquals( bl_True, writeNstSaveState( temp_file_name, save_state, 13165 ) );
+
+     assertEquals( 0, access( temp_file_name, F_OK ) );
+
+     unlink( temp_file_name );
+
+     return NULL;
+}
+
 static void check_file_utils_error()
 {
      printf( "file utils error: %s\n", getFileUtilsError() );
@@ -143,6 +184,10 @@ static void run_all_tests()
      run_test( hex2number_ShouldReturnTheNumberValue_GivenAHexValue,      null );
 
      run_test( writeSchedule_ShouldCreateAScheduleCSVFile_GivenAScheduleAndAFilename, check_file_utils_error );
+
+     run_test( readNstSaveState_ShouldReturnAPointerToABufferContainingTheSaveState_GivenAFilename,                     check_file_utils_error );
+     run_test( readNstSaveState_ShouldUncompressASaveStateThatIsCompressed_GivenAFilenameContainingCompressedSaveState, check_file_utils_error );
+     run_test( writeNstSaveState_ShouldCreateASaveState_GivenASaveStateALengthAndFilename,                              check_file_utils_error );
 }
 
 
@@ -155,8 +200,10 @@ int main( int argc, char *argv[] )
           return EXIT_FAILURE;
      }
 
-     sprintf( tsbrom_file_name,   "%s/%s", argv[1], "tsb_test.nes"     );
-     sprintf( schedule_file_name, "%s/%s", argv[1], "tsb_schedule.csv" );
+     sprintf( tsbrom_file_name,        "%s/%s", argv[1], "tsb_test.nes"            );
+     sprintf( schedule_file_name,      "%s/%s", argv[1], "tsb_schedule.csv"        );
+     sprintf( save_state_file_name,    "%s/%s", argv[1], "tsb_test.nst"            );
+     sprintf( compressed_ss_file_name, "%s/%s", argv[1], "tsb_test_compressed.nst" );
 
      run_all_tests();
 
