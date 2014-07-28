@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <zlib.h>
 #include "file_formats.h"
+#include "save_state.h"
 #include "schedule.h"
 
 #define MEMCMP( A, OP, B, L ) (memcmp( (A), (B), (L) ) OP 0)
@@ -707,4 +708,46 @@ unsigned char *readNstSaveState( const char *filename, int *save_state_size )
 boolean_e writeNstSaveState( const char *filename, const unsigned char *save_state, const size_t size )
 {
      return writeFile( filename, save_state, size );
+}
+
+
+nst_save_state_s *getSaveStateStats( const unsigned char *save_state, const size_t length )
+{
+     if ( save_state == NULL ) return NULL;
+
+     // NST -> IMG -> MPR -> WRM
+     const unsigned char *p_state        = save_state;
+     const unsigned char *section_header = NULL;
+     /**/           int   section_length = 0;
+
+     while ( (p_state - save_state) <= length )
+     {
+          section_header = p_state;
+          section_length = dword2int( p_state + 4 );
+
+          p_state += 8;
+
+          if      ( MEMCMP( section_header, ==, "NST\x1A", 4 ) )
+          {
+               // do nothing - file header
+          }
+          else if ( MEMCMP( section_header, ==, "IMG", 3 ) )
+          {
+               // do nothing - parent section header
+          }
+          else if ( MEMCMP( section_header, ==, "MPR", 3 ) )
+          {
+               // do nothing - parent section header
+          }
+          else if ( MEMCMP( section_header, ==, "WRM", 3 ) )
+          {
+               return (nst_save_state_s *)p_state + 1; // skip the single byte compression flag
+          }
+          else
+          {
+               p_state += section_length;
+          }
+     }
+
+     return NULL;
 }
