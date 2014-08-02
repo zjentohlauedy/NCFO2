@@ -120,6 +120,9 @@ typedef struct
      team_offense_stats_s *offense_stats;
      team_defense_stats_s *defense_stats;
      team_kicking_stats_s *kicking_stats;
+     // Simulation data:
+     int                   sim_offense;
+     int                   sim_defense;
 
 } team_s;
 

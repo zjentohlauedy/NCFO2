@@ -44,5 +44,6 @@ C/test_organization_service
 C/test_file_utils
 C/test_populate_roms
 C/test_generate_schedule
+C/test_convert_organization
 C/export_season
 C/decompress_save_state

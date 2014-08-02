@@ -170,6 +170,8 @@ typedef struct
      int         player_id;
      int         kicking_ability;
      int         avoid_kick_block;
+     // Simulation data:
+     int         sim_kicking;
 
 } player_kicking_ratings_s;
 
@@ -178,6 +180,9 @@ typedef struct
      int         player_id;
      int         interceptions;
      int         quickness;
+     // Simulation data:
+     int         sim_pass_rush;
+     int         sim_coverage;
 
 } player_defense_ratings_s;
 
@@ -186,6 +191,11 @@ typedef struct
      int         player_id;
      int         ball_control;
      int         receiving;
+     // Simulation data:
+     int         sim_rush;
+     int         sim_catch;
+     int         sim_yards;
+     int         sim_target;
 
 } player_offense_ratings_s;
 
@@ -196,6 +206,10 @@ typedef struct
      int         pass_control;
      int         pass_accuracy;
      int         avoid_pass_block;
+     // Simulation data:
+     int         sim_rush;
+     int         sim_pass;
+     int         sim_pocket;
 
 } player_quarterback_ratings_s;
 

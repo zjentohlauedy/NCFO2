@@ -49,6 +49,35 @@ static char *uppercase_ShouldReturnACopyOfTheStringInAllUppercase_GivenAString()
      return NULL;
 }
 
+static char *word2int_ShouldReturnTheConvertedIntValue_GivenATwoByteWord()
+{
+     unsigned char word1[2] = {    0,    0 };
+     unsigned char word2[2] = {   12,   32 };
+     unsigned char word3[2] = { 0x57, 0x84 };
+     unsigned char word4[2] = { 0x22, 0xfc };
+     unsigned char word5[2] = { 0xa3, 0xd8 };
+
+     assertEquals( 0x0000, word2int( word1 ) );
+     assertEquals( 0x200c, word2int( word2 ) );
+     assertEquals( 0x8457, word2int( word3 ) );
+     assertEquals( 0xfc22, word2int( word4 ) );
+     assertEquals( 0xd8a3, word2int( word5 ) );
+
+     return NULL;
+}
+
+static char *int2word_ShouldSetTheWordValue_GivenAWordAndAnInToConvert()
+{
+     unsigned char word[2] = { 0, 0 };
+
+     int2word( 0xa852, word );
+
+     assertEquals( 0x52, word[0] );
+     assertEquals( 0xa8, word[1] );
+
+     return NULL;
+}
+
 static char *pointer2int_ShouldReturnTheConvertedIntValue_GivenANesPointer()
 {
      nes_pointer_s pointer1 = {    0,    0 };
@@ -195,6 +224,8 @@ static void run_all_tests()
      run_test( lowercase_ShouldReturnACopyOfTheStringInAllLowercase_GivenAString, null );
      run_test( uppercase_ShouldReturnACopyOfTheStringInAllUppercase_GivenAString, null );
 
+     run_test( word2int_ShouldReturnTheConvertedIntValue_GivenATwoByteWord,              null );
+     run_test( int2word_ShouldSetTheWordValue_GivenAWordAndAnInToConvert,                null );
      run_test( pointer2int_ShouldReturnTheConvertedIntValue_GivenANesPointer,            null );
      run_test( int2pointer_ShouldSetTheNesPointerValue_GivenANesPointerAndAnInToConvert, null );
 

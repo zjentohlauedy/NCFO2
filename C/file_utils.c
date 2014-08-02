@@ -166,6 +166,19 @@ char *uppercase( const char *s )
 }
 
 
+int  word2int( const unsigned char *word )
+{
+     return (word[1] << 8) + word[0];
+}
+
+
+void int2word( const int value, unsigned char *word )
+{
+     word[0] = (value & 0x000000ff);
+     word[1] = (value & 0x0000ff00)>>8;
+}
+
+
 int  pointer2int( const nes_pointer_s *ptr )
 {
      return (ptr->value[1] << 8) + ptr->value[0];

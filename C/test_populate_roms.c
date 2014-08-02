@@ -256,27 +256,27 @@ static char *populateRoms_ShouldWriteThePlayerRatingsInTheTeamPlayerRatingsSecti
      player1 = org->conferences[0].conference->teams[0].team->players[0].player;
      player2 = org->conferences[0].conference->teams[0].team->players[1].player;
 
-     assertEquals( player1->face,                tsbrom1.team_player_ratings[0].qb1.player.face[0]            );
-     assertEquals( player1->ratings->run_speed,  tsbrom1.team_player_ratings[0].qb1.player.ratings[0]  & 0x0f );
-     assertEquals( player1->ratings->rush_power, tsbrom1.team_player_ratings[0].qb1.player.ratings[0] >>    4 );
-     assertEquals( player1->ratings->max_speed,  tsbrom1.team_player_ratings[0].qb1.player.ratings[1] >>    4 );
-     assertEquals( player1->ratings->hit_power,  tsbrom1.team_player_ratings[0].qb1.player.ratings[1]  & 0x0f );
+     assertEquals( player1->face,                tsbrom1.team_player_ratings[0].quarterback[0].player.face[0]            );
+     assertEquals( player1->ratings->run_speed,  tsbrom1.team_player_ratings[0].quarterback[0].player.ratings[0]  & 0x0f );
+     assertEquals( player1->ratings->rush_power, tsbrom1.team_player_ratings[0].quarterback[0].player.ratings[0] >>    4 );
+     assertEquals( player1->ratings->max_speed,  tsbrom1.team_player_ratings[0].quarterback[0].player.ratings[1] >>    4 );
+     assertEquals( player1->ratings->hit_power,  tsbrom1.team_player_ratings[0].quarterback[0].player.ratings[1]  & 0x0f );
 
-     assertEquals( player1->extra_ratings.quarterback->pass_speed,       tsbrom1.team_player_ratings[0].qb1.qb_ratings[0] >>    4 );
-     assertEquals( player1->extra_ratings.quarterback->pass_control,     tsbrom1.team_player_ratings[0].qb1.qb_ratings[0]  & 0x0f );
-     assertEquals( player1->extra_ratings.quarterback->pass_accuracy,    tsbrom1.team_player_ratings[0].qb1.qb_ratings[1] >>    4 );
-     assertEquals( player1->extra_ratings.quarterback->avoid_pass_block, tsbrom1.team_player_ratings[0].qb1.qb_ratings[1]  & 0x0f );
+     assertEquals( player1->extra_ratings.quarterback->pass_speed,       tsbrom1.team_player_ratings[0].quarterback[0].qb_ratings[0] >>    4 );
+     assertEquals( player1->extra_ratings.quarterback->pass_control,     tsbrom1.team_player_ratings[0].quarterback[0].qb_ratings[0]  & 0x0f );
+     assertEquals( player1->extra_ratings.quarterback->pass_accuracy,    tsbrom1.team_player_ratings[0].quarterback[0].qb_ratings[1] >>    4 );
+     assertEquals( player1->extra_ratings.quarterback->avoid_pass_block, tsbrom1.team_player_ratings[0].quarterback[0].qb_ratings[1]  & 0x0f );
 
-     assertEquals( player2->face,                tsbrom1.team_player_ratings[0].qb2.player.face[0]            );
-     assertEquals( player2->ratings->run_speed,  tsbrom1.team_player_ratings[0].qb2.player.ratings[0]  & 0x0f );
-     assertEquals( player2->ratings->rush_power, tsbrom1.team_player_ratings[0].qb2.player.ratings[0] >>    4 );
-     assertEquals( player2->ratings->max_speed,  tsbrom1.team_player_ratings[0].qb2.player.ratings[1] >>    4 );
-     assertEquals( player2->ratings->hit_power,  tsbrom1.team_player_ratings[0].qb2.player.ratings[1]  & 0x0f );
+     assertEquals( player2->face,                tsbrom1.team_player_ratings[0].quarterback[1].player.face[0]            );
+     assertEquals( player2->ratings->run_speed,  tsbrom1.team_player_ratings[0].quarterback[1].player.ratings[0]  & 0x0f );
+     assertEquals( player2->ratings->rush_power, tsbrom1.team_player_ratings[0].quarterback[1].player.ratings[0] >>    4 );
+     assertEquals( player2->ratings->max_speed,  tsbrom1.team_player_ratings[0].quarterback[1].player.ratings[1] >>    4 );
+     assertEquals( player2->ratings->hit_power,  tsbrom1.team_player_ratings[0].quarterback[1].player.ratings[1]  & 0x0f );
 
-     assertEquals( player2->extra_ratings.quarterback->pass_speed,       tsbrom1.team_player_ratings[0].qb2.qb_ratings[0] >>    4 );
-     assertEquals( player2->extra_ratings.quarterback->pass_control,     tsbrom1.team_player_ratings[0].qb2.qb_ratings[0]  & 0x0f );
-     assertEquals( player2->extra_ratings.quarterback->pass_accuracy,    tsbrom1.team_player_ratings[0].qb2.qb_ratings[1] >>    4 );
-     assertEquals( player2->extra_ratings.quarterback->avoid_pass_block, tsbrom1.team_player_ratings[0].qb2.qb_ratings[1]  & 0x0f );
+     assertEquals( player2->extra_ratings.quarterback->pass_speed,       tsbrom1.team_player_ratings[0].quarterback[1].qb_ratings[0] >>    4 );
+     assertEquals( player2->extra_ratings.quarterback->pass_control,     tsbrom1.team_player_ratings[0].quarterback[1].qb_ratings[0]  & 0x0f );
+     assertEquals( player2->extra_ratings.quarterback->pass_accuracy,    tsbrom1.team_player_ratings[0].quarterback[1].qb_ratings[1] >>    4 );
+     assertEquals( player2->extra_ratings.quarterback->avoid_pass_block, tsbrom1.team_player_ratings[0].quarterback[1].qb_ratings[1]  & 0x0f );
 
      free_organization( org );
 

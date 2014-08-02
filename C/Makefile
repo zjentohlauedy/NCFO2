@@ -39,7 +39,8 @@ tests = \
    test_player_service \
    test_team_service \
    test_conference_service \
-   test_organization_service
+   test_organization_service \
+   test_convert_organization
 
 ALL: PROGS TESTS
 
@@ -146,6 +147,8 @@ test_conference_service: test_conference_service.o libncfodata.a libncfobuilders
 test_organization_service: test_organization_service.o libncfodata.a libncfobuilders.a libncfocompares.a
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfodata -lncfobuilders -lncfocompares
 
+test_convert_organization: test_convert_organization.o convert_organization.o file_utils.o libncfodata.a
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfodata
 
 NCFODATA_OBJECTS = \
  sql_query.o \

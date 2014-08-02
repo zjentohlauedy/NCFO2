@@ -71,36 +71,11 @@ typedef struct
 
 typedef struct
 {
-     tsb_qb_ratings_s     qb1;
-     tsb_qb_ratings_s     qb2;
-     tsb_off_ratings_s    rb1;
-     tsb_off_ratings_s    rb2;
-     tsb_off_ratings_s    rb3;
-     tsb_off_ratings_s    rb4;
-     tsb_off_ratings_s    wr1;
-     tsb_off_ratings_s    wr2;
-     tsb_off_ratings_s    wr3;
-     tsb_off_ratings_s    wr4;
-     tsb_off_ratings_s    te1;
-     tsb_off_ratings_s    te2;
-     tsb_player_ratings_s c;
-     tsb_player_ratings_s lg;
-     tsb_player_ratings_s rg;
-     tsb_player_ratings_s lt;
-     tsb_player_ratings_s rt;
-     tsb_def_ratings_s    re;
-     tsb_def_ratings_s    nt;
-     tsb_def_ratings_s    le;
-     tsb_def_ratings_s    rolb;
-     tsb_def_ratings_s    rilb;
-     tsb_def_ratings_s    lilb;
-     tsb_def_ratings_s    lolb;
-     tsb_def_ratings_s    rcb;
-     tsb_def_ratings_s    lcb;
-     tsb_def_ratings_s    fs;
-     tsb_def_ratings_s    ss;
-     tsb_kick_ratings_s   k;
-     tsb_kick_ratings_s   p;
+     tsb_qb_ratings_s     quarterback [  2 ];
+     tsb_off_ratings_s    offense     [ 10 ];
+     tsb_player_ratings_s linesmen    [  5 ];
+     tsb_def_ratings_s    defense     [ 11 ];
+     tsb_kick_ratings_s   kickers     [  2 ];
 
 } tsb_ratings_team_s;
 
@@ -249,6 +224,9 @@ boolean_e populateRoms( tsbrom_s *rom1, tsbrom_s *rom2, const organization_s *or
 
 char *lowercase( const char *s );
 char *uppercase( const char *s );
+
+int  word2int(                  const unsigned char *word );
+void int2word( const int value,       unsigned char *word );
 
 int  pointer2int(                  const nes_pointer_s *ptr );
 void int2pointer( const int value,       nes_pointer_s *ptr );
