@@ -90,10 +90,13 @@ typedef struct
      bowl_game_e  bowl_game;
      int          wins;
      int          losses;
+     int          ties;
      int          home_wins;
      int          home_losses;
+     int          home_ties;
      int          road_wins;
      int          road_losses;
+     int          road_ties;
      int          points_scored;
      int          points_allowed;
 

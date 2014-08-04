@@ -871,6 +871,7 @@ static team_stats_s *convertTeamStats(
      stats->bowl_game      =           bowl;
      stats->wins           =           tsb_stats->wins[0];
      stats->losses         =           tsb_stats->losses[0];
+     stats->ties           =           tsb_stats->ties[0];
      stats->points_scored  = word2int( tsb_stats->points_scored  );
      stats->points_allowed = word2int( tsb_stats->points_allowed );
 

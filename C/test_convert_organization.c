@@ -347,10 +347,13 @@ static char *convertOrganization_ShouldReturnAnOrganizationObjectWithTeamsWithSt
           assertEquals( bg_OrangeBowl, stats->bowl_game      );
           assertEquals( 6,             stats->wins           );
           assertEquals( 3,             stats->losses         );
+          assertEquals( 1,             stats->ties           );
           assertEquals( 0,             stats->home_wins      );
           assertEquals( 0,             stats->home_losses    );
+          assertEquals( 0,             stats->home_ties      );
           assertEquals( 0,             stats->road_wins      );
           assertEquals( 0,             stats->road_losses    );
+          assertEquals( 0,             stats->road_ties      );
           assertEquals( 321,           stats->points_scored  );
           assertEquals( 123,           stats->points_allowed );
      }

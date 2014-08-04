@@ -24,10 +24,13 @@ void buildIntoTeamStats( team_stats_s *team_stats, const int team_id, const int 
 
      team_stats->wins           = rand() %   10;
      team_stats->losses         = rand() %   10;
+     team_stats->ties           = rand() %   10;
      team_stats->home_wins      = rand() %    5;
      team_stats->home_losses    = rand() %    5;
+     team_stats->home_ties      = rand() %    5;
      team_stats->road_wins      = rand() %    5;
      team_stats->road_losses    = rand() %    5;
+     team_stats->road_ties      = rand() %    5;
      team_stats->points_scored  = rand() %  500;
      team_stats->points_allowed = rand() %  500;
 }

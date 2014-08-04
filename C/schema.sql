@@ -78,10 +78,13 @@ CREATE TABLE Team_Stats_T
    Bowl_Game      INTEGER,
    Wins           INTEGER,
    Losses         INTEGER,
+   Ties           INTEGER,
    Home_Wins      INTEGER,
    Home_Losses    INTEGER,
+   Home_Ties      INTEGER,
    Road_Wins      INTEGER,
    Road_Losses    INTEGER,
+   Road_Ties      INTEGER,
    Points_Scored  INTEGER,
    Points_Allowed INTEGER,
 --

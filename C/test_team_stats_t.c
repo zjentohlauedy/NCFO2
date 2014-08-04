@@ -18,7 +18,7 @@ static int load_team_stats_data( void *output, int cols, char *data[], char *nam
 
      team_stats_s **ts = (team_stats_s **)output;
 
-     if ( cols < 11 ) return SQLITE_ERROR;
+     if ( cols < 14 ) return SQLITE_ERROR;
 
      memset( &team_stats, '\0', sizeof(team_stats_s) );
 
@@ -27,12 +27,15 @@ static int load_team_stats_data( void *output, int cols, char *data[], char *nam
      team_stats.bowl_game       = atoi( data[ 2] );
      team_stats.wins            = atoi( data[ 3] );
      team_stats.losses          = atoi( data[ 4] );
-     team_stats.home_wins       = atoi( data[ 5] );
-     team_stats.home_losses     = atoi( data[ 6] );
-     team_stats.road_wins       = atoi( data[ 7] );
-     team_stats.road_losses     = atoi( data[ 8] );
-     team_stats.points_scored   = atoi( data[ 9] );
-     team_stats.points_allowed  = atoi( data[10] );
+     team_stats.ties            = atoi( data[ 5] );
+     team_stats.home_wins       = atoi( data[ 6] );
+     team_stats.home_losses     = atoi( data[ 7] );
+     team_stats.home_ties       = atoi( data[ 8] );
+     team_stats.road_wins       = atoi( data[ 9] );
+     team_stats.road_losses     = atoi( data[10] );
+     team_stats.road_ties       = atoi( data[11] );
+     team_stats.points_scored   = atoi( data[12] );
+     team_stats.points_allowed  = atoi( data[13] );
 
      *ts = &team_stats;
 
@@ -57,17 +60,20 @@ static void insert_a_team_stats( team_stats_s *team_stats )
      char query[999+1];
 
 
-     snprintf( query, sizeof(query), "insert into team_stats_t (team_id, season, bowl_game, wins, losses, home_wins, home_losses, road_wins, road_losses, points_scored, points_allowed)"
-               "values (%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d)",
+     snprintf( query, sizeof(query), "insert into team_stats_t (team_id, season, bowl_game, wins, losses, ties, home_wins, home_losses, home_ties, road_wins, road_losses, road_ties, points_scored, points_allowed)"
+               "values (%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d)",
                team_stats->team_id,
                team_stats->season,
                team_stats->bowl_game,
                team_stats->wins,
                team_stats->losses,
+               team_stats->ties,
                team_stats->home_wins,
                team_stats->home_losses,
+               team_stats->home_ties,
                team_stats->road_wins,
                team_stats->road_losses,
+               team_stats->road_ties,
                team_stats->points_scored,
                team_stats->points_allowed );
 
@@ -102,10 +108,13 @@ static char *team_stats_t_create__ShouldGiveAnErrorIfRecordForSameTeamSeasonAndB
 
      expected.wins            = 92;
      expected.losses          = 60;
+     expected.ties            = 54;
      expected.home_wins       = 50;
      expected.home_losses     = 26;
+     expected.home_ties       = 18;
      expected.road_wins       = 42;
      expected.road_losses     = 24;
+     expected.road_ties       = 13;
      expected.points_scored   = 199;
      expected.points_allowed  = 141;
 
@@ -178,10 +187,13 @@ static char *team_stats_t_update__ShouldModifyMatchingRecord_GivenTheTeamIdSeaso
 
      expected.wins            = 92;
      expected.losses          = 60;
+     expected.ties            = 54;
      expected.home_wins       = 50;
      expected.home_losses     = 26;
+     expected.home_ties       = 18;
      expected.road_wins       = 42;
      expected.road_losses     = 24;
+     expected.road_ties       = 13;
      expected.points_scored   = 199;
      expected.points_allowed  = 141;
 
