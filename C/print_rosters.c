@@ -97,14 +97,14 @@ static void printHeader( const position_e position )
           case pos_Quarterback:   printf( "      Quarterbacks          ATT  CMP    PCT   YDS   AVG  TD INT     QBR   ATT   YDS  TD\n" ); break;
                //                          QB  5 CIDADESRF, q.          12    7  000.0   168  00.0   3   0  000.00     1     9   0
 
-          case pos_Runningback:   printf( "      Runningbacks          ATT   YDS   AVG  TD   REC   YDS   AVG  TD    KR   YDS   AVG  TD    PR   YDS   AVG  TD\n" ); break;
-               //                          RB 34 UWKDDIY, mzpezp         9    48  00.0   1     2    58  00.0   0     0     0  00.0   0     0     0  00.0   0
+          case pos_Runningback:   printf( "      Runningbacks          ATT   YDS   AVG  TD   REC   YDS   AVG  TD\n" ); break;
+               //                          RB 34 UWKDDIY, mzpezp         9    48  00.0   1     2    58  00.0   0
 
-          case pos_WideReceiver:  printf( "      Wide Receivers        ATT   YDS   AVG  TD   REC   YDS   AVG  TD    KR   YDS   AVG  TD    PR   YDS   AVG  TD\n" ); break;
-               //                          WR 89 BBDWCGGAFOF, sdvdv      0     0  00.0   0     0     0  00.0   0     0     0  00.0   0     1     5  00.0   0
+          case pos_WideReceiver:  printf( "      Wide Receivers        ATT   YDS   AVG  TD   REC   YDS   AVG  TD\n" ); break;
+               //                          WR 89 BBDWCGGAFOF, sdvdv      0     0  00.0   0     0     0  00.0   0
 
-          case pos_TightEnd:      printf( "      Tight Ends            ATT   YDS   AVG  TD   REC   YDS   AVG  TD    KR   YDS   AVG  TD    PR   YDS   AVG  TD\n" ); break;
-               //                          TE 85 FEVSHLGWWWQ, u.         0     0  00.0   0     1    20  00.0   1     0     0  00.0   0     0     0  00.0   0
+          case pos_TightEnd:      printf( "      Tight Ends            ATT   YDS   AVG  TD   REC   YDS   AVG  TD\n" ); break;
+               //                          TE 85 FEVSHLGWWWQ, u.         0     0  00.0   0     1    20  00.0   1
 
           case pos_OffensiveLine: printf( "      Offensive Linesmen\n" ); break;
                //                          OL 74 FCJNYMOWOGC, goqse
@@ -404,22 +404,6 @@ static void printPlayer( const player_s *player )
                     printf( "  %2d", offense->receiving_touchdowns );
                }
 
-               if ( player->stats.returns != NULL )
-               {
-                    player_returns_stats_s *returns = player->stats.returns;
-
-                    float yards_per_kr = (returns->kick_returns == 0) ? 0.0 : ((float)returns->kick_return_yards / (float)returns->kick_returns);
-                    float yards_per_pr = (returns->punt_returns == 0) ? 0.0 : ((float)returns->punt_return_yards / (float)returns->punt_returns);
-
-                    printf( "   %3d  %4d", returns->kick_returns, returns->kick_return_yards );
-                    printf( "  %4.1f", yards_per_kr );
-                    printf( "  %2d", returns->kick_return_touchdowns );
-
-                    printf( "   %3d  %4d", returns->punt_returns, returns->punt_return_yards );
-                    printf( "  %4.1f", yards_per_pr );
-                    printf( "  %2d", returns->punt_return_touchdowns );
-               }
-
                break;
 
           case pos_DefensiveLine:
@@ -484,7 +468,7 @@ static void printTeam( const team_s *team )
                printf( "  %2d - %2d - %2d", team->stats->wins, team->stats->losses, team->stats->ties );
           }
 
-          printf( "\n\n" );
+          printf( "\n" );
      }
 
      if ( team->players == NULL ) return;
@@ -501,6 +485,42 @@ static void printTeam( const team_s *team )
           }
 
           printPlayer( team->players[i].player );
+     }
+
+     if ( print_style == ps_Stats )
+     {
+          printf( "\n" );
+          printf( "      Returners              KR   YDS   AVG  TD    PR   YDS   AVG  TD\n" );
+          //       RB 34 UWKDDIY, mzpezp         0     0  00.0   0     0     0  00.0   0
+
+          for ( int i = 0; team->players[i].player != NULL; ++i )
+          {
+               player_s *player = team->players[i].player;
+
+               if ( player->stats.returns == NULL ) continue;
+
+               player_returns_stats_s *returns = player->stats.returns;
+
+               if ( returns->kick_returns <= 0  &&  returns->punt_returns <= 0 ) continue;
+
+               char display_name[30 + 1] = { 0 };
+
+               sprintf( display_name, "%s, %s", player->last_name, player->first_name );
+
+               printf( "%-2s %2d %-20s", getDisplayPosition( player->position ), player->number, display_name );
+
+               float yards_per_kr = (returns->kick_returns == 0) ? 0.0 : ((float)returns->kick_return_yards / (float)returns->kick_returns);
+               float yards_per_pr = (returns->punt_returns == 0) ? 0.0 : ((float)returns->punt_return_yards / (float)returns->punt_returns);
+
+               printf( "  %3d  %4d", returns->kick_returns, returns->kick_return_yards );
+               printf( "  %4.1f", yards_per_kr );
+               printf( "  %2d", returns->kick_return_touchdowns );
+
+               printf( "   %3d  %4d", returns->punt_returns, returns->punt_return_yards );
+               printf( "  %4.1f", yards_per_pr );
+               printf( "  %2d", returns->punt_return_touchdowns );
+               printf( "\n" );
+          }
      }
 
      printf( "\n\n" );
