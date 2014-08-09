@@ -6,7 +6,8 @@ LDFLAGS = -L. -lm -lsqlite3 -lz
 
 progs = \
    export_season \
-   decompress_save_state
+   decompress_save_state \
+   print_rosters
 
 tests = \
    test_file_utils \
@@ -51,6 +52,10 @@ export_season: export_season.o file_utils.o populate_roms.o generate_schedule.o 
 
 decompress_save_state: decompress_save_state.o file_utils.o
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
+
+print_rosters: print_rosters.o file_utils.o convert_organization.o libncfodata.a
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfodata
+
 
 TESTS: $(tests) ncfo_test.db TAGS
 

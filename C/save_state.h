@@ -29,7 +29,7 @@ typedef struct
      unsigned char pass_yards                [ 1 ]; // lowest 8 bits of pass yards
      unsigned char rush_attempts             [ 1 ];
      unsigned char rush_yards                [ 1 ]; // lowest 8 bits of rush yards
-     unsigned char yards_modifiers           [ 1 ]; // bits 1-5 = highest 5 bits of pass yards; bits 6-8 = highest 3 bits of rush yards
+     unsigned char yards_modifiers           [ 1 ]; // bits 1-3 = highest 3 bits of rush yards; bits 4-8 = highest 5 bits of pass yards
      unsigned char rush_touchdowns           [ 1 ]; // bits 1 & 2 - ignored; bits 3-8 = rush td
 
 } nst_quarterback_s;
@@ -140,8 +140,10 @@ typedef struct
      unsigned char game_of_week [    1 ]; // 0x0759 - 0x0759
      nst_matchup_s matches      [   14 ]; // 0x075a - 0x0775
      unsigned char unknown3     [   56 ]; // 0x0776 - 0x07ad
-     nst_stats_s   stats        [   28 ]; // 0x07ae - 0x1e6d
-     unsigned char unknown4     [  402 ]; // 0x1e6e - 0x1fff
+     nst_stats_s   stats1       [    9 ]; // 0x07ae - 0x0efd
+     unsigned char unknown4     [  260 ]; // 0x0efe - 0x1001 - For some reason the teams are broken up by this empty space
+     nst_stats_s   stats2       [   19 ]; // 0x1002 - 0x1f71
+     unsigned char unknown5     [  142 ]; // 0x1f72 - 0x1fff
 
 } nst_save_state_s;
 

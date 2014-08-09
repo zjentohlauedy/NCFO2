@@ -89,10 +89,10 @@ static boolean_e convertQuarterback(
      off_stats->pass_attempts   = ((stats->pass_attempts_modifier    [0] &  0x03) << 8) + stats->pass_attempts    [0];
      off_stats->completions     = ((stats->pass_completions_modifier [0] &  0x03) << 8) + stats->pass_completions [0];
      off_stats->interceptions   =  (stats->pass_completions_modifier [0] >> 2   );
-     off_stats->pass_yards      = ((stats->yards_modifiers           [0] &  0x1f) << 8) + stats->pass_yards       [0];
+     off_stats->pass_yards      = ((stats->yards_modifiers           [0] &  0xf8) << 5) + stats->pass_yards       [0];
      off_stats->pass_touchdowns =  (stats->pass_attempts_modifier    [0] >> 2   );
      off_stats->rush_attempts   =   stats->rush_attempts             [0];
-     off_stats->rush_yards      = ((stats->yards_modifiers           [0] &  0xe0) << 3) + stats->rush_yards       [0];
+     off_stats->rush_yards      = ((stats->yards_modifiers           [0] &  0x07) << 8) + stats->rush_yards       [0];
      off_stats->rush_touchdowns =  (stats->rush_touchdowns           [0] >> 2   );
 
      if ( (player->ratings = convertPlayerRatings( &(tsb_ratings->player) )) == NULL )
@@ -664,7 +664,7 @@ static team_player_s *convertPlayers(
 
           players[i].player->player_id = players[i].player_id;
 
-          int rom_team_idx = team_idx % 28;
+          int rom_team_idx = team_idx % 24;
 
           int start_offset = pointer2int( &(rom->player_pointers[rom_team_idx][i    ]) ) - 0x86ca;
           int end_offset   = pointer2int( &(rom->player_pointers[rom_team_idx][i + 1]) ) - 0x86ca;
@@ -680,7 +680,10 @@ static team_player_s *convertPlayers(
 
           const tsb_ratings_team_s *team_player_ratings = &(rom->team_player_ratings[rom_team_idx]);
           const tsb_sim_data_s     *sim_data            = &(rom->sim_data[rom_team_idx]);
-          const nst_players_s      *player_stats        = save_state->stats[rom_team_idx].player_stats;
+          const nst_players_s      *player_stats        = NULL;
+
+          if ( rom_team_idx < 9 ) player_stats = save_state->stats1[rom_team_idx    ].player_stats;
+          else                    player_stats = save_state->stats2[rom_team_idx - 9].player_stats;
 
           switch ( i )
           {
@@ -776,9 +779,9 @@ static team_player_s *convertPlayers(
           case 21:
           case 22:
           case 23:
-               if ( ! convertLinebacker( &(team_player_ratings->defense[i - 20]),
-                                         sim_data, i - 20,
-                                         &(player_stats->defense[i - 20]),
+               if ( ! convertLinebacker( &(team_player_ratings->defense[i - 17]),
+                                         sim_data, i - 17,
+                                         &(player_stats->defense[i - 17]),
                                          season, bowl,
                                          players[i].player ) )
                {
@@ -790,9 +793,9 @@ static team_player_s *convertPlayers(
 
           case 24:
           case 25:
-               if ( ! convertCornerback( &(team_player_ratings->defense[i - 24]),
-                                         sim_data, i - 24,
-                                         &(player_stats->defense[i - 24]),
+               if ( ! convertCornerback( &(team_player_ratings->defense[i - 17]),
+                                         sim_data, i - 17,
+                                         &(player_stats->defense[i - 17]),
                                          season, bowl,
                                          players[i].player ) )
                {
@@ -804,9 +807,9 @@ static team_player_s *convertPlayers(
 
           case 26:
           case 27:
-               if ( ! convertSafety( &(team_player_ratings->defense[i - 26]),
-                                     sim_data, i - 26,
-                                     &(player_stats->defense[i - 26]),
+               if ( ! convertSafety( &(team_player_ratings->defense[i - 17]),
+                                     sim_data, i - 17,
+                                     &(player_stats->defense[i - 17]),
                                      season, bowl,
                                      players[i].player ) )
                {
@@ -933,7 +936,12 @@ static conference_team_s *convertTeams(
           teams[i].team->sim_offense = (rom->sim_data[rom_team_idx].team[0] >> 4   );
           teams[i].team->sim_defense = (rom->sim_data[rom_team_idx].team[0] &  0x0f);
 
-          teams[i].team->stats   = convertTeamStats( save_state->stats[rom_team_idx].team_stats, season, bowl, teams[i].team_id );
+          const nst_teams_s *team_stats = NULL;
+
+          if ( rom_team_idx < 9 ) team_stats = save_state->stats1[rom_team_idx    ].team_stats;
+          else                    team_stats = save_state->stats2[rom_team_idx - 9].team_stats;
+
+          teams[i].team->stats   = convertTeamStats( team_stats, season, bowl, teams[i].team_id );
           teams[i].team->players = convertPlayers( rom, save_state, season, bowl, team_idx );
      }
 

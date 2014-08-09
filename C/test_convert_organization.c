@@ -16,7 +16,11 @@ static void setupSaveState( nst_save_state_s *save_state )
 {
      for ( int i = 0; i < 28; ++i )
      {
-          nst_teams_s *team_stats = save_state->stats[i].team_stats;
+          int save_state_idx = (i < 9) ? i : i - 9;
+
+          nst_stats_s *stats = (i < 9) ? &(save_state->stats1[save_state_idx]) : &(save_state->stats2[save_state_idx]);
+
+          nst_teams_s *team_stats = stats->team_stats;
 
           team_stats->wins[0]   = 6;
           team_stats->losses[0] = 3;
@@ -27,7 +31,7 @@ static void setupSaveState( nst_save_state_s *save_state )
           int2word( 2321, team_stats->pass_yards_allowed );
           int2word( 1321, team_stats->rush_yards_allowed );
 
-          nst_players_s *player_stats = save_state->stats[i].player_stats;
+          nst_players_s *player_stats = stats->player_stats;
 
           for ( int j = 0; j < 2; ++j )
           {
@@ -38,7 +42,7 @@ static void setupSaveState( nst_save_state_s *save_state )
                player_stats->quarterback[j].pass_yards                [0] = 0x3e;
                player_stats->quarterback[j].rush_attempts             [0] = 0xa4;
                player_stats->quarterback[j].rush_yards                [0] = 0x5C;
-               player_stats->quarterback[j].yards_modifiers           [0] = 0x14 | 0xC0;
+               player_stats->quarterback[j].yards_modifiers           [0] = 0x06 | 0xa0;
                player_stats->quarterback[j].rush_touchdowns           [0] = 0x94;
           }
 
@@ -77,19 +81,19 @@ static void setupSaveState( nst_save_state_s *save_state )
           player_stats->punter[0].punt_yards_modifier [0] = 0x0c;
 
           // 00 00 11 11  11 11 00 00  00 00 11 11
-          save_state->stats[i].injuries[0] = 0x0f;
-          save_state->stats[i].injuries[1] = 0xf0;
-          save_state->stats[i].injuries[2] = 0x0f;
+          stats->injuries[0] = 0x0f;
+          stats->injuries[1] = 0xf0;
+          stats->injuries[2] = 0x0f;
 
           // 00 00 01 01  01 01 10 10  10 10 11 11  00 00 00 00  00 01 01 01  10 10 10 10  11 11 00 00  01 10 - 0101
-          save_state->stats[i].conditions[0] = 0x05;
-          save_state->stats[i].conditions[1] = 0x5a;
-          save_state->stats[i].conditions[2] = 0xaf;
-          save_state->stats[i].conditions[3] = 0x00;
-          save_state->stats[i].conditions[4] = 0x15;
-          save_state->stats[i].conditions[5] = 0xaa;
-          save_state->stats[i].conditions[6] = 0xf0;
-          save_state->stats[i].conditions[7] = 0x65;
+          stats->conditions[0] = 0x05;
+          stats->conditions[1] = 0x5a;
+          stats->conditions[2] = 0xaf;
+          stats->conditions[3] = 0x00;
+          stats->conditions[4] = 0x15;
+          stats->conditions[5] = 0xaa;
+          stats->conditions[6] = 0xf0;
+          stats->conditions[7] = 0x65;
      }
 }
 

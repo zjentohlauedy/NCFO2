@@ -198,6 +198,15 @@ int dword2int( const unsigned char *dword )
 }
 
 
+void int2dword( const int value, unsigned char *dword )
+{
+     dword[0] = (value & 0x000000ff);
+     dword[1] = (value & 0x0000ff00) >>  8;
+     dword[2] = (value & 0x00ff0000) >> 16;
+     dword[3] = (value & 0xff000000) >> 24;
+}
+
+
 int number2hex( const int number )
 {
      if ( number > 99 ) return -1;
@@ -332,6 +341,132 @@ static char *zerror( const int error )
      case Z_DATA_ERROR: return "Data cannot be uncompressed possibly corrupted or incomplete";
      default:           return "Unknown error";
      }
+}
+
+static boolean_e loadSaveState2( unsigned char *save_state, int *save_state_size, const unsigned char *data, const size_t datasize )
+{
+     const  unsigned char      *p_data             = data;
+     /**/   unsigned char      *p_save_state       = save_state;
+     const  unsigned char      *section_header     = NULL;
+     /**/            int        section_length     = 0;
+     /**/            int        real_section_len   = 0;
+
+     while ( (p_data - data) < datasize )
+     {
+          section_header = p_data;
+          section_length = dword2int( p_data + 4 );
+
+          memcpy( p_save_state, p_data, 8 );
+
+          p_data       += 8;
+          p_save_state += 8;
+
+          if      ( MEMCMP( section_header, ==, "NST\x1A", 4 ) ||
+                    MEMCMP( section_header, ==, "CPU",     3 ) ||
+                    MEMCMP( section_header, ==, "APU",     3 ) ||
+                    MEMCMP( section_header, ==, "PPU",     3 ) ||
+                    MEMCMP( section_header, ==, "IMG",     3 ) ||
+                    MEMCMP( section_header, ==, "SQ0",     3 ) ||
+                    MEMCMP( section_header, ==, "SQ1",     3 ) ||
+                    MEMCMP( section_header, ==, "TRI",     3 ) ||
+                    MEMCMP( section_header, ==, "NOI",     3 ) ||
+                    MEMCMP( section_header, ==, "DMC",     3 ) ||
+                    MEMCMP( section_header, ==, "MPR",     3 ) ||
+                    MEMCMP( section_header, ==, "PRG",     3 ) ||
+                    MEMCMP( section_header, ==, "CHR",     3 ) ||
+                    MEMCMP( section_header, ==, "WRK",     3 ) ||
+                    MEMCMP( section_header, ==, "POW",     3 )    )
+          {
+               if ( ! loadSaveState2( p_save_state, &real_section_len, p_data, section_length )) return bl_False;
+
+               int2dword( real_section_len, p_save_state - 4 );
+
+               p_data       += section_length;
+               p_save_state += real_section_len;
+          }
+          else if ( MEMCMP( section_header, ==, "NMT", 3 ) )
+          {
+               if ( isupper( *p_data ) )
+               {
+                    // Section header
+                    if ( ! loadSaveState2( p_save_state, &real_section_len, p_data, section_length )) return bl_False;
+
+                    int2dword( real_section_len, p_save_state - 4 );
+
+                    p_data       += section_length;
+                    p_save_state += real_section_len;
+               }
+               else
+               {
+                    uLongf dest_len = 50000 - (p_save_state - save_state);
+                    int    ret;
+
+                    if ( *p_data )
+                    {
+                         *p_save_state = 0;
+                         p_save_state++;
+
+                         if ( (ret = uncompress( p_save_state, &dest_len, p_data + 1, section_length - 1)) != Z_OK )
+                         {
+                              sprintf( error_message, "Cannot uncompress NMT data: %s", zerror(ret) );
+
+                              return bl_False;
+                         }
+
+                         int2dword( dest_len + 1, p_save_state - 5 );
+
+                         p_data       += section_length;
+                         p_save_state += dest_len;
+                    }
+                    else
+                    {
+                         p_data       += section_length;
+                         p_save_state += section_length;
+                    }
+               }
+          }
+          else if ( MEMCMP( section_header, ==, "RAM", 3 ) ||
+                    MEMCMP( section_header, ==, "PAL", 3 ) ||
+                    MEMCMP( section_header, ==, "OAM", 3 ) ||
+                    MEMCMP( section_header, ==, "WRM", 3 ) ||
+                    MEMCMP( section_header, ==, "VRM", 3 ))
+          {
+               uLongf dest_len = 50000 - (p_save_state - save_state);
+               int    ret;
+
+               if ( *p_data )
+               {
+                    *p_save_state = 0;
+                    p_save_state++;
+
+                    if ( (ret = uncompress( p_save_state, &dest_len, p_data + 1, section_length - 1)) != Z_OK )
+                    {
+                         sprintf( error_message, "Cannot uncompress RAM data: %s", zerror(ret) );
+
+                         return bl_False;
+                    }
+
+                    int2dword( dest_len + 1, p_save_state - 5 );
+
+                    p_data       += section_length;
+                    p_save_state += dest_len;
+               }
+               else
+               {
+                    p_data       += section_length;
+                    p_save_state += section_length;
+               }
+          }
+          else
+          {
+               memcpy( p_save_state, p_data, section_length );
+
+               p_data       += section_length;
+               p_save_state += section_length;
+          }
+     }
+
+     *save_state_size = p_save_state - save_state;
 }
 
 static boolean_e loadSaveState( unsigned char *save_state, int *save_state_size, const unsigned char *data, const size_t datasize )
@@ -705,7 +840,7 @@ unsigned char *readNstSaveState( const char *filename, int *save_state_size )
           return NULL;
      }
 
-     if ( ! loadSaveState( save_state, save_state_size, filedata, filesize ) )
+     if ( ! loadSaveState2( save_state, save_state_size, filedata, filesize ) )
      {
           free( filedata   );
           free( save_state );
@@ -754,7 +889,8 @@ nst_save_state_s *getSaveStateStats( const unsigned char *save_state, const size
           }
           else if ( MEMCMP( section_header, ==, "WRM", 3 ) )
           {
-               return (nst_save_state_s *)p_state + 1; // skip the single byte compression flag
+               p_state++; // skip the single byte compression flag
+               return (nst_save_state_s *)p_state;
           }
           else
           {
