@@ -7,7 +7,8 @@ LDFLAGS = -L. -lm -lsqlite3 -lz
 progs = \
    export_season \
    decompress_save_state \
-   print_rosters
+   print_rosters \
+   standings
 
 tests = \
    test_file_utils \
@@ -54,6 +55,9 @@ decompress_save_state: decompress_save_state.o file_utils.o
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
 
 print_rosters: print_rosters.o file_utils.o convert_organization.o libncfodata.a
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfodata
+
+standings: standings.o file_utils.o convert_organization.o libncfodata.a
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfodata
 
 
