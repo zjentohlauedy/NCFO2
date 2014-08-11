@@ -320,6 +320,14 @@ static void printPlayer( const player_s *player )
 
                break;
 
+          case pos_OffensiveLine:
+               if ( player->ratings != NULL )
+               {
+                    printf( "     %3d", calcPlayerScore( player ) );
+               }
+
+               break;
+
           case pos_DefensiveLine:
           case pos_Linebacker:
           case pos_Cornerback:
