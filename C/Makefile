@@ -8,7 +8,8 @@ progs = \
    export_season \
    decompress_save_state \
    print_rosters \
-   standings
+   standings \
+   extract_data
 
 tests = \
    test_file_utils \
@@ -58,6 +59,9 @@ print_rosters: print_rosters.o file_utils.o convert_organization.o libncfodata.a
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfodata
 
 standings: standings.o file_utils.o convert_organization.o libncfodata.a
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfodata
+
+extract_data: extract_data.o file_utils.o convert_organization.o libncfodata.a
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfodata
 
 
