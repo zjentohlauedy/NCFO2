@@ -413,7 +413,7 @@ static void printData( const organization_s *organization )
 
      if ( organization->conferences != NULL )
      {
-          printf( ",\"conferenes\":[" );
+          printf( ",\"conferences\":[" );
 
           for ( int i = 0; organization->conferences[i].conference != NULL; ++i )
           {
