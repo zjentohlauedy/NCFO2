@@ -2,6 +2,23 @@
 #define _INC_SAVE_STATE_H_
 
 
+typedef enum
+{
+     ni_Injured = 0,
+     ni_Healthy = 3
+
+} nst_injury_e;
+
+typedef enum
+{
+     nc_Bad       = 0,
+     nc_Average   = 1,
+     nc_Good      = 2,
+     nc_Excellent = 3
+
+} nst_condition_e;
+
+
 typedef struct
 {
      unsigned char road [ 1 ];
@@ -122,12 +139,65 @@ typedef struct
 
 typedef struct
 {
-     nst_players_s player_stats [ 1 ];
-     nst_teams_s   team_stats   [ 1 ];
-     unsigned char playbook     [ 4 ]; // Each hex nibble is a play in each play slot. The order is Run1, Run2 // Run3, Run4 // Pass1, Pass2 // Pass3, Pass4.
-     unsigned char starters     [ 4 ]; // Each hex nibble is a player where 0 = QB1, 1 = QB2, 2 = RB1, 3 = RB2, 4 = RB3, 5 = RB4, 6 = WR1, 7 = WR2, 8 = WR3, 9 = WR4, A = TE1, and B = TE2. The order goes QB, RB1 // RB2, WR1 // WR2, TE // KR, PR.
-     unsigned char injuries     [ 3 ]; // Two bits per position (00 = healthy, 11 = injured) The order is QB1, QB2, RB1, RB2 // RB3, RB4, WR1, WR2 // WR3, WR4, TE1, TE2.
-     unsigned char conditions   [ 8 ]; // Two bits per position (00 = Bad, 01 = Average, 10 = Good, and 11 = Excellent) Order goes QB1, QB2, RB1, RB2 // RB3, RB4, WR1, WR2 // WR3, WR4, TE1, TE2 // C, LG, RG, LT // RT, RE, NT, LE // ROLB, RILB, LILB, LOLB // RCB, LCB, FS, SS // K, P. The final nibble always appears to be 5.
+     unsigned char qb1 : 2;
+     unsigned char qb2 : 2;
+     unsigned char rb1 : 2;
+     unsigned char rb2 : 2;
+     unsigned char rb3 : 2;
+     unsigned char rb4 : 2;
+     unsigned char wr1 : 2;
+     unsigned char wr2 : 2;
+     unsigned char wr3 : 2;
+     unsigned char wr4 : 2;
+     unsigned char te1 : 2;
+     unsigned char te2 : 2;
+
+} injury_bits_s;
+
+typedef struct
+{
+     unsigned char qb1 : 2;
+     unsigned char qb2 : 2;
+     unsigned char rb1 : 2;
+     unsigned char rb2 : 2;
+     unsigned char rb3 : 2;
+     unsigned char rb4 : 2;
+     unsigned char wr1 : 2;
+     unsigned char wr2 : 2;
+     unsigned char wr3 : 2;
+     unsigned char wr4 : 2;
+     unsigned char te1 : 2;
+     unsigned char te2 : 2;
+     unsigned char ol1 : 2;
+     unsigned char ol2 : 2;
+     unsigned char ol3 : 2;
+     unsigned char ol4 : 2;
+     unsigned char ol5 : 2;
+     unsigned char dl1 : 2;
+     unsigned char dl2 : 2;
+     unsigned char dl3 : 2;
+     unsigned char lb1 : 2;
+     unsigned char lb2 : 2;
+     unsigned char lb3 : 2;
+     unsigned char lb4 : 2;
+     unsigned char cb1 : 2;
+     unsigned char cb2 : 2;
+     unsigned char s1  : 2;
+     unsigned char s2  : 2;
+     unsigned char k   : 2;
+     unsigned char p   : 2;
+     unsigned char end : 4;
+
+} condition_bits_s;
+
+typedef struct
+{
+     nst_players_s    player_stats [ 1 ];
+     nst_teams_s      team_stats   [ 1 ];
+     unsigned char    playbook     [ 4 ]; // Each hex nibble is a play in each play slot. The order is Run1, Run2 // Run3, Run4 // Pass1, Pass2 // Pass3, Pass4.
+     unsigned char    starters     [ 4 ]; // Each hex nibble is a player where 0 = QB1, 1 = QB2, 2 = RB1, 3 = RB2, 4 = RB3, 5 = RB4, 6 = WR1, 7 = WR2, 8 = WR3, 9 = WR4, A = TE1, and B = TE2. The order goes QB, RB1 // RB2, WR1 // WR2, TE // KR, PR.
+     injury_bits_s    injuries;           // Two bits per position (00 = healthy, 11 = injured) The order is QB1, QB2, RB1, RB2 // RB3, RB4, WR1, WR2 // WR3, WR4, TE1, TE2.
+     condition_bits_s conditions;         // Two bits per position (00 = Bad, 01 = Average, 10 = Good, and 11 = Excellent) Order goes QB1, QB2, RB1, RB2 // RB3, RB4, WR1, WR2 // WR3, WR4, TE1, TE2 // C, LG, RG, LT // RT, RE, NT, LE // ROLB, RILB, LILB, LOLB // RCB, LCB, FS, SS // K, P. The final nibble always appears to be 5.
 
 } nst_stats_s;
 

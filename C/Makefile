@@ -9,7 +9,8 @@ progs = \
    decompress_save_state \
    print_rosters \
    standings \
-   extract_data
+   extract_data \
+   injuries
 
 tests = \
    test_file_utils \
@@ -62,6 +63,9 @@ standings: standings.o file_utils.o convert_organization.o libncfodata.a
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfodata
 
 extract_data: extract_data.o file_utils.o convert_organization.o libncfodata.a
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfodata
+
+injuries: injuries.o file_utils.o convert_organization.o libncfodata.a
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfodata
 
 

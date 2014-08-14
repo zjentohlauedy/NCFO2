@@ -2,6 +2,7 @@
 #define __INC_PLAYER_H__
 
 #include <sqlite3.h>
+#include "bool.h"
 #include "data_list.h"
 #include "bowls.h"
 
@@ -80,6 +81,15 @@ typedef enum
      pacc_All_American                             = 64
 
 } player_accolade_e;
+
+typedef enum
+{
+     cnd_Bad       = 0,
+     cnd_Average   = 1,
+     cnd_Good      = 2,
+     cnd_Excellent = 3
+
+} condition_e;
 
 typedef struct
 {
@@ -257,6 +267,8 @@ typedef struct
      player_stats_s          stats;
      // internal use:
      int                     score;
+     boolean_e               injured;
+     condition_e             condition;
 
 } player_s;
 

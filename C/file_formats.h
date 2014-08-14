@@ -1,14 +1,8 @@
 #ifndef _INC_FILE_FORMATS_H_
 #define _INC_FILE_FORMATS_H_
 
+#include "bool.h"
 #include "organization.h"
-
-typedef enum
-{
-     bl_False = 0,
-     bl_True  = 1
-
-} boolean_e;
 
 typedef struct
 {

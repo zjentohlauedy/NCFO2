@@ -681,9 +681,55 @@ static team_player_s *convertPlayers(
           const tsb_ratings_team_s *team_player_ratings = &(rom->team_player_ratings[rom_team_idx]);
           const tsb_sim_data_s     *sim_data            = &(rom->sim_data[rom_team_idx]);
           const nst_players_s      *player_stats        = NULL;
+          const injury_bits_s      *injuries            = NULL;
+          const condition_bits_s   *conditions          = NULL;
 
-          if ( rom_team_idx < 9 ) player_stats = save_state->stats1[rom_team_idx    ].player_stats;
-          else                    player_stats = save_state->stats2[rom_team_idx - 9].player_stats;
+          if ( rom_team_idx < 9 )
+          {
+               player_stats =   save_state->stats1[rom_team_idx    ].player_stats;
+               injuries     = &(save_state->stats1[rom_team_idx    ].injuries);
+               conditions   = &(save_state->stats1[rom_team_idx    ].conditions);
+          }
+          else
+          {
+               player_stats =   save_state->stats2[rom_team_idx - 9].player_stats;
+               injuries     = &(save_state->stats1[rom_team_idx - 9].injuries);
+               conditions   = &(save_state->stats1[rom_team_idx - 9].conditions);
+          }
+
+          switch ( i )
+          {
+          case  0: players[i].player->condition = conditions->qb1; players[i].player->injured = (injuries->qb1 != 0); break;
+          case  1: players[i].player->condition = conditions->qb2; players[i].player->injured = (injuries->qb2 != 0); break;
+          case  2: players[i].player->condition = conditions->rb1; players[i].player->injured = (injuries->rb1 != 0); break;
+          case  3: players[i].player->condition = conditions->rb2; players[i].player->injured = (injuries->rb2 != 0); break;
+          case  4: players[i].player->condition = conditions->rb3; players[i].player->injured = (injuries->rb3 != 0); break;
+          case  5: players[i].player->condition = conditions->rb4; players[i].player->injured = (injuries->rb4 != 0); break;
+          case  6: players[i].player->condition = conditions->wr1; players[i].player->injured = (injuries->wr1 != 0); break;
+          case  7: players[i].player->condition = conditions->wr2; players[i].player->injured = (injuries->wr2 != 0); break;
+          case  8: players[i].player->condition = conditions->wr3; players[i].player->injured = (injuries->wr3 != 0); break;
+          case  9: players[i].player->condition = conditions->wr4; players[i].player->injured = (injuries->wr4 != 0); break;
+          case 10: players[i].player->condition = conditions->te1; players[i].player->injured = (injuries->te1 != 0); break;
+          case 11: players[i].player->condition = conditions->te2; players[i].player->injured = (injuries->te2 != 0); break;
+          case 12: players[i].player->condition = conditions->ol1;                                                    break;
+          case 13: players[i].player->condition = conditions->ol2;                                                    break;
+          case 14: players[i].player->condition = conditions->ol3;                                                    break;
+          case 15: players[i].player->condition = conditions->ol4;                                                    break;
+          case 16: players[i].player->condition = conditions->ol5;                                                    break;
+          case 17: players[i].player->condition = conditions->dl1;                                                    break;
+          case 18: players[i].player->condition = conditions->dl2;                                                    break;
+          case 19: players[i].player->condition = conditions->dl3;                                                    break;
+          case 20: players[i].player->condition = conditions->lb1;                                                    break;
+          case 21: players[i].player->condition = conditions->lb2;                                                    break;
+          case 22: players[i].player->condition = conditions->lb3;                                                    break;
+          case 23: players[i].player->condition = conditions->lb4;                                                    break;
+          case 24: players[i].player->condition = conditions->cb1;                                                    break;
+          case 25: players[i].player->condition = conditions->cb2;                                                    break;
+          case 26: players[i].player->condition = conditions->s1;                                                     break;
+          case 27: players[i].player->condition = conditions->s2;                                                     break;
+          case 28: players[i].player->condition = conditions->k;                                                      break;
+          case 29: players[i].player->condition = conditions->p;                                                      break;
+          }
 
           switch ( i )
           {
