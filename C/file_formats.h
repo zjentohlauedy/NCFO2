@@ -216,8 +216,9 @@ boolean_e  writeTsbRom( const char *filename, const tsbrom_s *tsbrom_file );
 
 boolean_e populateRoms( tsbrom_s *rom1, tsbrom_s *rom2, const organization_s *organization );
 
-char *lowercase( const char *s );
-char *uppercase( const char *s );
+char *lowercase(     const char *s );
+char *uppercase(     const char *s );
+char *normalizeCase( const char *s );
 
 int  word2int(                  const unsigned char *word );
 void int2word( const int value,       unsigned char *word );

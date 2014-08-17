@@ -49,6 +49,16 @@ static char *uppercase_ShouldReturnACopyOfTheStringInAllUppercase_GivenAString()
      return NULL;
 }
 
+static char *normalizeCase_ShouldReturnACopyOfTheStringWithNormalizedCase_GivenAString()
+{
+     assertEqualsStr( "Uppercase", normalizeCase( "UPPERCASE" ) );
+     assertEqualsStr( "Lowercase", normalizeCase( "lowercase" ) );
+     assertEqualsStr( "O'Neal",    normalizeCase( "O'NEAL"    ) );
+     assertEqualsStr( "McMillian", normalizeCase( "mcmillian" ) );
+
+     return NULL;
+}
+
 static char *word2int_ShouldReturnTheConvertedIntValue_GivenATwoByteWord()
 {
      unsigned char word1[2] = {    0,    0 };
@@ -240,8 +250,9 @@ static void run_all_tests()
      run_test( readTsbRom_ShouldReturnAPointerToATsbRomObject_GivenAFilename, check_file_utils_error );
      run_test( writeTsbRom_ShouldCreateATsbRom_GivenATsbRomObjectAndFilename, check_file_utils_error );
 
-     run_test( lowercase_ShouldReturnACopyOfTheStringInAllLowercase_GivenAString, null );
-     run_test( uppercase_ShouldReturnACopyOfTheStringInAllUppercase_GivenAString, null );
+     run_test( lowercase_ShouldReturnACopyOfTheStringInAllLowercase_GivenAString,         null );
+     run_test( uppercase_ShouldReturnACopyOfTheStringInAllUppercase_GivenAString,         null );
+     run_test( normalizeCase_ShouldReturnACopyOfTheStringWithNormalizedCase_GivenAString, null );
 
      run_test( word2int_ShouldReturnTheConvertedIntValue_GivenATwoByteWord,              null );
      run_test( int2word_ShouldSetTheWordValue_GivenAWordAndAnInToConvert,                null );

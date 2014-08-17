@@ -95,17 +95,17 @@ static void printStandings( const organization_s *organization )
           processConference( organization->conferences[i].conference, &(conferences[i]) );
      }
 
-     for ( int i = 0; i < 4; ++i ) printf( "%-13s   W  L  T    ", conferences[i].conference_name );
+     for ( int i = 0; i < 4; ++i ) printf( "%-15s   W  L  T    ", conferences[i].conference_name );
      printf( "\n" );
 
-     for ( int i = 0; i < 4; ++i ) printf( "-               -  -  -    " );
+     for ( int i = 0; i < 4; ++i ) printf( "-                 -  -  -    " );
      printf( "\n" );
 
      for ( int i = 0; i < 6; ++i )
      {
           for ( int j = 0; j < 4; ++j )
           {
-               printf( "%-13s  %2d %2d %2d    ",
+               printf( "%-15s  %2d %2d %2d    ",
                        conferences[j].teams[i].team_name,
                        conferences[j].teams[i].wins,
                        conferences[j].teams[i].losses,
@@ -117,17 +117,17 @@ static void printStandings( const organization_s *organization )
 
      printf( "\n\n" );
 
-     for ( int i = 4; i < 8; ++i ) printf( "%-13s   W  L  T    ", conferences[i].conference_name );
+     for ( int i = 4; i < 8; ++i ) printf( "%-15s   W  L  T    ", conferences[i].conference_name );
      printf( "\n" );
 
-     for ( int i = 4; i < 8; ++i ) printf( "-               -  -  -    " );
+     for ( int i = 4; i < 8; ++i ) printf( "-                 -  -  -    " );
      printf( "\n" );
 
      for ( int i = 0; i < 6; ++i )
      {
           for ( int j = 4; j < 8; ++j )
           {
-               printf( "%-13s  %2d %2d %2d    ",
+               printf( "%-15s  %2d %2d %2d    ",
                        conferences[j].teams[i].team_name,
                        conferences[j].teams[i].wins,
                        conferences[j].teams[i].losses,

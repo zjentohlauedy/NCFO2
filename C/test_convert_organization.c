@@ -332,8 +332,8 @@ static char *convertOrganization_ShouldReturnAnOrganizationObjectWithTeams()
           assertEqualsInt( i + 1,         teams[i].team_id                );
           assertEqualsInt( i + 1,         teams[i].team->team_id          );
           assertEqualsBfr( "UXZ",         teams[i].team->abbreviation,  3 );
-          assertEqualsBfr( "XANADU ZERO", teams[i].team->location,     11 );
-          assertEqualsBfr( "UTOPIANS",    teams[i].team->name,          8 );
+          assertEqualsBfr( "Xanadu Zero", teams[i].team->location,     11 );
+          assertEqualsBfr( "Utopians",    teams[i].team->name,          8 );
 
           assertEqualsInt( 10,            teams[i].team->sim_offense      );
           assertEqualsInt( 11,            teams[i].team->sim_defense      );
@@ -397,6 +397,147 @@ static char *convertOrganization_ShouldReturnAnOrganizationObjectWithTeamsWithSt
      return NULL;
 }
 
+static char *convertOrganization_ShouldReturnAnOrganizationObjectWithTeamsWithOffenseStats()
+{
+     tsbrom_s          rom1        = { 0 };
+     tsbrom_s          rom2        = { 0 };
+     nst_save_state_s  save_state1 = { 0 };
+     nst_save_state_s  save_state2 = { 0 };
+
+     setupRom( &rom1 );
+     setupRom( &rom2 );
+
+     setupSaveState( &save_state1 );
+     setupSaveState( &save_state2 );
+
+     organization_s *org = convertOrganization( &rom1, &save_state1, &rom2, &save_state2, 3, bg_OrangeBowl );
+
+     assertNotNull( org                                   );
+     assertNotNull( org->conferences                      );
+     assertNotNull( org->conferences[0].conference        );
+     assertNotNull( org->conferences[0].conference->teams );
+
+     conference_team_s *teams = org->conferences[0].conference->teams;
+
+     for ( int i = 0; i < 6; ++i )
+     {
+          assertNotNull( teams[i].team );
+          assertNotNull( teams[i].team->offense_stats );
+
+          team_offense_stats_s *offense = teams[i].team->offense_stats;
+
+          assertEquals(         i + 1, offense->team_id         );
+          assertEquals(             3, offense->season          );
+          assertEquals( bg_OrangeBowl, offense->bowl_game       );
+          assertEquals(          1304, offense->pass_attempts   );
+          assertEquals(          1076, offense->completions     );
+          assertEquals(            72, offense->interceptions   );
+          assertEquals(         10364, offense->pass_yards      );
+          assertEquals(            82, offense->pass_touchdowns );
+          assertEquals(          2778, offense->rush_attempts   );
+          assertEquals(         27506, offense->rush_yards      );
+          assertEquals(           524, offense->rush_touchdowns );
+     }
+
+     free_organization( org );
+
+     return NULL;
+}
+
+static char *convertOrganization_ShouldReturnAnOrganizationObjectWithTeamsWithDefenseStats()
+{
+     tsbrom_s          rom1        = { 0 };
+     tsbrom_s          rom2        = { 0 };
+     nst_save_state_s  save_state1 = { 0 };
+     nst_save_state_s  save_state2 = { 0 };
+
+     setupRom( &rom1 );
+     setupRom( &rom2 );
+
+     setupSaveState( &save_state1 );
+     setupSaveState( &save_state2 );
+
+     organization_s *org = convertOrganization( &rom1, &save_state1, &rom2, &save_state2, 3, bg_OrangeBowl );
+
+     assertNotNull( org                                   );
+     assertNotNull( org->conferences                      );
+     assertNotNull( org->conferences[0].conference        );
+     assertNotNull( org->conferences[0].conference->teams );
+
+     conference_team_s *teams = org->conferences[0].conference->teams;
+
+     for ( int i = 0; i < 6; ++i )
+     {
+          assertNotNull( teams[i].team );
+          assertNotNull( teams[i].team->defense_stats );
+
+          team_defense_stats_s *defense = teams[i].team->defense_stats;
+
+          assertEquals(         i + 1, defense->team_id           );
+          assertEquals(             3, defense->season            );
+          assertEquals( bg_OrangeBowl, defense->bowl_game         );
+          assertEquals(          1056, defense->sacks             );
+          assertEquals(           264, defense->interceptions     );
+          assertEquals(          3223, defense->return_yards      );
+          assertEquals(            66, defense->return_touchdowns );
+     }
+
+     free_organization( org );
+
+     return NULL;
+}
+
+static char *convertOrganization_ShouldReturnAnOrganizationObjectWithTeamsWithKickingStats()
+{
+     tsbrom_s          rom1        = { 0 };
+     tsbrom_s          rom2        = { 0 };
+     nst_save_state_s  save_state1 = { 0 };
+     nst_save_state_s  save_state2 = { 0 };
+
+     setupRom( &rom1 );
+     setupRom( &rom2 );
+
+     setupSaveState( &save_state1 );
+     setupSaveState( &save_state2 );
+
+     organization_s *org = convertOrganization( &rom1, &save_state1, &rom2, &save_state2, 3, bg_OrangeBowl );
+
+     assertNotNull( org                                   );
+     assertNotNull( org->conferences                      );
+     assertNotNull( org->conferences[0].conference        );
+     assertNotNull( org->conferences[0].conference->teams );
+
+     conference_team_s *teams = org->conferences[0].conference->teams;
+
+     for ( int i = 0; i < 6; ++i )
+     {
+          assertNotNull( teams[i].team );
+          assertNotNull( teams[i].team->kicking_stats );
+
+          team_kicking_stats_s *kicking = teams[i].team->kicking_stats;
+
+          assertEquals(         i + 1, kicking->team_id                );
+          assertEquals(             3, kicking->season                 );
+          assertEquals( bg_OrangeBowl, kicking->bowl_game              );
+          assertEquals(            32, kicking->extra_point_attempts   );
+          assertEquals(            31, kicking->extra_points_made      );
+          assertEquals(            24, kicking->field_goal_attempts    );
+          assertEquals(            16, kicking->field_goals_made       );
+          assertEquals(            47, kicking->punts                  );
+          assertEquals(          3212, kicking->punt_yards             );
+          assertEquals(          1040, kicking->kick_returns           );
+          assertEquals(         16510, kicking->kick_return_yards      );
+          assertEquals(           210, kicking->kick_return_touchdowns );
+          assertEquals(           350, kicking->punt_returns           );
+          assertEquals(          7630, kicking->punt_return_yards      );
+          assertEquals(           120, kicking->punt_return_touchdowns );
+     }
+
+     free_organization( org );
+
+     return NULL;
+}
+
 static char *convertOrganization_ShouldReturnAnOrganizationObjectWithPlayers()
 {
      tsbrom_s          rom1        = { 0 };
@@ -429,8 +570,8 @@ static char *convertOrganization_ShouldReturnAnOrganizationObjectWithPlayers()
           assertEqualsInt( i + 1,  players[i].player_id          );
           assertEqualsInt( i + 1,  players[i].player->player_id  );
           assertEqualsInt( 55,     players[i].player->number     );
-          assertEqualsStr( "joe",  players[i].player->first_name );
-          assertEqualsStr( "COOL", players[i].player->last_name  );
+          assertEqualsStr( "Joe",  players[i].player->first_name );
+          assertEqualsStr( "Cool", players[i].player->last_name  );
 
           switch ( i )
           {
@@ -774,6 +915,9 @@ static void run_all_tests()
      run_test( convertOrganization_ShouldReturnAnOrganizationObjectWithConferences,            check_generate_org_error );
      run_test( convertOrganization_ShouldReturnAnOrganizationObjectWithTeams,                  check_generate_org_error );
      run_test( convertOrganization_ShouldReturnAnOrganizationObjectWithTeamsWithStats,         check_generate_org_error );
+     run_test( convertOrganization_ShouldReturnAnOrganizationObjectWithTeamsWithOffenseStats,  check_generate_org_error );
+     run_test( convertOrganization_ShouldReturnAnOrganizationObjectWithTeamsWithDefenseStats,  check_generate_org_error );
+     run_test( convertOrganization_ShouldReturnAnOrganizationObjectWithTeamsWithKickingStats,  check_generate_org_error );
      run_test( convertOrganization_ShouldReturnAnOrganizationObjectWithPlayers,                check_generate_org_error );
      run_test( convertOrganization_ShouldReturnAnOrganizationObjectWithPlayersWithRatings,     check_generate_org_error );
      run_test( convertOrganization_ShouldReturnAnOrganizationObjectWithPlayersWithStats,       check_generate_org_error );

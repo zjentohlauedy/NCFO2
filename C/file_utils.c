@@ -135,7 +135,7 @@ boolean_e writeTsbRom( const char *filename, const tsbrom_s *tsbrom_file )
 
 char *lowercase( const char *s )
 {
-     static char buf[1024];
+     static char buf[1024] = { 0 };
 
      int i;
 
@@ -151,13 +151,41 @@ char *lowercase( const char *s )
 
 char *uppercase( const char *s )
 {
-     static char buf[1024];
+     static char buf[1024] = { 0 };
 
      int i;
 
      for ( i = 0; s[i] != '\0'; ++i )
      {
           buf[i] = toupper( s[i] );
+     }
+
+     buf[i] = '\0';
+
+     return buf;
+}
+
+char *normalizeCase( const char *s )
+{
+     static char buf[1024] = { 0 };
+
+     int       i;
+     boolean_e capital = bl_True;
+
+     for ( i = 0; s[i] != '\0'; ++i )
+     {
+          if ( isalpha(s[i]) )
+          {
+               if   ( capital ) { buf[i] = toupper( s[i] ); capital = bl_False; }
+               else             { buf[i] = tolower( s[i] );                     }
+          }
+          else
+          {
+               buf[i]  = s[i];
+               capital = bl_True;
+          }
+
+          if ( i >= 1  &&  memcmp( buf, "Mc", i + 1 ) == 0 ) capital = bl_True;
      }
 
      buf[i] = '\0';

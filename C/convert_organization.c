@@ -676,7 +676,10 @@ static team_player_s *convertPlayers(
           int lname_offset = getLastNameOffset( rom->player_identifiers + start_offset, end_offset - start_offset ) + start_offset;
 
           memcpy( players[i].player->first_name, rom->player_identifiers + start_offset, lname_offset - start_offset );
-          memcpy( players[i].player->last_name,  rom->player_identifiers + lname_offset, end_offset - lname_offset   );
+          memcpy( players[i].player->last_name,  rom->player_identifiers + lname_offset, end_offset   - lname_offset );
+
+          strcpy( players[i].player->first_name, normalizeCase( players[i].player->first_name ) );
+          strcpy( players[i].player->last_name,  normalizeCase( players[i].player->last_name  ) );
 
           const tsb_ratings_team_s *team_player_ratings = &(rom->team_player_ratings[rom_team_idx]);
           const tsb_sim_data_s     *sim_data            = &(rom->sim_data[rom_team_idx]);
@@ -927,6 +930,152 @@ static team_stats_s *convertTeamStats(
      return stats;
 }
 
+static team_offense_stats_s *convertTeamOffenseStats(
+     const team_player_s *players,
+     const int            season,
+     const bowl_game_e    bowl,
+     const int            team_id )
+{
+     team_offense_stats_s *offense = NULL;
+
+     if ( (offense = malloc( sizeof(team_offense_stats_s) )) == NULL )
+     {
+          sprintf( error_message, "Cannot allocate memory for team offense stats" );
+
+          return NULL;
+     }
+
+     memset( offense, '\0', sizeof(team_offense_stats_s) );
+
+     offense->team_id   = team_id;
+     offense->season    = season;
+     offense->bowl_game = bowl;
+
+     for ( int i = 0; players[i].player != NULL; ++i )
+     {
+          const player_s *player = players[i].player;
+
+          if ( player->stats.offense == NULL ) continue;
+
+          offense->pass_attempts   += player->stats.offense->pass_attempts;
+          offense->completions     += player->stats.offense->completions;
+          offense->interceptions   += player->stats.offense->interceptions;
+          offense->pass_yards      += player->stats.offense->pass_yards;
+          offense->pass_touchdowns += player->stats.offense->pass_touchdowns;
+          offense->rush_attempts   += player->stats.offense->rush_attempts;
+          offense->rush_yards      += player->stats.offense->rush_yards;
+          offense->rush_touchdowns += player->stats.offense->rush_touchdowns;
+     }
+
+     return offense;
+}
+
+static team_defense_stats_s *convertTeamDefenseStats(
+     const team_player_s *players,
+     const int            season,
+     const bowl_game_e    bowl,
+     const int            team_id )
+{
+     team_defense_stats_s *defense = NULL;
+
+     if ( (defense = malloc( sizeof(team_defense_stats_s) )) == NULL )
+     {
+          sprintf( error_message, "Cannot allocate memory for team defense stats" );
+
+          return NULL;
+     }
+
+     memset( defense, '\0', sizeof(team_defense_stats_s) );
+
+     defense->team_id   = team_id;
+     defense->season    = season;
+     defense->bowl_game = bowl;
+
+     for ( int i = 0; players[i].player != NULL; ++i )
+     {
+          const player_s *player = players[i].player;
+
+          if ( player->stats.defense == NULL ) continue;
+
+          defense->sacks             += player->stats.defense->sacks;
+          defense->interceptions     += player->stats.defense->interceptions;
+          defense->return_yards      += player->stats.defense->return_yards;
+          defense->return_touchdowns += player->stats.defense->return_touchdowns;
+     }
+
+     return defense;
+}
+
+static team_kicking_stats_s *convertTeamKickingStats(
+     const team_player_s *players,
+     const int            season,
+     const bowl_game_e    bowl,
+     const int            team_id )
+{
+     team_kicking_stats_s *kicking = NULL;
+
+     if ( (kicking = malloc( sizeof(team_kicking_stats_s) )) == NULL )
+     {
+          sprintf( error_message, "Cannot allocate memory for team kicking stats" );
+
+          return NULL;
+     }
+
+     memset( kicking, '\0', sizeof(team_kicking_stats_s) );
+
+     kicking->team_id   = team_id;
+     kicking->season    = season;
+     kicking->bowl_game = bowl;
+
+     for ( int i = 0; players[i].player != NULL; ++i )
+     {
+          const player_s *player = players[i].player;
+
+          if ( player->stats.kicking != NULL )
+          {
+               kicking->extra_point_attempts   += player->stats.kicking->extra_point_attempts;
+               kicking->extra_points_made      += player->stats.kicking->extra_points_made;
+               kicking->field_goal_attempts    += player->stats.kicking->field_goal_attempts;
+               kicking->field_goals_made       += player->stats.kicking->field_goals_made;
+               kicking->punts                  += player->stats.kicking->punts;
+               kicking->punt_yards             += player->stats.kicking->punt_yards;
+          }
+
+          if ( player->stats.returns != NULL )
+          {
+               kicking->kick_returns           += player->stats.returns->kick_returns;
+               kicking->kick_return_yards      += player->stats.returns->kick_return_yards;
+               kicking->kick_return_touchdowns += player->stats.returns->kick_return_touchdowns;
+               kicking->punt_returns           += player->stats.returns->punt_returns;
+               kicking->punt_return_yards      += player->stats.returns->punt_return_yards;
+               kicking->punt_return_touchdowns += player->stats.returns->punt_return_touchdowns;
+          }
+     }
+
+     return kicking;
+}
+
+static void fixTeamLocation( char *location )
+{
+     if ( strcmp( location, "N. Carolina" ) == 0 ) sprintf( location, "North Carolina" );
+     if ( strcmp( location, "S. Carolina" ) == 0 ) sprintf( location, "South Carolina" );
+}
+
+static void fixTeamName( char *name )
+{
+     if ( strcmp( name, "B. Bears"   ) == 0 ) sprintf( name, "Black Bears"     );
+     if ( strcmp( name, "S. Knights" ) == 0 ) sprintf( name, "Scarlet Knights" );
+     if ( strcmp( name, "Mntneers"   ) == 0 ) sprintf( name, "Mountaineers"    );
+     if ( strcmp( name, "C. Tide"    ) == 0 ) sprintf( name, "Crimson Tide"    );
+     if ( strcmp( name, "F. Illini"  ) == 0 ) sprintf( name, "Fighting Illini" );
+     if ( strcmp( name, "N. Lions"   ) == 0 ) sprintf( name, "Nittany Lions"   );
+     if ( strcmp( name, "G. Bears"   ) == 0 ) sprintf( name, "Golden Bears"    );
+     if ( strcmp( name, "C. Huskers" ) == 0 ) sprintf( name, "Corn Huskers"    );
+     if ( strcmp( name, "G. Gophers" ) == 0 ) sprintf( name, "Golden Gophers"  );
+     if ( strcmp( name, "F. Sioux"   ) == 0 ) sprintf( name, "Fighting Sioux"  );
+     if ( strcmp( name, "R. Cajuns"  ) == 0 ) sprintf( name, "Ragin Cajuns"    );
+}
+
 static conference_team_s *convertTeams(
      const tsbrom_s         *rom,
      const nst_save_state_s *save_state,
@@ -979,6 +1128,12 @@ static conference_team_s *convertTeams(
           sprintf( teams[i].team->location,     "%.*s", locn_length, rom->team_conference_names + locn_offset );
           sprintf( teams[i].team->abbreviation, "%.*s", abbr_length, rom->team_conference_names + abbr_offset );
 
+          strcpy( teams[i].team->name,     normalizeCase( teams[i].team->name     ) );
+          strcpy( teams[i].team->location, normalizeCase( teams[i].team->location ) );
+
+          fixTeamName(     teams[i].team->name     );
+          fixTeamLocation( teams[i].team->location );
+
           teams[i].team->sim_offense = (rom->sim_data[rom_team_idx].team[0] >> 4   );
           teams[i].team->sim_defense = (rom->sim_data[rom_team_idx].team[0] &  0x0f);
 
@@ -987,8 +1142,11 @@ static conference_team_s *convertTeams(
           if ( rom_team_idx < 9 ) team_stats = save_state->stats1[rom_team_idx    ].team_stats;
           else                    team_stats = save_state->stats2[rom_team_idx - 9].team_stats;
 
-          teams[i].team->stats   = convertTeamStats( team_stats, season, bowl, teams[i].team_id );
-          teams[i].team->players = convertPlayers( rom, save_state, season, bowl, team_idx );
+          teams[i].team->stats         = convertTeamStats( team_stats, season, bowl, teams[i].team_id );
+          teams[i].team->players       = convertPlayers( rom, save_state, season, bowl, team_idx );
+          teams[i].team->offense_stats = convertTeamOffenseStats( teams[i].team->players, season, bowl, teams[i].team_id );
+          teams[i].team->defense_stats = convertTeamDefenseStats( teams[i].team->players, season, bowl, teams[i].team_id );
+          teams[i].team->kicking_stats = convertTeamKickingStats( teams[i].team->players, season, bowl, teams[i].team_id );
      }
 
      teams[6] = conference_team_sentinel;

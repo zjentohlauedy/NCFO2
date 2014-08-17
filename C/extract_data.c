@@ -364,6 +364,54 @@ static void printTeam( const team_s *team )
           printf( "}" );
      }
 
+     if ( team->offense_stats != NULL )
+     {
+          printf( ",\"offense_stats\":" );
+
+          printf( "{\"pass_attempts\":%d",   team->offense_stats->pass_attempts   );
+          printf( ",\"completions\":%d",     team->offense_stats->completions     );
+          printf( ",\"interceptions\":%d",   team->offense_stats->interceptions   );
+          printf( ",\"pass_yards\":%d",      team->offense_stats->pass_yards      );
+          printf( ",\"pass_touchdowns\":%d", team->offense_stats->pass_touchdowns );
+          printf( ",\"rush_attempts\":%d",   team->offense_stats->rush_attempts   );
+          printf( ",\"rush_yards\":%d",      team->offense_stats->rush_yards      );
+          printf( ",\"rush_touchdowns\":%d", team->offense_stats->rush_touchdowns );
+
+          printf( "}" );
+     }
+
+     if ( team->defense_stats != NULL )
+     {
+          printf( ",\"defense_stats\":" );
+
+          printf( "{\"sacks\":%d",             team->defense_stats->sacks             );
+          printf( ",\"interceptions\":%d",     team->defense_stats->interceptions     );
+          printf( ",\"return_yards\":%d",      team->defense_stats->return_yards      );
+          printf( ",\"return_touchdowns\":%d", team->defense_stats->return_touchdowns );
+
+          printf( "}" );
+     }
+
+     if ( team->kicking_stats != NULL )
+     {
+          printf( ",\"kicking_stats\":" );
+
+          printf( "{\"extra_point_attempts\":%d",   team->kicking_stats->extra_point_attempts   );
+          printf( ",\"extra_points_made\":%d",      team->kicking_stats->extra_points_made      );
+          printf( ",\"field_goal_attempts\":%d",    team->kicking_stats->field_goal_attempts    );
+          printf( ",\"field_goals_made\":%d",       team->kicking_stats->field_goals_made       );
+          printf( ",\"punts\":%d",                  team->kicking_stats->punts                  );
+          printf( ",\"punt_yards\":%d",             team->kicking_stats->punt_yards             );
+          printf( ",\"kick_returns\":%d",           team->kicking_stats->kick_returns           );
+          printf( ",\"kick_return_yards\":%d",      team->kicking_stats->kick_return_yards      );
+          printf( ",\"kick_return_touchdowns\":%d", team->kicking_stats->kick_return_touchdowns );
+          printf( ",\"punt_returns\":%d",           team->kicking_stats->punt_returns           );
+          printf( ",\"punt_return_yards\":%d",      team->kicking_stats->punt_return_yards      );
+          printf( ",\"punt_return_touchdowns\":%d", team->kicking_stats->punt_return_touchdowns );
+
+          printf( "}" );
+     }
+
      if ( team->players != NULL )
      {
           printf( ",\"players\":[" );
