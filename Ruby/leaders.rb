@@ -8,7 +8,7 @@ require 'ProgRunner'
 require 'top_players'
 
 
-path = ARGV[0] or '.'
+path = ARGV[0] || '.'
 
 extract_data = ProgRunner.new "#{location}/../C", "extract_data"
 

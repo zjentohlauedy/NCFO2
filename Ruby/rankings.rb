@@ -159,7 +159,7 @@ if ARGV.length != 1
   abort "Usage: #{__FILE__} <path>\n"
 end
 
-path = ARGV[0] or '.'
+path = ARGV[0] || '.'
 
 if ! Dir.exists? path
   abort "File '#{path}' not found.\n"
