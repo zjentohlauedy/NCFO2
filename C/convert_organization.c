@@ -696,8 +696,8 @@ static team_player_s *convertPlayers(
           else
           {
                player_stats =   save_state->stats2[rom_team_idx - 9].player_stats;
-               injuries     = &(save_state->stats1[rom_team_idx - 9].injuries);
-               conditions   = &(save_state->stats1[rom_team_idx - 9].conditions);
+               injuries     = &(save_state->stats2[rom_team_idx - 9].injuries);
+               conditions   = &(save_state->stats2[rom_team_idx - 9].conditions);
           }
 
           switch ( i )

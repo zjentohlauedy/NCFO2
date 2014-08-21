@@ -139,51 +139,60 @@ typedef struct
 
 typedef struct
 {
-     unsigned char qb1 : 2;
-     unsigned char qb2 : 2;
-     unsigned char rb1 : 2;
      unsigned char rb2 : 2;
-     unsigned char rb3 : 2;
-     unsigned char rb4 : 2;
-     unsigned char wr1 : 2;
+     unsigned char rb1 : 2;
+     unsigned char qb2 : 2;
+     unsigned char qb1 : 2;
+
      unsigned char wr2 : 2;
-     unsigned char wr3 : 2;
-     unsigned char wr4 : 2;
-     unsigned char te1 : 2;
+     unsigned char wr1 : 2;
+     unsigned char rb4 : 2;
+     unsigned char rb3 : 2;
+
      unsigned char te2 : 2;
+     unsigned char te1 : 2;
+     unsigned char wr4 : 2;
+     unsigned char wr3 : 2;
 
 } injury_bits_s;
 
 typedef struct
 {
-     unsigned char qb1 : 2;
-     unsigned char qb2 : 2;
-     unsigned char rb1 : 2;
      unsigned char rb2 : 2;
-     unsigned char rb3 : 2;
-     unsigned char rb4 : 2;
-     unsigned char wr1 : 2;
+     unsigned char rb1 : 2;
+     unsigned char qb2 : 2;
+     unsigned char qb1 : 2;
+
      unsigned char wr2 : 2;
-     unsigned char wr3 : 2;
-     unsigned char wr4 : 2;
-     unsigned char te1 : 2;
+     unsigned char wr1 : 2;
+     unsigned char rb4 : 2;
+     unsigned char rb3 : 2;
+
      unsigned char te2 : 2;
-     unsigned char ol1 : 2;
-     unsigned char ol2 : 2;
-     unsigned char ol3 : 2;
+     unsigned char te1 : 2;
+     unsigned char wr4 : 2;
+     unsigned char wr3 : 2;
+
      unsigned char ol4 : 2;
-     unsigned char ol5 : 2;
-     unsigned char dl1 : 2;
-     unsigned char dl2 : 2;
+     unsigned char ol3 : 2;
+     unsigned char ol2 : 2;
+     unsigned char ol1 : 2;
+
      unsigned char dl3 : 2;
-     unsigned char lb1 : 2;
-     unsigned char lb2 : 2;
-     unsigned char lb3 : 2;
+     unsigned char dl2 : 2;
+     unsigned char dl1 : 2;
+     unsigned char ol5 : 2;
+
      unsigned char lb4 : 2;
-     unsigned char cb1 : 2;
-     unsigned char cb2 : 2;
-     unsigned char s1  : 2;
+     unsigned char lb3 : 2;
+     unsigned char lb2 : 2;
+     unsigned char lb1 : 2;
+
      unsigned char s2  : 2;
+     unsigned char s1  : 2;
+     unsigned char cb2 : 2;
+     unsigned char cb1 : 2;
+
      unsigned char k   : 2;
      unsigned char p   : 2;
      unsigned char end : 4;
