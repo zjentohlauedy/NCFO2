@@ -5,8 +5,9 @@
 
 typedef struct
 {
-     int road;
-     int home;
+     int       road;
+     int       home;
+     boolean_e on_tv;
 
 } game_s;
 

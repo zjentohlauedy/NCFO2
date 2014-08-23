@@ -207,7 +207,11 @@ schedule_s *buildRomSchedule( tsbrom_s *rom )
                return NULL;
           }
 
-          for ( int j = 0; j < 24 + 1; ++j ) schedule->weeks[i].games[j].home = -1;
+          for ( int j = 0; j < 24 + 1; ++j )
+          {
+               schedule->weeks[i].games[j].home  = -1;
+               schedule->weeks[i].games[j].on_tv = bl_False;
+          }
      }
 
      schedule->weeks[10].games = NULL;
@@ -242,12 +246,96 @@ schedule_s *buildRomSchedule( tsbrom_s *rom )
      return schedule;
 }
 
+static void resetTelevisionGames( schedule_s *schedule )
+{
+     for ( int i = 0; schedule->weeks[i].games != NULL; ++i )
+     {
+          game_s *games = schedule->weeks[i].games;
+
+          for ( int j = 0; games[j].home >= 0; ++j )
+          {
+               games[j].on_tv = bl_False;
+          }
+     }
+}
+
+static boolean_e pickTelevisionGame( week_s *week, boolean_e *teams_on_tv )
+{
+     int x = rand() % 24;
+
+     game_s *game = &(week->games[x]);
+
+     if ( game->on_tv                ||
+          teams_on_tv[ game->road ]  ||
+          teams_on_tv[ game->home ]     )
+     {
+          int y = x;
+
+          do
+          {
+               y++;
+
+               if ( y > 23 ) y = 0;
+
+               game = &(week->games[y]);
+
+               if ( ! game->on_tv                &&
+                    ! teams_on_tv[ game->road ]  &&
+                    ! teams_on_tv[ game->home ]     ) break;
+          }
+          while ( y != x );
+
+          if ( y == x ) return bl_False;
+     }
+
+     game->on_tv               = bl_True;
+     teams_on_tv[ game->road ] = bl_True;
+     teams_on_tv[ game->home ] = bl_True;
+
+     return bl_True;
+}
+
+static boolean_e selectTelevisionGames( schedule_s *schedule )
+{
+     boolean_e teams_on_tv[48] = { 0 };
+     int       tv_games_needed =  24;
+
+     for ( int tries = 0; tries < 10; ++tries )
+     {
+          for ( int passes = 0; passes < 3; ++passes )
+          {
+               for ( int j = 0; j < 10; ++j )
+               {
+                    if ( pickTelevisionGame( &(schedule->weeks[j]), teams_on_tv ) )
+                    {
+                         tv_games_needed--;
+
+                         if ( tv_games_needed == 0 ) return bl_True;
+                    }
+               }
+          }
+
+          resetTelevisionGames( schedule );
+     }
+
+     return bl_False;
+}
+
 schedule_s *generateSchedule( tsbrom_s *rom1, tsbrom_s *rom2 )
 {
      schedule_s *rom1_schedule = buildRomSchedule( rom1 );
      schedule_s *rom2_schedule = buildRomSchedule( rom2 );
 
      mergeSchedules( rom1_schedule, rom2_schedule );
+
+     freeSchedule( rom2_schedule );
+
+     if ( ! selectTelevisionGames( rom1_schedule ) )
+     {
+          freeSchedule( rom1_schedule );
+
+          return NULL;
+     }
 
      return rom1_schedule;
 }

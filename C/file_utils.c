@@ -333,6 +333,8 @@ boolean_e writeSchedule( const char *filename, const schedule_s *schedule )
           for ( int j = 0; games[j].home >= 0; ++j )
           {
                fprintf( schedule_file, ",%s,", getTeamName( games[j].road ) );
+
+               if ( games[j].on_tv ) fprintf( schedule_file, "@" );
           }
 
           fprintf( schedule_file, "\n" );
@@ -342,6 +344,8 @@ boolean_e writeSchedule( const char *filename, const schedule_s *schedule )
           for ( int j = 0; games[j].home >= 0; ++j )
           {
                fprintf( schedule_file, ",%s,", getTeamName( games[j].home ) );
+
+               if ( games[j].on_tv ) fprintf( schedule_file, "@" );
           }
 
           fprintf( schedule_file, "\n" );

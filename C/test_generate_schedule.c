@@ -341,6 +341,67 @@ static char *generateSchedule_ShouldUpdateTheRomsWithTheGeneratedSchedule_GivenT
      return NULL;
 }
 
+static char *generateSchedule_ShouldReturnAScheduleWith24TVGamesSelected()
+{
+     schedule_s *schedule = generateSchedule( NULL, NULL );
+
+     assertNotNull( schedule );
+
+     assertNotNull( schedule->weeks );
+
+     int count = 0;
+
+     for ( int i = 0; schedule->weeks[i].games != NULL; ++i )
+     {
+          game_s *games = schedule->weeks[i].games;
+
+          for ( int j = 0; games[j].home >= 0; ++j )
+          {
+               if ( games[j].on_tv ) count++;
+          }
+     }
+
+     assertEquals( 24, count );
+
+     freeSchedule( schedule );
+
+     return NULL;
+}
+
+static char *generateSchedule_ShouldSelectTVGamesForEveryTeam()
+{
+     schedule_s *schedule = generateSchedule( NULL, NULL );
+
+     assertNotNull( schedule );
+
+     assertNotNull( schedule->weeks );
+
+     boolean_e teams_on_tv[48] = { 0 };
+
+     for ( int i = 0; schedule->weeks[i].games != NULL; ++i )
+     {
+          game_s *games = schedule->weeks[i].games;
+
+          for ( int j = 0; games[j].home >= 0; ++j )
+          {
+               if ( games[j].on_tv )
+               {
+                    teams_on_tv[games[j].road] = bl_True;
+                    teams_on_tv[games[j].home] = bl_True;
+               }
+          }
+     }
+
+     for ( int i = 0; i < 48; ++i )
+     {
+          assertEquals( bl_True, teams_on_tv[i] );
+     }
+
+     freeSchedule( schedule );
+
+     return NULL;
+}
+
 static void check_generate_schedule_error()
 {
      printf( "generate schedule error: %s\n", getGenerateScheduleError() );
@@ -359,6 +420,9 @@ static void run_all_tests()
      run_test( generateSchedule_ShouldReturnAScheduleWhereOnlyPlayOtherTeamsInTheSameConference, check_generate_schedule_error );
 
      run_test( generateSchedule_ShouldUpdateTheRomsWithTheGeneratedSchedule_GivenTwoRoms,        check_generate_schedule_error );
+
+     run_test( generateSchedule_ShouldReturnAScheduleWith24TVGamesSelected,                      check_generate_schedule_error );
+     run_test( generateSchedule_ShouldSelectTVGamesForEveryTeam,                                 check_generate_schedule_error );
 }
 
 
