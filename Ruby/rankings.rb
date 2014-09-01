@@ -155,10 +155,6 @@ class TeamRankings
 end
 
 
-if ARGV.length != 1
-  abort "Usage: #{__FILE__} <path>\n"
-end
-
 path = ARGV[0] || '.'
 
 if ! Dir.exists? path
