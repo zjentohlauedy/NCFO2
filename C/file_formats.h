@@ -175,17 +175,23 @@ typedef struct
      nes_pointer_s      unknown_pointers1           [     4 ];          // 0x1fcd8 - 0x1fcdf
      nes_pointer_s      misc_name_pointers          [    16 ];          // 0x1fce0 - 0x1fcff
      unsigned char      team_conference_names       [   784 ];          // 0x1fd00 - 0x2000f
-     unsigned char      unknown18a                  [ 14787 ];          // 0x20010 - 0x239d2
+     unsigned char      unknown18a                  [  8144 ];          // 0x20010 - 0x21fdf
+     unsigned char      formations1                 [    28 ];          // 0x21fe0 - 0x21ffb
+     unsigned char      unknown18b                  [  6615 ];          // 0x21ffc - 0x239d2
      unsigned char      kick_and_punt_returners1    [    28 ];          // 0x239d3 - 0x239ee - 1 byte per team by nibble: [KR, PR]
-     unsigned char      unknown18b                  [  1569 ];          // 0x239ef - 0x2400f
+     unsigned char      unknown18c                  [  1569 ];          // 0x239ef - 0x2400f
      unsigned char      unknown19                   [  8192 ];          // 0x24010 - 0x2600f
      unsigned char      unknown20                   [  2048 ];          // 0x26010 - 0x2680f
-     unsigned char      unknown21                   [  6144 ];          // 0x26810 - 0x2800f
+     unsigned char      unknown21a                  [  3350 ];          // 0x26810 - 0x27525
+     unsigned char      offensive_preference        [    28 ];          // 0x27526 - 0x27541
+     unsigned char      unknown21b                  [  2766 ];          // 0x27542 - 0x2800f
      unsigned char      unknown22                   [ 16384 ];          // 0x28010 - 0x2c00f
      unsigned char      unknown23                   [  4096 ];          // 0x2c010 - 0x2d00f
      unsigned char      unknown24                   [  4096 ];          // 0x2d010 - 0x2e00f
      unsigned char      unknown25                   [  8192 ];          // 0x2e010 - 0x3000f
-     unsigned char      unknown26                   [  8192 ];          // 0x30010 - 0x3200f
+     unsigned char      unknown26a                  [  7792 ];          // 0x30010 - 0x31e7f
+     unsigned char      formations2                 [    28 ];          // 0x31e80 - 0x31e9b
+     unsigned char      unknown26b                  [   372 ];          // 0x31e9c - 0x3200f
      unsigned char      unknown27a                  [  2243 ];          // 0x32010 - 0x328d2
      unsigned char      kick_and_punt_returners2    [    28 ];          // 0x328d3 - 0x328ee - 1 byte per team by nibble: [KR, PR]
      unsigned char      unknown27b                  [   184 ];          // 0x328ef - 0x329a6

@@ -1137,6 +1137,10 @@ static conference_team_s *convertTeams(
           teams[i].team->sim_offense = (rom->sim_data[rom_team_idx].team[0] >> 4   );
           teams[i].team->sim_defense = (rom->sim_data[rom_team_idx].team[0] &  0x0f);
 
+          teams[i].team->offensive_formation = rom->formations1[rom_team_idx];
+
+          teams[i].team->offensive_preference = rom->offensive_preference[rom_team_idx];
+
           const nst_teams_s *team_stats = NULL;
 
           if ( rom_team_idx < 9 ) team_stats = save_state->stats1[rom_team_idx    ].team_stats;

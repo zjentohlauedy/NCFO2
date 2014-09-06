@@ -163,6 +163,14 @@ static void setupRom( tsbrom_s *rom )
           team_offset += strlen(name);
      }
 
+     for ( int i = 0; i < 28; ++i )
+     {
+          rom->offensive_preference[i] = 3;
+
+          rom->formations1[i] = 2;
+          rom->formations2[i] = 2;
+     }
+
      int player_base   = 0x86ca;
      int player_offset = 0;
 
@@ -328,15 +336,18 @@ static char *convertOrganization_ShouldReturnAnOrganizationObjectWithTeams()
      {
           assertNotNull( teams[i].team );
 
-          assertEqualsInt( 1,             teams[i].conference_id          );
-          assertEqualsInt( i + 1,         teams[i].team_id                );
-          assertEqualsInt( i + 1,         teams[i].team->team_id          );
-          assertEqualsBfr( "UXZ",         teams[i].team->abbreviation,  3 );
-          assertEqualsBfr( "Xanadu Zero", teams[i].team->location,     11 );
-          assertEqualsBfr( "Utopians",    teams[i].team->name,          8 );
+          assertEqualsInt( 1,              teams[i].conference_id              );
+          assertEqualsInt( i + 1,          teams[i].team_id                    );
+          assertEqualsInt( i + 1,          teams[i].team->team_id              );
+          assertEqualsBfr( "UXZ",          teams[i].team->abbreviation,      3 );
+          assertEqualsBfr( "Xanadu Zero",  teams[i].team->location,         11 );
+          assertEqualsBfr( "Utopians",     teams[i].team->name,              8 );
 
-          assertEqualsInt( 10,            teams[i].team->sim_offense      );
-          assertEqualsInt( 11,            teams[i].team->sim_defense      );
+          assertEqualsInt( 10,             teams[i].team->sim_offense          );
+          assertEqualsInt( 11,             teams[i].team->sim_defense          );
+
+          assertEqualsInt( form_Four_Wide, teams[i].team->offensive_formation  );
+          assertEqualsInt( pref_HeavyPass, teams[i].team->offensive_preference );
      }
 
      assertEquals( -1, teams[6].conference_id );

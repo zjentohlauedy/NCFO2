@@ -15,6 +15,23 @@
 
 typedef enum
 {
+     form_Pro_Set    = 0,
+     form_Three_Wide = 1,
+     form_Four_Wide  = 2
+
+} formation_e;
+
+typedef enum
+{
+     pref_BalancedRush = 0,
+     pref_HeavyRush    = 1,
+     pref_BalancedPass = 2,
+     pref_HeavyPass    = 3
+
+} preference_e;
+
+typedef enum
+{
      tacc_None                 = 0,
      tacc_ConferenceChampions  = 1,
      tacc_CottonBowlChampions  = 2,
@@ -126,6 +143,9 @@ typedef struct
      // Simulation data:
      int                   sim_offense;
      int                   sim_defense;
+     // Offense:
+     formation_e           offensive_formation;
+     preference_e          offensive_preference;
 
 } team_s;
 
