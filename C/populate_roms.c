@@ -232,6 +232,8 @@ static void calcPlayerScore( player_s *player )
 
 static int calcPassingScore( const player_s *player )
 {
+     if ( player->extra_ratings.quarterback == NULL ) return 0;
+
      int passing = 0;
 
      passing += player->extra_ratings.quarterback->pass_control * 5;
@@ -244,6 +246,9 @@ static int calcPassingScore( const player_s *player )
 
 static int calcRushingScore( const player_s *player )
 {
+     if ( player->ratings == NULL ) return 0;
+     if ( player->position != pos_Quarterback  &&  player->extra_ratings.offense == NULL ) return 0;
+
      int rushing = 0;
 
      rushing += player->ratings->max_speed * 4;
@@ -258,6 +263,9 @@ static int calcRushingScore( const player_s *player )
 
 static int calcReceivingScore( const player_s *player )
 {
+     if ( player->ratings               == NULL ) return 0;
+     if ( player->extra_ratings.offense == NULL ) return 0;
+
      int receiving = 0;
 
      receiving += player->extra_ratings.offense->receiving * 5;
@@ -269,6 +277,9 @@ static int calcReceivingScore( const player_s *player )
 
 static int calcPassRushScore( const player_s *player )
 {
+     if ( player->ratings               == NULL ) return 0;
+     if ( player->extra_ratings.defense == NULL ) return 0;
+
      int passrush = 0;
 
      passrush += player->ratings->hit_power * 6;
@@ -281,6 +292,9 @@ static int calcPassRushScore( const player_s *player )
 
 static int calcCoverageScore( const player_s *player )
 {
+     if ( player->ratings               == NULL ) return 0;
+     if ( player->extra_ratings.defense == NULL ) return 0;
+
      int coverage = 0;
 
      coverage += player->extra_ratings.defense->interceptions * 5;
@@ -291,27 +305,52 @@ static int calcCoverageScore( const player_s *player )
      return coverage;
 }
 
+static void calcPlayerScores( player_s *player )
+{
+     calcPlayerScore( player );
+
+     switch ( player->position )
+     {
+     case pos_Quarterback:
+          player->passing_score = calcPassingScore( player );
+          player->rushing_score = calcRushingScore( player );
+          break;
+
+     case pos_Runningback:
+     case pos_WideReceiver:
+     case pos_TightEnd:
+          player->rushing_score   = calcRushingScore(   player );
+          player->receiving_score = calcReceivingScore( player );
+          break;
+
+     case pos_DefensiveLine:
+     case pos_Linebacker:
+     case pos_Cornerback:
+     case pos_Safety:
+          player->passrush_score = calcPassRushScore( player );
+          player->coverage_score = calcCoverageScore( player );
+          break;
+     }
+}
+
 static void setQuarterbackSimData( unsigned char *sim_data, const player_s *player )
 {
      if ( player->ratings                   == NULL ) return;
      if ( player->extra_ratings.quarterback == NULL ) return;
 
-     int passing_score = calcPassingScore( player );
-     int rushing_score = calcRushingScore( player );
-
      int sim_rush   = 0;
      int sim_pass   = 0;
      int sim_pocket = 0;
 
-     if      ( passing_score < 50 ) { sim_pass = (rand() % 4) +  4; }
-     else if ( passing_score < 70 ) { sim_pass = (rand() % 4) +  6; }
-     else if ( passing_score < 80 ) { sim_pass = (rand() % 4) +  8; }
-     else                           { sim_pass = (rand() % 4) + 10; }
+     if      ( player->passing_score < 50 ) { sim_pass = (rand() % 4) +  4; }
+     else if ( player->passing_score < 70 ) { sim_pass = (rand() % 4) +  6; }
+     else if ( player->passing_score < 80 ) { sim_pass = (rand() % 4) +  8; }
+     else                                   { sim_pass = (rand() % 4) + 10; }
 
-     if      ( rushing_score < 50 ) { sim_rush = (rand() % 4) +  2; sim_pocket = 3; }
-     else if ( rushing_score < 80 ) { sim_rush = (rand() % 4) +  4; sim_pocket = 2; }
-     else if ( rushing_score < 90 ) { sim_rush = (rand() % 4) +  6; sim_pocket = 1; }
-     else                           { sim_rush = (rand() % 4) +  8; sim_pocket = 0; }
+     if      ( player->rushing_score < 50 ) { sim_rush = (rand() % 4) +  2; sim_pocket = 3; }
+     else if ( player->rushing_score < 80 ) { sim_rush = (rand() % 4) +  4; sim_pocket = 2; }
+     else if ( player->rushing_score < 90 ) { sim_rush = (rand() % 4) +  6; sim_pocket = 1; }
+     else                                   { sim_rush = (rand() % 4) +  8; sim_pocket = 0; }
 
      sim_data[0] = (sim_rush << 4) + sim_pass;
      sim_data[1] = sim_pocket;
@@ -322,9 +361,6 @@ static void setOffenseSimData( unsigned char *sim_data, const player_s *player )
      if ( player->ratings               == NULL ) return;
      if ( player->extra_ratings.offense == NULL ) return;
 
-     int rushing_score   = calcRushingScore(   player );
-     int receiving_score = calcReceivingScore( player );
-
      int sim_rush   = 0;
      int sim_recv   = 0;
      int sim_yards  = 0;
@@ -333,15 +369,15 @@ static void setOffenseSimData( unsigned char *sim_data, const player_s *player )
      switch ( player->position )
      {
      case pos_Runningback:
-          if      ( rushing_score < 50 ) { sim_rush = (rand() % 4) +  4; }
-          else if ( rushing_score < 80 ) { sim_rush = (rand() % 4) +  6; }
-          else if ( rushing_score < 90 ) { sim_rush = (rand() % 4) +  8; }
-          else                           { sim_rush = (rand() % 4) + 10; }
+          if      ( player->rushing_score < 50 ) { sim_rush = (rand() % 4) +  4; }
+          else if ( player->rushing_score < 80 ) { sim_rush = (rand() % 4) +  6; }
+          else if ( player->rushing_score < 90 ) { sim_rush = (rand() % 4) +  8; }
+          else                                   { sim_rush = (rand() % 4) + 10; }
 
-          if      ( receiving_score <  50 ) { sim_recv = (rand() % 4) + 2; sim_target = 2; }
-          else if ( receiving_score <  85 ) { sim_recv = (rand() % 4) + 4; sim_target = 4; }
-          else if ( receiving_score < 100 ) { sim_recv = (rand() % 4) + 6; sim_target = 6; }
-          else                              { sim_recv = (rand() % 4) + 8; sim_target = 8; }
+          if      ( player->receiving_score <  50 ) { sim_recv = (rand() % 4) + 2; sim_target = 2; }
+          else if ( player->receiving_score <  85 ) { sim_recv = (rand() % 4) + 4; sim_target = 4; }
+          else if ( player->receiving_score < 100 ) { sim_recv = (rand() % 4) + 6; sim_target = 6; }
+          else                                      { sim_recv = (rand() % 4) + 8; sim_target = 8; }
 
           if      ( player->score < 115 ) { sim_yards = (rand() % 4) +  4; }
           else if ( player->score < 150 ) { sim_yards = (rand() % 4) +  6; }
@@ -351,15 +387,15 @@ static void setOffenseSimData( unsigned char *sim_data, const player_s *player )
           break;
 
      case pos_WideReceiver:
-          if      ( rushing_score < 50 ) { sim_rush = (rand() % 4) + 2; }
-          else if ( rushing_score < 80 ) { sim_rush = (rand() % 4) + 4; }
-          else if ( rushing_score < 90 ) { sim_rush = (rand() % 4) + 6; }
-          else                           { sim_rush = (rand() % 4) + 8; }
+          if      ( player->rushing_score < 50 ) { sim_rush = (rand() % 4) + 2; }
+          else if ( player->rushing_score < 80 ) { sim_rush = (rand() % 4) + 4; }
+          else if ( player->rushing_score < 90 ) { sim_rush = (rand() % 4) + 6; }
+          else                                   { sim_rush = (rand() % 4) + 8; }
 
-          if      ( receiving_score <  50 ) { sim_recv = (rand() % 4) +  4; sim_target =  8; }
-          else if ( receiving_score <  85 ) { sim_recv = (rand() % 4) +  6; sim_target = 10; }
-          else if ( receiving_score < 100 ) { sim_recv = (rand() % 4) +  8; sim_target = 12; }
-          else                              { sim_recv = (rand() % 4) + 10; sim_target = 14; }
+          if      ( player->receiving_score <  50 ) { sim_recv = (rand() % 4) +  4; sim_target =  8; }
+          else if ( player->receiving_score <  85 ) { sim_recv = (rand() % 4) +  6; sim_target = 10; }
+          else if ( player->receiving_score < 100 ) { sim_recv = (rand() % 4) +  8; sim_target = 12; }
+          else                                      { sim_recv = (rand() % 4) + 10; sim_target = 14; }
 
           if      ( player->score < 130 ) { sim_yards = (rand() % 4) +  4; }
           else if ( player->score < 180 ) { sim_yards = (rand() % 4) +  6; }
@@ -369,15 +405,15 @@ static void setOffenseSimData( unsigned char *sim_data, const player_s *player )
           break;
 
      case pos_TightEnd:
-          if      ( rushing_score < 50 ) { sim_rush = (rand() % 4) + 2; }
-          else if ( rushing_score < 80 ) { sim_rush = (rand() % 4) + 4; }
-          else if ( rushing_score < 90 ) { sim_rush = (rand() % 4) + 6; }
-          else                           { sim_rush = (rand() % 4) + 8; }
+          if      ( player->rushing_score < 50 ) { sim_rush = (rand() % 4) + 2; }
+          else if ( player->rushing_score < 80 ) { sim_rush = (rand() % 4) + 4; }
+          else if ( player->rushing_score < 90 ) { sim_rush = (rand() % 4) + 6; }
+          else                                   { sim_rush = (rand() % 4) + 8; }
 
-          if      ( receiving_score <  50 ) { sim_recv = (rand() % 4) + 2; sim_target = 1; }
-          else if ( receiving_score <  85 ) { sim_recv = (rand() % 4) + 4; sim_target = 2; }
-          else if ( receiving_score < 100 ) { sim_recv = (rand() % 4) + 6; sim_target = 3; }
-          else                              { sim_recv = (rand() % 4) + 8; sim_target = 4; }
+          if      ( player->receiving_score <  50 ) { sim_recv = (rand() % 4) + 2; sim_target = 1; }
+          else if ( player->receiving_score <  85 ) { sim_recv = (rand() % 4) + 4; sim_target = 2; }
+          else if ( player->receiving_score < 100 ) { sim_recv = (rand() % 4) + 6; sim_target = 3; }
+          else                                      { sim_recv = (rand() % 4) + 8; sim_target = 4; }
 
           if      ( player->score < 110 ) { sim_yards = (rand() % 4) +  4; }
           else if ( player->score < 150 ) { sim_yards = (rand() % 4) +  6; }
@@ -396,63 +432,60 @@ static void setDefenseSimData( unsigned char *passrush_out, unsigned char *cover
      if ( player->ratings               == NULL ) return;
      if ( player->extra_ratings.defense == NULL ) return;
 
-     int passrush_score = calcPassRushScore( player );
-     int coverage_score = calcCoverageScore( player );
-
      unsigned char sim_passrush = 0;
      unsigned char sim_coverage = 0;
 
      switch ( player->position )
      {
      case pos_DefensiveLine:
-          if      ( passrush_score < 50 ) { sim_passrush = (rand() % 15) + 15; }
-          else if ( passrush_score < 70 ) { sim_passrush = (rand() % 15) + 35; }
-          else if ( passrush_score < 80 ) { sim_passrush = (rand() % 15) + 55; }
-          else                            { sim_passrush = (rand() % 15) + 75; }
+          if      ( player->passrush_score < 50 ) { sim_passrush = (rand() % 15) + 15; }
+          else if ( player->passrush_score < 70 ) { sim_passrush = (rand() % 15) + 35; }
+          else if ( player->passrush_score < 80 ) { sim_passrush = (rand() % 15) + 55; }
+          else                                    { sim_passrush = (rand() % 15) + 75; }
 
-          if      ( coverage_score < 50 ) { sim_coverage = 1; }
-          else if ( coverage_score < 80 ) { sim_coverage = 2; }
-          else if ( coverage_score < 90 ) { sim_coverage = 3; }
-          else                            { sim_coverage = 4; }
+          if      ( player->coverage_score < 50 ) { sim_coverage = 1; }
+          else if ( player->coverage_score < 80 ) { sim_coverage = 2; }
+          else if ( player->coverage_score < 90 ) { sim_coverage = 3; }
+          else                                    { sim_coverage = 4; }
 
           break;
 
      case pos_Linebacker:
-          if      ( passrush_score < 50 ) { sim_passrush = (rand() % 10) +  8; }
-          else if ( passrush_score < 70 ) { sim_passrush = (rand() % 10) + 23; }
-          else if ( passrush_score < 80 ) { sim_passrush = (rand() % 10) + 38; }
-          else                            { sim_passrush = (rand() % 10) + 53; }
+          if      ( player->passrush_score < 50 ) { sim_passrush = (rand() % 10) +  8; }
+          else if ( player->passrush_score < 70 ) { sim_passrush = (rand() % 10) + 23; }
+          else if ( player->passrush_score < 80 ) { sim_passrush = (rand() % 10) + 38; }
+          else                                    { sim_passrush = (rand() % 10) + 53; }
 
-          if      ( coverage_score < 50 ) { sim_coverage = (rand() % 8) +  4; }
-          else if ( coverage_score < 80 ) { sim_coverage = (rand() % 8) + 12; }
-          else if ( coverage_score < 90 ) { sim_coverage = (rand() % 8) + 20; }
-          else                            { sim_coverage = (rand() % 8) + 28; }
+          if      ( player->coverage_score < 50 ) { sim_coverage = (rand() % 8) +  4; }
+          else if ( player->coverage_score < 80 ) { sim_coverage = (rand() % 8) + 12; }
+          else if ( player->coverage_score < 90 ) { sim_coverage = (rand() % 8) + 20; }
+          else                                    { sim_coverage = (rand() % 8) + 28; }
 
           break;
 
      case pos_Cornerback:
-          if      ( passrush_score < 50 ) { sim_passrush = 1; }
-          else if ( passrush_score < 70 ) { sim_passrush = 2; }
-          else if ( passrush_score < 80 ) { sim_passrush = 3; }
-          else                            { sim_passrush = 4; }
+          if      ( player->passrush_score < 50 ) { sim_passrush = 1; }
+          else if ( player->passrush_score < 70 ) { sim_passrush = 2; }
+          else if ( player->passrush_score < 80 ) { sim_passrush = 3; }
+          else                                    { sim_passrush = 4; }
 
-          if      ( coverage_score < 50 ) { sim_coverage = (rand() % 16) +  8; }
-          else if ( coverage_score < 80 ) { sim_coverage = (rand() % 16) + 32; }
-          else if ( coverage_score < 90 ) { sim_coverage = (rand() % 16) + 48; }
-          else                            { sim_coverage = (rand() % 16) + 80; }
+          if      ( player->coverage_score < 50 ) { sim_coverage = (rand() % 16) +  8; }
+          else if ( player->coverage_score < 80 ) { sim_coverage = (rand() % 16) + 32; }
+          else if ( player->coverage_score < 90 ) { sim_coverage = (rand() % 16) + 48; }
+          else                                    { sim_coverage = (rand() % 16) + 80; }
 
           break;
 
      case pos_Safety:
-          if      ( passrush_score < 50 ) { sim_passrush = 1; }
-          else if ( passrush_score < 70 ) { sim_passrush = 2; }
-          else if ( passrush_score < 80 ) { sim_passrush = 3; }
-          else                            { sim_passrush = 4; }
+          if      ( player->passrush_score < 50 ) { sim_passrush = 1; }
+          else if ( player->passrush_score < 70 ) { sim_passrush = 2; }
+          else if ( player->passrush_score < 80 ) { sim_passrush = 3; }
+          else                                    { sim_passrush = 4; }
 
-          if      ( coverage_score < 50 ) { sim_coverage = (rand() % 16) +  8; }
-          else if ( coverage_score < 80 ) { sim_coverage = (rand() % 16) + 32; }
-          else if ( coverage_score < 90 ) { sim_coverage = (rand() % 16) + 48; }
-          else                            { sim_coverage = (rand() % 16) + 80; }
+          if      ( player->coverage_score < 50 ) { sim_coverage = (rand() % 16) +  8; }
+          else if ( player->coverage_score < 80 ) { sim_coverage = (rand() % 16) + 32; }
+          else if ( player->coverage_score < 90 ) { sim_coverage = (rand() % 16) + 48; }
+          else                                    { sim_coverage = (rand() % 16) + 80; }
 
           break;
      }
@@ -598,7 +631,7 @@ static void setKickRatings( tsb_kick_ratings_s *kick_ratings, const player_s *pl
      kick_ratings->kick_ratings[0] = (player->extra_ratings.kicking->kicking_ability << 4) + player->extra_ratings.kicking->avoid_kick_block;
 }
 
-static void injectData( tsbrom_s *rom, player_s **players )
+static void injectData( tsbrom_s *rom, team_s **teams, player_s **players )
 {
      unsigned char *ratings_ptr = (unsigned char *)rom->team_player_ratings;
      size_t         offset      = 0;
@@ -612,6 +645,28 @@ static void injectData( tsbrom_s *rom, player_s **players )
 
           int team_sim_offense = 8;
           int team_sim_defense = 8;
+
+          if ( teams[i] != NULL  &&  teams[i]->offensive_formation != form_Pro_Set )
+          {
+               int start_idx = i * 30;
+
+               // Move WR3 to RB2 slot, then shift running backs down: rb2->rb3->rb4->wr3
+               player_s *player = players[start_idx + 8];
+
+               players[start_idx + 8] = players[start_idx + 5];
+               players[start_idx + 5] = players[start_idx + 4];
+               players[start_idx + 4] = players[start_idx + 3];
+               players[start_idx + 3] = player;
+
+               if ( teams[i]->offensive_formation == form_Four_Wide )
+               {
+                    // Switch WR4 and TE1 slots
+                    player = players[start_idx + 9];
+
+                    players[start_idx +  9] = players[start_idx + 10];
+                    players[start_idx + 10] = player;
+               }
+          }
 
           for ( int j = 0; j < 30; ++j )
           {
@@ -751,16 +806,49 @@ static void injectData( tsbrom_s *rom, player_s **players )
           rom->kick_and_punt_returners1[i] = (kick_returner.index << 4) + punt_returner.index;
           rom->kick_and_punt_returners2[i] = rom->kick_and_punt_returners1[i];
 
-          rom->formations1[i] = form_Pro_Set;
-          rom->formations2[i] = form_Pro_Set;
+          if ( teams[i] != NULL )
+          {
+               rom->formations1[i] = teams[i]->offensive_formation;
+               rom->formations2[i] = teams[i]->offensive_formation;
 
-          rom->offensive_preference[i] = pref_BalancedPass;
+               rom->offensive_preference[i] = teams[i]->offensive_preference;
 
-          rom->default_playbooks[i].rushing[0] = 0x10;
-          rom->default_playbooks[i].rushing[1] = 0x24;
+               if ( teams[i]->offensive_formation == form_Pro_Set )
+               {
+                    if ( teams[i]->use_feature_back )
+                    {
+                         rom->default_playbooks[i].rushing[0] = 0x00;
+                         rom->default_playbooks[i].rushing[1] = 0x03;
 
-          rom->default_playbooks[i].passing[0] = 0x64;
-          rom->default_playbooks[i].passing[1] = 0x66;
+                         rom->default_playbooks[i].passing[0] = 0x60;
+                         rom->default_playbooks[i].passing[1] = 0x24;
+                    }
+                    else
+                    {
+                         rom->default_playbooks[i].rushing[0] = 0x10;
+                         rom->default_playbooks[i].rushing[1] = 0x24;
+
+                         rom->default_playbooks[i].passing[0] = 0x64;
+                         rom->default_playbooks[i].passing[1] = 0x66;
+                    }
+               }
+               else if ( teams[i]->offensive_formation == form_Three_Wide )
+               {
+                    rom->default_playbooks[i].rushing[0] = 0x64;
+                    rom->default_playbooks[i].rushing[1] = 0x03;
+
+                    rom->default_playbooks[i].passing[0] = 0x37;
+                    rom->default_playbooks[i].passing[1] = 0x40;
+               }
+               else if ( teams[i]->offensive_formation == form_Four_Wide )
+               {
+                    rom->default_playbooks[i].rushing[0] = 0x42;
+                    rom->default_playbooks[i].rushing[1] = 0x13;
+
+                    rom->default_playbooks[i].passing[0] = 0x13;
+                    rom->default_playbooks[i].passing[1] = 0x25;
+               }
+          }
      }
 }
 
@@ -797,33 +885,19 @@ static int orderByPositionAscendingAndScoreDescending( const void *a, const void
      return 0;
 }
 
-static void organizePlayers( team_player_s *players, const int season )
-{
-     int members = 0;
-
-     for ( int i = 0; players[i].player != NULL; ++i )
-     {
-          player_s *player = players[i].player;
-
-          applyMaturityAdjustment( player, season );
-
-          calcPlayerScore( player );
-
-          members++;
-     }
-
-     qsort( players, members, sizeof(team_player_s), orderByPositionAscendingAndScoreDescending );
-}
-
-static boolean_e processPlayers( player_s **rom_players, team_player_s *players, const int team_id, const int season )
+static boolean_e selectPlayers( player_s **rom_players, team_player_s *players, const int team_id, const formation_e formation )
 {
      if ( players == NULL ) return bl_True;
-
-     organizePlayers( players, season );
 
      int player_pos_counts[] = { 0, 2, 4, 4, 2, 5, 3, 4, 2, 2, 1, 1 }; // number of players needed by position
      int player_count        =   0;                                    // total number of players used
      int start_idx           =  (team_id - 1) % 24;
+
+     if ( formation == form_Four_Wide )
+     {
+          player_pos_counts[3] = 6;
+          player_pos_counts[4] = 0;
+     }
 
      for ( int i = 0; players[i].player != NULL; ++i )
      {
@@ -848,7 +922,135 @@ static boolean_e processPlayers( player_s **rom_players, team_player_s *players,
      return bl_True;
 }
 
-static boolean_e processTeams( player_s **rom_players, const conference_team_s *teams, const int season )
+static boolean_e checkForFeatureBack( team_player_s *players, const formation_e formation )
+{
+     if ( formation == form_Three_Wide  ||  formation == form_Four_Wide ) return bl_True;
+
+     player_s *rb1 = players[2].player;
+     player_s *rb2 = players[3].player;
+
+     int rb1_rush_value = (rb1->rushing_score   < 50) ? 0 : (rb1->rushing_score   < 80) ? 1 : (rb1->rushing_score   <  90) ? 2 : 3;
+     int rb2_rush_value = (rb2->rushing_score   < 50) ? 0 : (rb2->rushing_score   < 80) ? 1 : (rb2->rushing_score   <  90) ? 2 : 3;
+
+     if ( rb1_rush_value > rb2_rush_value ) return bl_True;
+
+     return bl_False;
+}
+
+static preference_e determinePreference( team_player_s *players, const formation_e formation )
+{
+     int balance;
+
+     player_s *qb1 = players[0].player;
+     player_s *rb1 = players[2].player;
+     player_s *wr1 = players[6].player;
+     player_s *wr2 = players[7].player;
+
+     balance  = (qb1->passing_score   < 50) ?  0 : (qb1->passing_score   < 70) ? 2 : (qb1->passing_score   <  80) ?  3 :  3;
+     balance += (qb1->rushing_score   < 50) ?  0 : (qb1->rushing_score   < 80) ? 0 : (qb1->rushing_score   <  90) ? -1 : -1;
+     balance += (rb1->rushing_score   < 50) ?  1 : (rb1->rushing_score   < 80) ? 0 : (rb1->rushing_score   <  90) ? -1 : -2;
+     balance += (rb1->receiving_score < 50) ? -1 : (rb1->receiving_score < 85) ? 0 : (rb1->receiving_score < 100) ?  1 :  1;
+     balance += (wr1->receiving_score < 50) ? -1 : (wr1->receiving_score < 85) ? 0 : (wr1->receiving_score < 100) ?  0 :  1;
+     balance += (wr2->receiving_score < 50) ? -1 : (wr2->receiving_score < 85) ? 0 : (wr2->receiving_score < 100) ?  0 :  1;
+
+     if      ( formation == form_Pro_Set )
+     {
+          player_s *rb2 = players[ 3].player;
+          player_s *te1 = players[12].player;
+
+          balance += (rb2->rushing_score   < 50) ?  1 : (rb2->rushing_score   < 80) ? 0 : (rb2->rushing_score   <  90) ? -1 : -2;
+          balance += (rb2->receiving_score < 50) ? -1 : (rb2->receiving_score < 85) ? 0 : (rb2->receiving_score < 100) ?  1 :  1;
+          balance += (te1->receiving_score < 50) ?  0 : (te1->receiving_score < 85) ? 0 : (te1->receiving_score < 100) ?  0 :  1;
+     }
+     else if ( formation == form_Three_Wide )
+     {
+          player_s *wr3 = players[ 8].player;
+          player_s *te1 = players[12].player;
+
+          balance += (wr3->receiving_score < 50) ? -1 : (wr3->receiving_score < 85) ? 0 : (wr3->receiving_score < 100) ?  0 :  1;
+          balance += (te1->receiving_score < 50) ?  0 : (te1->receiving_score < 85) ? 0 : (te1->receiving_score < 100) ?  0 :  1;
+     }
+     else if ( formation == form_Four_Wide )
+     {
+          player_s *wr3 = players[8].player;
+          player_s *wr4 = players[9].player;
+
+          balance += (wr3->receiving_score < 50) ? -1 : (wr3->receiving_score < 85) ? 0 : (wr3->receiving_score < 100) ?  0 :  1;
+          balance += (wr4->receiving_score < 50) ? -1 : (wr4->receiving_score < 85) ? 0 : (wr4->receiving_score < 100) ?  0 :  1;
+     }
+
+     if ( balance < 0 ) balance = 0;
+     if ( balance > 3 ) balance = 3;
+
+     switch ( balance )
+     {
+     case 0: return pref_HeavyRush;
+     case 1: return pref_BalancedRush;
+     case 2: return pref_BalancedPass;
+     case 3: return pref_HeavyPass;
+     }
+
+     return pref_BalancedPass;
+}
+
+static formation_e determineFormation( team_player_s *players )
+{
+     formation_e formation = form_Pro_Set;
+
+     player_s *rb2 = players[ 3].player;
+     player_s *wr3 = players[ 8].player;
+     player_s *wr4 = players[ 9].player;
+     player_s *te1 = players[12].player;
+
+     int rb2_rush_value = (rb2->rushing_score   < 50) ? 0 : (rb2->rushing_score   < 80) ? 1 : (rb2->rushing_score   <  90) ? 2 : 3;
+     int rb2_recv_value = (rb2->receiving_score < 50) ? 0 : (rb2->receiving_score < 85) ? 1 : (rb2->receiving_score < 100) ? 2 : 3;
+     int wr3_value      = (wr3->receiving_score < 50) ? 0 : (wr3->receiving_score < 85) ? 1 : (wr3->receiving_score < 100) ? 2 : 3;
+
+     int rb2_value = (rb2_rush_value < rb2_recv_value) ? rb2_recv_value : rb2_rush_value;
+
+     if ( wr3_value > rb2_value ) formation = form_Three_Wide;
+
+     if ( formation == form_Three_Wide )
+     {
+          int wr4_value = (wr4->score < 130) ? 0 : (wr4->score < 180) ? 1 : (wr4->score < 190) ? 2 : 3;
+          int te1_value = (te1->score < 110) ? 0 : (te1->score < 150) ? 1 : (te1->score < 170) ? 2 : 3;
+
+          if      ( wr4_value > te1_value ) formation = form_Four_Wide;
+          else if ( te1_value > wr4_value ) formation = form_Three_Wide;
+          else
+          {
+               wr4_value = (wr4->receiving_score < 50) ? 0 : (wr4->receiving_score < 85) ? 1 : (wr4->receiving_score < 100) ? 2 : 3;
+               te1_value = (te1->receiving_score < 50) ? 0 : (te1->receiving_score < 85) ? 1 : (te1->receiving_score < 100) ? 2 : 3;
+
+               if   ( wr4_value > te1_value ) formation = form_Four_Wide;
+               else                           formation = form_Three_Wide;
+          }
+     }
+
+     return formation;
+}
+
+static void processPlayers( team_player_s *players, const int season )
+{
+     if ( players == NULL ) return;
+
+     int members = 0;
+
+     for ( int i = 0; players[i].player != NULL; ++i )
+     {
+          player_s *player = players[i].player;
+
+          applyMaturityAdjustment( player, season );
+
+          calcPlayerScores( player );
+
+          members++;
+     }
+
+     qsort( players, members, sizeof(team_player_s), orderByPositionAscendingAndScoreDescending );
+}
+
+static boolean_e processTeams( team_s **rom_teams, player_s **rom_players, const conference_team_s *teams, const int season )
 {
      if ( teams == NULL ) return bl_True;
 
@@ -856,7 +1058,17 @@ static boolean_e processTeams( player_s **rom_players, const conference_team_s *
      {
           team_s *team = teams[i].team;
 
-          if ( ! processPlayers( rom_players, team->players, team->team_id, season ) ) return bl_False;
+          int rom_team_idx = (team->team_id -1) % 24;
+
+          rom_teams[rom_team_idx] = team;
+
+          processPlayers( team->players, season );
+
+          team->offensive_formation  = determineFormation(  team->players                            );
+          team->offensive_preference = determinePreference( team->players, team->offensive_formation );
+          team->use_feature_back     = checkForFeatureBack( team->players, team->offensive_formation );
+
+          if ( ! selectPlayers( rom_players, team->players, team->team_id, team->offensive_formation ) ) return bl_False;
      }
 
      return bl_True;
@@ -879,6 +1091,8 @@ void initializeRom( tsbrom_s *rom )
 
 boolean_e populateRoms( tsbrom_s *rom1, tsbrom_s *rom2, const organization_s *organization )
 {
+     team_s   *rom1_teams  [28     ] = { 0 };
+     team_s   *rom2_teams  [28     ] = { 0 };
      player_s *rom1_players[28 * 30] = { 0 };
      player_s *rom2_players[28 * 30] = { 0 };
 
@@ -893,13 +1107,16 @@ boolean_e populateRoms( tsbrom_s *rom1, tsbrom_s *rom2, const organization_s *or
 
      for ( int i = 0; organization->conferences[i].conference != NULL; ++i )
      {
-          conference_s *conference = organization->conferences[i].conference;
+          conference_s *conference  = organization->conferences[i].conference;
 
-          if ( ! processTeams( (i < 4) ? rom1_players : rom2_players, conference->teams, organization->season ) ) return bl_False;
+          team_s   **rom_teams   = (i < 4) ? rom1_teams   : rom2_teams;
+          player_s **rom_players = (i < 4) ? rom1_players : rom2_players;
+
+          if ( ! processTeams( rom_teams, rom_players, conference->teams, organization->season ) ) return bl_False;
      }
 
-     injectData( rom1, rom1_players );
-     injectData( rom2, rom2_players );
+     injectData( rom1, rom1_teams, rom1_players );
+     injectData( rom2, rom2_teams, rom2_players );
 
      return bl_True;
 }

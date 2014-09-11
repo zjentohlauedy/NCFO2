@@ -167,8 +167,8 @@ static void setupRom( tsbrom_s *rom )
      {
           rom->offensive_preference[i] = 3;
 
-          rom->formations1[i] = 2;
-          rom->formations2[i] = 2;
+          rom->formations1[i] = 1;
+          rom->formations2[i] = 1;
      }
 
      int player_base   = 0x86ca;
@@ -561,6 +561,14 @@ static char *convertOrganization_ShouldReturnAnOrganizationObjectWithPlayers()
 
      setupSaveState( &save_state1 );
      setupSaveState( &save_state2 );
+
+     for ( int i = 0; i < 28; ++i )
+     {
+          rom1.formations1[i] = 0;
+          rom1.formations2[i] = 0;
+          rom2.formations1[i] = 0;
+          rom2.formations2[i] = 0;
+     }
 
      organization_s *org = convertOrganization( &rom1, &save_state1, &rom2, &save_state2, 0, bg_None );
 

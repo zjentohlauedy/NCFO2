@@ -16,8 +16,8 @@
 typedef enum
 {
      form_Pro_Set    = 0,
-     form_Three_Wide = 1,
-     form_Four_Wide  = 2
+     form_Four_Wide  = 1,
+     form_Three_Wide = 2
 
 } formation_e;
 
@@ -146,6 +146,7 @@ typedef struct
      // Offense:
      formation_e           offensive_formation;
      preference_e          offensive_preference;
+     boolean_e             use_feature_back;
 
 } team_s;
 

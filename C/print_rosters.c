@@ -49,6 +49,31 @@ static char *getDisplayPosition( const position_e position )
      }
 }
 
+static char *getDisplayPreference( const preference_e preference )
+{
+     switch ( preference )
+     {
+     case pref_BalancedRush: return "Balanced Rush";
+     case pref_HeavyRush:    return "Heavy Rush";
+     case pref_BalancedPass: return "Balanced Pass";
+     case pref_HeavyPass:    return "Heavy Pass";
+     }
+
+     return "Unknown";
+}
+
+static char *getDisplayFormation( const formation_e formation )
+{
+     switch ( formation )
+     {
+     case form_Pro_Set:    return "2RB/2WR/1TE";
+     case form_Three_Wide: return "1RB/3WR/1TE";
+     case form_Four_Wide:  return "1RB/4WR";
+     }
+
+     return "Unknown";
+}
+
 
 static void printHeader( const position_e position )
 {
@@ -459,6 +484,75 @@ static void printPlayer( const player_s *player )
      printf( "\n" );
 }
 
+static int comparePlayersByPositionAndStats( const void *arg1, const void *arg2 )
+{
+     const player_s *player1 = ((team_player_s *)arg1)->player;
+     const player_s *player2 = ((team_player_s *)arg2)->player;
+
+     if ( player1 == NULL )
+     {
+          if ( player2 == NULL ) return 0;
+
+          return 1;
+     }
+
+     if ( player2 == NULL ) return -1;
+
+     if ( player1->position != player2->position ) return player1->position - player2->position;
+
+     switch ( player1->position )
+     {
+     case pos_Quarterback:   return player2->stats.offense->pass_attempts - player1->stats.offense->pass_attempts;
+     case pos_Runningback:   return player2->stats.offense->rush_attempts - player1->stats.offense->rush_attempts;
+     case pos_WideReceiver:  return player2->stats.offense->receptions    - player1->stats.offense->receptions;
+     case pos_TightEnd:      return player2->stats.offense->receptions    - player1->stats.offense->receptions;
+     case pos_DefensiveLine: return player2->stats.defense->sacks         - player1->stats.defense->sacks;
+     case pos_Linebacker:    return player2->stats.defense->sacks         - player1->stats.defense->sacks;
+     case pos_Cornerback:    return player2->stats.defense->interceptions - player1->stats.defense->interceptions;
+     case pos_Safety:        return player2->stats.defense->interceptions - player1->stats.defense->interceptions;
+     }
+
+     return 0;
+}
+
+static int comparePlayersByPositionAndScore( const void *arg1, const void *arg2 )
+{
+     const player_s *player1 = ((team_player_s *)arg1)->player;
+     const player_s *player2 = ((team_player_s *)arg2)->player;
+
+     if ( player1 == NULL )
+     {
+          if ( player2 == NULL ) return 0;
+
+          return 1;
+     }
+
+     if ( player2 == NULL ) return -1;
+
+     if ( player1->position != player2->position ) return player1->position - player2->position;
+
+     return player2->score - player1->score;
+}
+
+static void sortPlayers( team_player_s *players )
+{
+     int i;
+
+     for ( i = 0; players[i].player != NULL; ++i )
+     {
+          players[i].player->score = calcPlayerScore( players[i].player );
+     }
+
+     if ( print_style == ps_Ratings )
+     {
+          qsort( players, i, sizeof(team_player_s), comparePlayersByPositionAndScore );
+     }
+     else if ( print_style == ps_Stats )
+     {
+          qsort( players, i, sizeof(team_player_s), comparePlayersByPositionAndStats );
+     }
+}
+
 static void printTeam( const team_s *team )
 {
      position_e current_pos = pos_None;
@@ -467,7 +561,12 @@ static void printTeam( const team_s *team )
 
      if ( print_style == ps_Ratings )
      {
-          printf( "  %2d/%2d\n", team->sim_offense, team->sim_defense );
+          printf( "  %2d/%2d", team->sim_offense, team->sim_defense );
+
+          printf( "  %s", getDisplayFormation(  team->offensive_formation  ) );
+          printf( "  %s", getDisplayPreference( team->offensive_preference ) );
+
+          printf( "\n" );
      }
      else if ( print_style == ps_Stats )
      {
@@ -480,6 +579,8 @@ static void printTeam( const team_s *team )
      }
 
      if ( team->players == NULL ) return;
+
+     sortPlayers( team->players );
 
      for ( int i = 0; team->players[i].player != NULL; ++i )
      {

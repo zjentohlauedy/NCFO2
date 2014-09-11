@@ -267,6 +267,11 @@ typedef struct
      player_stats_s          stats;
      // internal use:
      int                     score;
+     int                     passing_score;
+     int                     rushing_score;
+     int                     receiving_score;
+     int                     passrush_score;
+     int                     coverage_score;
      boolean_e               injured;
      condition_e             condition;
 
