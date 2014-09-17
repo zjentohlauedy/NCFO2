@@ -128,6 +128,26 @@ typedef struct
 
 typedef struct
 {
+     unsigned char selections [ 8]; // Based on what play call the defense makes, e.g. ^A, <B, >A, etc.
+
+} tsb_action_s;
+
+typedef struct
+{
+     unsigned char name      [15];
+     unsigned char formation [ 1];
+     tsb_action_s  actions;
+
+} tsb_play_s;
+
+typedef struct
+{
+     unsigned char bytes [42];
+
+} tsb_playbook_gfx_s;
+
+typedef struct
+{
      nes_header_s       header;                                         // 0x00000 - 0x0000f
      nes_pointer_s      team_pointers               [    28 ];          // 0x00010 - 0x00047
      nes_pointer_s      player_pointers             [    28 ][ 30 ];    // 0x00048 - 0x006d7
@@ -160,10 +180,12 @@ typedef struct
      tsb_playbook_s     default_playbooks           [    28 ];          // 0x1d310 - 0x1d37f
      unsigned char      pro_bowl_playbooks          [    16 ];          // 0x1d380 - 0x1d38f
      unsigned char      filler2                     [   128 ];          // 0x1d390 - 0x1d40f
-     unsigned char      play_names_and_pointers     [  2048 ];          // 0x1d410 - 0x1dc0f
-     unsigned char      defensive_reactions         [   768 ];          // 0x1dc10 - 0x1df0f
+     tsb_play_s         offensive_plays             [    64 ];          // 0x1d410 - 0x1da0f
+     unsigned char      filler3                     [   512 ];          // 0x1da10 - 0x1dc0f
+     tsb_action_s       defensive_reactions         [    64 ];          // 0x1dc10 - 0x1de0f
+     unsigned char      filler4                     [   256 ];          // 0x1de10 - 0x1df0f
      tsb_com_juice_s    computer_juice              [    17 ];          // 0x1df10 - 0x1df64
-     unsigned char      filler3                     [   171 ];          // 0x1df65 - 0x1e00f
+     unsigned char      filler5                     [   171 ];          // 0x1df65 - 0x1e00f
      unsigned char      unknown17                   [  7168 ];          // 0x1e010 - 0x1fc0f
      nes_pointer_s      team_abbr_pointers          [    28 ];          // 0x1fc10 - 0x1fc47
      nes_pointer_s      conference_abbr_pointers    [     4 ];          // 0x1fc48 - 0x1fc49
@@ -182,9 +204,12 @@ typedef struct
      unsigned char      unknown18c                  [  1569 ];          // 0x239ef - 0x2400f
      unsigned char      unknown19                   [  8192 ];          // 0x24010 - 0x2600f
      unsigned char      unknown20                   [  2048 ];          // 0x26010 - 0x2680f
-     unsigned char      unknown21a                  [  3350 ];          // 0x26810 - 0x27525
+     unsigned char      unknown21a                  [  3318 ];          // 0x26810 - 0x27525
+     unsigned char      target_rusher               [    32 ];          // 0x27506 - 0x27525
      unsigned char      offensive_preference        [    28 ];          // 0x27526 - 0x27541
-     unsigned char      unknown21b                  [  2766 ];          // 0x27542 - 0x2800f
+     unsigned char      filler6                     [     4 ];          // 0x27542 - 0x27545
+     tsb_playbook_gfx_s playbook_gfx                [    64 ];          // 0x27546 - 0x27fc5
+     unsigned char      filler7                     [    74 ];          // 0x27fc6 - 0x2800f
      unsigned char      unknown22                   [ 16384 ];          // 0x28010 - 0x2c00f
      unsigned char      unknown23                   [  4096 ];          // 0x2c010 - 0x2d00f
      unsigned char      unknown24                   [  4096 ];          // 0x2d010 - 0x2e00f

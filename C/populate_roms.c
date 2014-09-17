@@ -818,7 +818,7 @@ static void injectData( tsbrom_s *rom, team_s **teams, player_s **players )
                     if ( teams[i]->use_feature_back )
                     {
                          rom->default_playbooks[i].rushing[0] = 0x00;
-                         rom->default_playbooks[i].rushing[1] = 0x03;
+                         rom->default_playbooks[i].rushing[1] = 0x05;
 
                          rom->default_playbooks[i].passing[0] = 0x60;
                          rom->default_playbooks[i].passing[1] = 0x24;
@@ -843,7 +843,7 @@ static void injectData( tsbrom_s *rom, team_s **teams, player_s **players )
                else if ( teams[i]->offensive_formation == form_Four_Wide )
                {
                     rom->default_playbooks[i].rushing[0] = 0x42;
-                    rom->default_playbooks[i].rushing[1] = 0x13;
+                    rom->default_playbooks[i].rushing[1] = 0x02;
 
                     rom->default_playbooks[i].passing[0] = 0x13;
                     rom->default_playbooks[i].passing[1] = 0x25;
