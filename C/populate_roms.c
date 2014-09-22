@@ -631,6 +631,151 @@ static void setKickRatings( tsb_kick_ratings_s *kick_ratings, const player_s *pl
      kick_ratings->kick_ratings[0] = (player->extra_ratings.kicking->kicking_ability << 4) + player->extra_ratings.kicking->avoid_kick_block;
 }
 
+static void setPlaybooks( tsb_playbook_s *playbook, team_s *team )
+{
+     int roll = rand() % 100;
+
+     if ( team->offensive_formation == form_Pro_Set )
+     {
+          if ( team->use_feature_back )
+          {
+               if      ( team->offensive_preference == pref_HeavyRush )
+               {
+                    playbook->rushing[0] = 0x20;
+                    playbook->rushing[1] = 0x33;
+
+                    playbook->passing[0] = 0x61;
+                    playbook->passing[1] = 0x44;
+               }
+               else if ( team->offensive_preference == pref_HeavyPass )
+               {
+                    playbook->rushing[0] = 0x67;
+                    playbook->rushing[1] = 0x03;
+
+                    playbook->passing[0] = 0x34;
+
+                    if   ( roll > 49 ) playbook->passing[1] = 0x40;
+                    else               playbook->passing[1] = 0x46;
+               }
+               else if ( team->offensive_preference == pref_BalancedRush )
+               {
+                    playbook->rushing[0] = 0x00;
+                    playbook->rushing[1] = 0x35;
+
+                    playbook->passing[0] = 0x54;
+                    playbook->passing[1] = 0x64;
+               }
+               else
+               {
+                    playbook->rushing[0] = 0x10;
+                    playbook->rushing[1] = 0x05;
+
+                    playbook->passing[0] = 0x04;
+
+                    if   ( roll > 49 ) playbook->passing[1] = 0x00;
+                    else               playbook->passing[1] = 0x06;
+               }
+          }
+          else
+          {
+               if      ( team->offensive_preference == pref_HeavyRush )
+               {
+                    playbook->rushing[0] = 0x10;
+                    playbook->rushing[1] = 0x24;
+
+                    playbook->passing[0] = 0x24;
+                    playbook->passing[1] = 0x07;
+               }
+               else if ( team->offensive_preference == pref_HeavyPass )
+               {
+                    playbook->rushing[0] = 0x66;
+                    playbook->rushing[1] = 0x06;
+
+                    playbook->passing[0] = 0x35;
+
+                    if   ( roll > 49 ) playbook->passing[1] = 0x20;
+                    else               playbook->passing[1] = 0x26;
+               }
+               else if ( team->offensive_preference == pref_BalancedRush )
+               {
+                    playbook->rushing[0] = 0x76;
+                    playbook->rushing[1] = 0x35;
+
+                    playbook->passing[0] = 0x75;
+                    playbook->passing[1] = 0x64;
+               }
+               else
+               {
+                    playbook->rushing[0] = 0x67;
+                    playbook->rushing[1] = 0x44;
+
+                    playbook->passing[0] = 0x34;
+                    playbook->passing[1] = 0x65;
+               }
+          }
+     }
+     else if ( team->offensive_formation == form_Three_Wide )
+     {
+          if      ( team->offensive_preference == pref_HeavyRush )
+          {
+               playbook->rushing[0] = 0x34;
+               playbook->rushing[1] = 0x03;
+
+               playbook->passing[0] = 0x32;
+               playbook->passing[1] = 0x42;
+          }
+          else if ( team->offensive_preference == pref_HeavyPass )
+          {
+               playbook->rushing[0] = 0x53;
+               playbook->rushing[1] = 0x03;
+
+               playbook->passing[0] = 0x47;
+
+               if   ( roll > 49 ) playbook->passing[1] = 0x40;
+               else               playbook->passing[1] = 0x46;
+          }
+          else
+          {
+               playbook->rushing[0] = 0x35;
+               playbook->rushing[1] = 0x03;
+
+               playbook->passing[0] = 0x40;
+
+               if   ( roll > 49 ) playbook->passing[1] = 0x40;
+               else               playbook->passing[1] = 0x46;
+          }
+     }
+     else if ( team->offensive_formation == form_Four_Wide )
+     {
+          if      ( team->offensive_preference == pref_HeavyRush )
+          {
+               playbook->rushing[0] = 0x42;
+               playbook->rushing[1] = 0x02;
+
+               playbook->passing[0] = 0x13;
+               playbook->passing[1] = 0x21;
+          }
+          else if ( team->offensive_preference == pref_HeavyPass )
+          {
+               playbook->rushing[0] = 0x42;
+               playbook->rushing[1] = 0x02;
+
+               playbook->passing[0] = 0x12;
+
+               if   ( roll > 49 ) playbook->passing[1] = 0x20;
+               else               playbook->passing[1] = 0x26;
+          }
+          else
+          {
+               playbook->rushing[0] = 0x42;
+               playbook->rushing[1] = 0x02;
+
+               playbook->passing[0] = 0x12;
+               playbook->passing[1] = 0x21;
+          }
+     }
+}
+
 static void injectData( tsbrom_s *rom, team_s **teams, player_s **players )
 {
      unsigned char *ratings_ptr = (unsigned char *)rom->team_player_ratings;
@@ -813,41 +958,7 @@ static void injectData( tsbrom_s *rom, team_s **teams, player_s **players )
 
                rom->offensive_preference[i] = teams[i]->offensive_preference;
 
-               if ( teams[i]->offensive_formation == form_Pro_Set )
-               {
-                    if ( teams[i]->use_feature_back )
-                    {
-                         rom->default_playbooks[i].rushing[0] = 0x00;
-                         rom->default_playbooks[i].rushing[1] = 0x05;
-
-                         rom->default_playbooks[i].passing[0] = 0x60;
-                         rom->default_playbooks[i].passing[1] = 0x24;
-                    }
-                    else
-                    {
-                         rom->default_playbooks[i].rushing[0] = 0x10;
-                         rom->default_playbooks[i].rushing[1] = 0x24;
-
-                         rom->default_playbooks[i].passing[0] = 0x64;
-                         rom->default_playbooks[i].passing[1] = 0x66;
-                    }
-               }
-               else if ( teams[i]->offensive_formation == form_Three_Wide )
-               {
-                    rom->default_playbooks[i].rushing[0] = 0x64;
-                    rom->default_playbooks[i].rushing[1] = 0x03;
-
-                    rom->default_playbooks[i].passing[0] = 0x37;
-                    rom->default_playbooks[i].passing[1] = 0x40;
-               }
-               else if ( teams[i]->offensive_formation == form_Four_Wide )
-               {
-                    rom->default_playbooks[i].rushing[0] = 0x42;
-                    rom->default_playbooks[i].rushing[1] = 0x02;
-
-                    rom->default_playbooks[i].passing[0] = 0x13;
-                    rom->default_playbooks[i].passing[1] = 0x25;
-               }
+               setPlaybooks( &(rom->default_playbooks[i]), teams[i] );
           }
      }
 }
