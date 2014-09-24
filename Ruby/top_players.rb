@@ -39,7 +39,7 @@ class Stats
 end
 
 class Passing < Stats
-  attr_reader :yards, :td, :pct, :avg, :qbr
+  attr_reader :att, :yards, :td, :pct, :avg, :qbr
 
   def initialize( school, player )
     super()
@@ -68,7 +68,7 @@ class Passing < Stats
 end
 
 class Rushing < Stats
-  attr_reader :yards, :td, :avg
+  attr_reader :att, :yards, :td, :avg
 
   def initialize( school, player )
     super()
@@ -258,7 +258,7 @@ class StatRankings
 
       value.fetch( 'stats' ).each do |stat|
         print "#{stat.fetch 'label'}\n"
-        print_top_players stat.fetch( 'stat' )
+        print_top_players stat['stat'], stat['filter']
         print "\n"
       end
     end
@@ -278,17 +278,32 @@ class StatRankings
     end
   end
 
-  def print_top_players( stat, count=15 )
+  def print_top_players( stat, filter=nil, count=15 )
     @players.each do |player|
       player.set_sort_key stat
     end
 
-    @players.sort!
+    players = @players.sort
+
+    if ! filter.nil?
+      players.select! { |p| (p.send filter) > 0 }
+
+      sum = players.reduce(0) { |sum, p| sum + (p.send filter) }
+
+      mean = sum.to_f / players.length
+
+      variance = players.reduce(0) { |var, p| var + ((p.send filter) - mean)**2 }
+      variance /= (players.length - 1).to_f
+
+      stddev = Math.sqrt variance
+
+      players.select! { |p| (p.send filter) > (mean - stddev) }
+    end
 
     i = 0
 
-    while i < [count, @players.length].min
-      print "#{@players[i].to_s}\n"
+    while i < [count, players.length].min
+      print "#{players[i].to_s}\n"
       i += 1
     end
   end
@@ -301,19 +316,19 @@ end
     'stats'       => [{ 'label' => "Passing Yards",      'stat'  => :yards   },
                       { 'label' => "Passing TD",         'stat'  => :td      },
                       { 'label' => "Completion Pct.",    'stat'  => :pct     },
-                      { 'label' => "Yards Per Comp.",    'stat'  => :avg     },
+                      { 'label' => "Yards Per Comp.",    'stat'  => :avg,    'filter' => :att },
                       { 'label' => "Quarterback Rating", 'stat'  => :qbr     }]},
 
   'rushing'       => {  'class' => Rushing,             'types' => ['QB','RB','WR','TE'],
     'stats'       => [{ 'label' => "Rushing Yards",     'stat'  => :yards   },
                       { 'label' => "Rushing TD",        'stat'  => :td      },
-                      { 'label' => "Yards Per Carry",   'stat'  => :avg     }]},
+                      { 'label' => "Yards Per Carry",   'stat'  => :avg,    'filter' => :att }]},
 
   'receiving'     => {  'class' => Receiving,           'types' => ['RB','WR','TE'],
     'stats'       => [{ 'label' => "Receptions",        'stat'  => :rec     },
                       { 'label' => "Receiving Yards",   'stat'  => :yards   },
                       { 'label' => "Receiving TD",      'stat'  => :td      },
-                      { 'label' => "Yards Per Catch",   'stat'  => :avg     }]},
+                      { 'label' => "Yards Per Catch",   'stat'  => :avg,    'filter' => :rec }]},
 
   'all-purpose'   => {  'class' => AllPurpose,          'types' => ['QB','RB','WR','TE'],
     'stats'       => [{ 'label' => "All Purpose Yards", 'stat'  => :yards   },
