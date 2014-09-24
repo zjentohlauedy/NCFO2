@@ -49,7 +49,7 @@ static void printTeam( const team_s *team )
      {
           const player_s *player = team->players[i].player;
 
-          if ( ! player->injured ) continue;
+          if ( player->injuries == 0 ) continue;
 
           if ( print_team )
           {
@@ -60,7 +60,11 @@ static void printTeam( const team_s *team )
 
           sprintf( display_name, "%s, %s", player->last_name, player->first_name );
 
-          printf( "%-2s %2d %-20s\n", getDisplayPosition( player->position ), player->number, display_name );
+          printf( "%-2s %2d %-20s", getDisplayPosition( player->position ), player->number, display_name );
+
+          printf( "  %d days", player->injuries );
+
+          printf( "\n" );
      }
 
      if ( ! print_team ) printf( "\n" );

@@ -80,18 +80,18 @@ static void setupSaveState( nst_save_state_s *save_state )
           player_stats->punter[0].punt_yards          [0] = 0x8c;
           player_stats->punter[0].punt_yards_modifier [0] = 0x0c;
 
-          stats->injuries.qb1 = ni_Injured;
-          stats->injuries.qb2 = ni_Injured;
-          stats->injuries.rb1 = ni_Healthy;
-          stats->injuries.rb2 = ni_Healthy;
-          stats->injuries.rb3 = ni_Healthy;
-          stats->injuries.rb4 = ni_Healthy;
-          stats->injuries.wr1 = ni_Injured;
-          stats->injuries.wr2 = ni_Injured;
-          stats->injuries.wr3 = ni_Injured;
-          stats->injuries.wr4 = ni_Injured;
-          stats->injuries.te1 = ni_Healthy;
-          stats->injuries.te2 = ni_Healthy;
+          stats->injuries.qb1 = 0;
+          stats->injuries.qb2 = 0;
+          stats->injuries.rb1 = 1;
+          stats->injuries.rb2 = 1;
+          stats->injuries.rb3 = 1;
+          stats->injuries.rb4 = 1;
+          stats->injuries.wr1 = 2;
+          stats->injuries.wr2 = 2;
+          stats->injuries.wr3 = 2;
+          stats->injuries.wr4 = 2;
+          stats->injuries.te1 = 3;
+          stats->injuries.te2 = 3;
 
           stats->conditions.qb1 = nc_Bad;
           stats->conditions.qb2 = nc_Bad;
@@ -594,36 +594,36 @@ static char *convertOrganization_ShouldReturnAnOrganizationObjectWithPlayers()
 
           switch ( i )
           {
-          case  0: assertEquals( cnd_Bad,       players[i].player->condition ); assertEquals( bl_False, players[i].player->injured ); break;
-          case  1: assertEquals( cnd_Bad,       players[i].player->condition ); assertEquals( bl_False, players[i].player->injured ); break;
-          case  2: assertEquals( cnd_Average,   players[i].player->condition ); assertEquals( bl_True,  players[i].player->injured ); break;
-          case  3: assertEquals( cnd_Average,   players[i].player->condition ); assertEquals( bl_True,  players[i].player->injured ); break;
-          case  4: assertEquals( cnd_Average,   players[i].player->condition ); assertEquals( bl_True,  players[i].player->injured ); break;
-          case  5: assertEquals( cnd_Average,   players[i].player->condition ); assertEquals( bl_True,  players[i].player->injured ); break;
-          case  6: assertEquals( cnd_Good,      players[i].player->condition ); assertEquals( bl_False, players[i].player->injured ); break;
-          case  7: assertEquals( cnd_Good,      players[i].player->condition ); assertEquals( bl_False, players[i].player->injured ); break;
-          case  8: assertEquals( cnd_Good,      players[i].player->condition ); assertEquals( bl_False, players[i].player->injured ); break;
-          case  9: assertEquals( cnd_Good,      players[i].player->condition ); assertEquals( bl_False, players[i].player->injured ); break;
-          case 10: assertEquals( cnd_Excellent, players[i].player->condition ); assertEquals( bl_True,  players[i].player->injured ); break;
-          case 11: assertEquals( cnd_Excellent, players[i].player->condition ); assertEquals( bl_True,  players[i].player->injured ); break;
-          case 12: assertEquals( cnd_Bad,       players[i].player->condition );                                                       break;
-          case 13: assertEquals( cnd_Bad,       players[i].player->condition );                                                       break;
-          case 14: assertEquals( cnd_Bad,       players[i].player->condition );                                                       break;
-          case 15: assertEquals( cnd_Bad,       players[i].player->condition );                                                       break;
-          case 16: assertEquals( cnd_Bad,       players[i].player->condition );                                                       break;
-          case 17: assertEquals( cnd_Average,   players[i].player->condition );                                                       break;
-          case 18: assertEquals( cnd_Average,   players[i].player->condition );                                                       break;
-          case 19: assertEquals( cnd_Average,   players[i].player->condition );                                                       break;
-          case 20: assertEquals( cnd_Good,      players[i].player->condition );                                                       break;
-          case 21: assertEquals( cnd_Good,      players[i].player->condition );                                                       break;
-          case 22: assertEquals( cnd_Good,      players[i].player->condition );                                                       break;
-          case 23: assertEquals( cnd_Good,      players[i].player->condition );                                                       break;
-          case 24: assertEquals( cnd_Excellent, players[i].player->condition );                                                       break;
-          case 25: assertEquals( cnd_Excellent, players[i].player->condition );                                                       break;
-          case 26: assertEquals( cnd_Bad,       players[i].player->condition );                                                       break;
-          case 27: assertEquals( cnd_Bad,       players[i].player->condition );                                                       break;
-          case 28: assertEquals( cnd_Average,   players[i].player->condition );                                                       break;
-          case 29: assertEquals( cnd_Good,      players[i].player->condition );                                                       break;
+          case  0: assertEquals( cnd_Bad,       players[i].player->condition ); assertEquals( 0, players[i].player->injuries ); break;
+          case  1: assertEquals( cnd_Bad,       players[i].player->condition ); assertEquals( 0, players[i].player->injuries ); break;
+          case  2: assertEquals( cnd_Average,   players[i].player->condition ); assertEquals( 1, players[i].player->injuries ); break;
+          case  3: assertEquals( cnd_Average,   players[i].player->condition ); assertEquals( 1, players[i].player->injuries ); break;
+          case  4: assertEquals( cnd_Average,   players[i].player->condition ); assertEquals( 1, players[i].player->injuries ); break;
+          case  5: assertEquals( cnd_Average,   players[i].player->condition ); assertEquals( 1, players[i].player->injuries ); break;
+          case  6: assertEquals( cnd_Good,      players[i].player->condition ); assertEquals( 2, players[i].player->injuries ); break;
+          case  7: assertEquals( cnd_Good,      players[i].player->condition ); assertEquals( 2, players[i].player->injuries ); break;
+          case  8: assertEquals( cnd_Good,      players[i].player->condition ); assertEquals( 2, players[i].player->injuries ); break;
+          case  9: assertEquals( cnd_Good,      players[i].player->condition ); assertEquals( 2, players[i].player->injuries ); break;
+          case 10: assertEquals( cnd_Excellent, players[i].player->condition ); assertEquals( 3, players[i].player->injuries ); break;
+          case 11: assertEquals( cnd_Excellent, players[i].player->condition ); assertEquals( 3, players[i].player->injuries ); break;
+          case 12: assertEquals( cnd_Bad,       players[i].player->condition );                                                 break;
+          case 13: assertEquals( cnd_Bad,       players[i].player->condition );                                                 break;
+          case 14: assertEquals( cnd_Bad,       players[i].player->condition );                                                 break;
+          case 15: assertEquals( cnd_Bad,       players[i].player->condition );                                                 break;
+          case 16: assertEquals( cnd_Bad,       players[i].player->condition );                                                 break;
+          case 17: assertEquals( cnd_Average,   players[i].player->condition );                                                 break;
+          case 18: assertEquals( cnd_Average,   players[i].player->condition );                                                 break;
+          case 19: assertEquals( cnd_Average,   players[i].player->condition );                                                 break;
+          case 20: assertEquals( cnd_Good,      players[i].player->condition );                                                 break;
+          case 21: assertEquals( cnd_Good,      players[i].player->condition );                                                 break;
+          case 22: assertEquals( cnd_Good,      players[i].player->condition );                                                 break;
+          case 23: assertEquals( cnd_Good,      players[i].player->condition );                                                 break;
+          case 24: assertEquals( cnd_Excellent, players[i].player->condition );                                                 break;
+          case 25: assertEquals( cnd_Excellent, players[i].player->condition );                                                 break;
+          case 26: assertEquals( cnd_Bad,       players[i].player->condition );                                                 break;
+          case 27: assertEquals( cnd_Bad,       players[i].player->condition );                                                 break;
+          case 28: assertEquals( cnd_Average,   players[i].player->condition );                                                 break;
+          case 29: assertEquals( cnd_Good,      players[i].player->condition );                                                 break;
           }
 
           switch ( i )

@@ -272,7 +272,7 @@ typedef struct
      int                     receiving_score;
      int                     passrush_score;
      int                     coverage_score;
-     boolean_e               injured;
+     int                     injuries;
      condition_e             condition;
 
 } player_s;
