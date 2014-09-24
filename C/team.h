@@ -15,7 +15,7 @@
 
 typedef enum
 {
-     form_Pro_Set    = 0,
+     form_Two_Back   = 0,
      form_Four_Wide  = 1,
      form_Three_Wide = 2
 

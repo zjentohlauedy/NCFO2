@@ -66,7 +66,7 @@ static char *getDisplayFormation( const formation_e formation )
 {
      switch ( formation )
      {
-     case form_Pro_Set:    return "2RB/2WR/1TE";
+     case form_Two_Back:   return "2RB/2WR/1TE";
      case form_Three_Wide: return "1RB/3WR/1TE";
      case form_Four_Wide:  return "1RB/4WR";
      }

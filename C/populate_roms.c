@@ -635,7 +635,7 @@ static void setPlaybooks( tsb_playbook_s *playbook, team_s *team )
 {
      int roll = rand() % 100;
 
-     if ( team->offensive_formation == form_Pro_Set )
+     if ( team->offensive_formation == form_Two_Back )
      {
           if ( team->use_feature_back )
           {
@@ -791,7 +791,7 @@ static void injectData( tsbrom_s *rom, team_s **teams, player_s **players )
           int team_sim_offense = 8;
           int team_sim_defense = 8;
 
-          if ( teams[i] != NULL  &&  teams[i]->offensive_formation != form_Pro_Set )
+          if ( teams[i] != NULL  &&  teams[i]->offensive_formation != form_Two_Back )
           {
                int start_idx = i * 30;
 
@@ -1064,7 +1064,7 @@ static preference_e determinePreference( team_player_s *players, const formation
      balance += (wr1->receiving_score < 50) ? -1 : (wr1->receiving_score < 85) ? 0 : (wr1->receiving_score < 100) ?  0 :  1;
      balance += (wr2->receiving_score < 50) ? -1 : (wr2->receiving_score < 85) ? 0 : (wr2->receiving_score < 100) ?  0 :  1;
 
-     if      ( formation == form_Pro_Set )
+     if      ( formation == form_Two_Back )
      {
           player_s *rb2 = players[ 3].player;
           player_s *te1 = players[12].player;
@@ -1106,7 +1106,7 @@ static preference_e determinePreference( team_player_s *players, const formation
 
 static formation_e determineFormation( team_player_s *players )
 {
-     formation_e formation = form_Pro_Set;
+     formation_e formation = form_Two_Back;
 
      player_s *rb2 = players[ 3].player;
      player_s *wr3 = players[ 8].player;

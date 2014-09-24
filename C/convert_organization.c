@@ -657,7 +657,7 @@ static boolean_e convertPlayerByPosition(
           break;
 
      case  3:
-          if ( formation == form_Pro_Set )
+          if ( formation == form_Two_Back )
           {
                retval = convertRunningback( &(team_player_ratings->offense[player_idx - 2]),
                                             sim_data->offense[player_idx - 2],
@@ -694,7 +694,7 @@ static boolean_e convertPlayerByPosition(
           break;
 
      case  8:
-          if ( formation == form_Pro_Set )
+          if ( formation == form_Two_Back )
           {
                retval = convertWideReceiver( &(team_player_ratings->offense[player_idx - 2]),
                                              sim_data->offense[player_idx - 2],
