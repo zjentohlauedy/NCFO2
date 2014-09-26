@@ -344,11 +344,13 @@ static void printPlayer( const player_s *player )
 
 static void printTeam( const team_s *team )
 {
-     printf( "{\"name\":\"%s\"",         team->name         );
-     printf( ",\"location\":\"%s\"",     team->location     );
-     printf( ",\"abbreviation\":\"%s\"", team->abbreviation );
-     printf( ",\"sim_offense\":%d",      team->sim_offense  );
-     printf( ",\"sim_defense\":%d",      team->sim_defense  );
+     printf( "{\"name\":\"%s\"",             team->name                 );
+     printf( ",\"location\":\"%s\"",         team->location             );
+     printf( ",\"abbreviation\":\"%s\"",     team->abbreviation         );
+     printf( ",\"offensive_formation\":%d",  team->offensive_formation  );
+     printf( ",\"offensive_preference\":%d", team->offensive_preference );
+     printf( ",\"sim_offense\":%d",          team->sim_offense          );
+     printf( ",\"sim_defense\":%d",          team->sim_defense          );
 
 
      if ( team->stats != NULL )

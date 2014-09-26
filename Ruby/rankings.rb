@@ -45,7 +45,7 @@ class TeamRankings
     @location = location
   end
 
-  def calc_team_score( players )
+  def calc_team_score( players, offensive_formation )
     score = 0
     qb_scores = []
     rb_scores = []
@@ -73,10 +73,21 @@ class TeamRankings
     wr_scores.sort!
     te_scores.sort!
 
-    score += qb_scores[1]
-    score += rb_scores[2] + rb_scores[3]
-    score += wr_scores[2] + wr_scores[3]
-    score += te_scores[1]
+    if offensive_formation == 0
+      score += qb_scores[1]
+      score += rb_scores[2] + rb_scores[3]
+      score += wr_scores[2] + wr_scores[3]
+      score += te_scores[1]
+    elsif offensive_formation == 1
+      score += qb_scores[1]
+      score += rb_scores[3]
+      score += wr_scores[2] + wr_scores[3] + wr_scores[4] + wr_scores[5]
+    else
+      score += qb_scores[1]
+      score += rb_scores[3]
+      score += wr_scores[1] + wr_scores[2] + wr_scores[3]
+      score += te_scores[1]
+    end
 
     score
   end
@@ -84,13 +95,18 @@ class TeamRankings
   def load_teams( path )
     extract_data = ProgRunner.new "#{@location}/../C", "extract_data"
 
-    extract_data.execute "#{path}/ncfo1.nes", "#{path}/ncfo1.nst", "#{path}/ncfo2.nes", "#{path}/ncfo2.nst"
+    if File.file?("#{path}/ncfo1.nst") and File.file?("#{path}/ncfo2.nst")
+      extract_data.execute "#{path}/ncfo1.nes", "#{path}/ncfo1.nst", "#{path}/ncfo2.nes", "#{path}/ncfo2.nst"
+    else
+      extract_data.execute "#{path}/ncfo1.nes", "#{path}/ncfo2.nes"
+    end
 
     org = JSON.parse extract_data.get_output, {:symbolize_names => true}
 
     org[:conferences].each do |conf|
       conf[:teams].each do |team|
-        team_score = calc_team_score team[:players]
+
+        team_score = calc_team_score team[:players], team[:offensive_formation]
         location   = team[:location].split.map(&:capitalize).join(' ')
 
         location.gsub! 'N.', 'North'
