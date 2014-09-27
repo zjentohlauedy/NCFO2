@@ -46,50 +46,44 @@ class TeamRankings
   end
 
   def calc_team_score( players, offensive_formation )
-    score = 0
-    qb_scores = []
-    rb_scores = []
-    wr_scores = []
-    te_scores = []
+    scores = {}
 
     players.each do |player|
-      if    player[:position] == 'QB'
-        qb_scores.push player[:score]
-      elsif player[:position] == 'RB'
-        rb_scores.push player[:score]
-      elsif player[:position] == 'WR'
-        wr_scores.push player[:score]
-      elsif player[:position] == 'TE'
-        te_scores.push player[:score]
-      else
-        if player[:position] != 'K' and player[:position] != 'P'
-          score += player[:score]
-        end
+      if scores[player[:position]].nil?
+        scores[player[:position]] = []
       end
+
+      scores[player[:position]].push player[:score]
     end
 
-    qb_scores.sort!
-    rb_scores.sort!
-    wr_scores.sort!
-    te_scores.sort!
+    scores['QB'].nil? or scores['QB'].sort!
+    scores['RB'].nil? or scores['RB'].sort!
+    scores['WR'].nil? or scores['WR'].sort!
+    scores['TE'].nil? or scores['TE'].sort!
+
+    total_score = 0
 
     if offensive_formation == 0
-      score += qb_scores[1]
-      score += rb_scores[2] + rb_scores[3]
-      score += wr_scores[2] + wr_scores[3]
-      score += te_scores[1]
+      total_score += scores['QB'][1]
+      total_score += scores['RB'][2] + scores['RB'][3]
+      total_score += scores['WR'][2] + scores['WR'][3]
+      total_score += scores['TE'][1]
     elsif offensive_formation == 1
-      score += qb_scores[1]
-      score += rb_scores[3]
-      score += wr_scores[2] + wr_scores[3] + wr_scores[4] + wr_scores[5]
+      total_score += scores['QB'][1]
+      total_score += scores['RB'][3]
+      total_score += scores['WR'][2] + scores['WR'][3] + scores['WR'][4] + scores['WR'][5]
     else
-      score += qb_scores[1]
-      score += rb_scores[3]
-      score += wr_scores[1] + wr_scores[2] + wr_scores[3]
-      score += te_scores[1]
+      total_score += scores['QB'][1]
+      total_score += scores['RB'][3]
+      total_score += scores['WR'][1] + scores['WR'][2] + scores['WR'][3]
+      total_score += scores['TE'][1]
     end
 
-    score
+    total_score += scores['OL'].reduce { |sum, score| sum + score } / scores['OL'].length
+    total_score += scores['DL'].reduce { |sum, score| sum + score } / scores['DL'].length
+    total_score += scores['LB'].reduce { |sum, score| sum + score } / scores['LB'].length
+
+    total_score += scores['CB'].concat( scores['S'] ).reduce { |sum, score| sum + score } / (scores['CB'].length + scores['S'].length)
   end
 
   def load_teams( path )
