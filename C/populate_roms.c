@@ -718,10 +718,10 @@ static void setPlaybooks( tsb_playbook_s *playbook, team_s *team )
      {
           if      ( team->offensive_preference == pref_HeavyRush )
           {
-               playbook->rushing[0] = 0x34;
-               playbook->rushing[1] = 0x03;
+               playbook->rushing[0] = 0x35;
+               playbook->rushing[1] = 0x53;
 
-               playbook->passing[0] = 0x32;
+               playbook->passing[0] = 0x40;
                playbook->passing[1] = 0x42;
           }
           else if ( team->offensive_preference == pref_HeavyPass )
@@ -731,18 +731,26 @@ static void setPlaybooks( tsb_playbook_s *playbook, team_s *team )
 
                playbook->passing[0] = 0x47;
 
+               if   ( roll > 49 ) playbook->passing[1] = 0x20;
+               else               playbook->passing[1] = 0x26;
+          }
+          else if ( team->offensive_preference == pref_BalancedPass )
+          {
+               playbook->rushing[0] = 0x64;
+               playbook->rushing[1] = 0x03;
+
+               playbook->passing[0] = 0x32;
+
                if   ( roll > 49 ) playbook->passing[1] = 0x40;
                else               playbook->passing[1] = 0x46;
           }
           else
           {
-               playbook->rushing[0] = 0x35;
+               playbook->rushing[0] = 0x53;
                playbook->rushing[1] = 0x03;
 
-               playbook->passing[0] = 0x40;
-
-               if   ( roll > 49 ) playbook->passing[1] = 0x40;
-               else               playbook->passing[1] = 0x46;
+               playbook->passing[0] = 0x42;
+               playbook->passing[1] = 0x43;
           }
      }
      else if ( team->offensive_formation == form_Four_Wide )
