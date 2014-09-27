@@ -175,7 +175,7 @@ class Interceptions < Stats
 end
 
 class KickReturns < Stats
-  attr_reader :yards, :td, :avg
+  attr_reader :ret, :yards, :td, :avg
 
   def initialize( school, player )
     super()
@@ -192,7 +192,7 @@ class KickReturns < Stats
 end
 
 class PuntReturns < Stats
-  attr_reader :yards, :td, :avg
+  attr_reader :ret, :yards, :td, :avg
 
   def initialize( school, player )
     super()
@@ -209,7 +209,7 @@ class PuntReturns < Stats
 end
 
 class Kicking < Stats
-  attr_reader :points, :fg_pct
+  attr_reader :fga, :points, :fg_pct
 
   def initialize( school, player )
     super()
@@ -229,7 +229,7 @@ class Kicking < Stats
 end
 
 class Punting < Stats
-  attr_reader :yards, :avg
+  attr_reader :punts, :yards, :avg
 
   def initialize( school, player )
     super()
@@ -313,21 +313,21 @@ end
 
 @categories = {
   'passing'       => {  'class' => Passing,              'types' => ['QB'],
-    'stats'       => [{ 'label' => "Passing Yards",      'stat'  => :yards   },
-                      { 'label' => "Passing TD",         'stat'  => :td      },
-                      { 'label' => "Completion Pct.",    'stat'  => :pct     },
+    'stats'       => [{ 'label' => "Passing Yards",      'stat'  => :yards,  'filter' =>  nil },
+                      { 'label' => "Passing TD",         'stat'  => :td,     'filter' =>  nil },
+                      { 'label' => "Completion Pct.",    'stat'  => :pct,    'filter' => :att },
                       { 'label' => "Yards Per Comp.",    'stat'  => :avg,    'filter' => :att },
-                      { 'label' => "Quarterback Rating", 'stat'  => :qbr     }]},
+                      { 'label' => "Quarterback Rating", 'stat'  => :qbr,    'filter' =>  nil }]},
 
   'rushing'       => {  'class' => Rushing,             'types' => ['QB','RB','WR','TE'],
-    'stats'       => [{ 'label' => "Rushing Yards",     'stat'  => :yards   },
-                      { 'label' => "Rushing TD",        'stat'  => :td      },
+    'stats'       => [{ 'label' => "Rushing Yards",     'stat'  => :yards,  'filter' =>  nil },
+                      { 'label' => "Rushing TD",        'stat'  => :td,     'filter' =>  nil },
                       { 'label' => "Yards Per Carry",   'stat'  => :avg,    'filter' => :att }]},
 
   'receiving'     => {  'class' => Receiving,           'types' => ['RB','WR','TE'],
-    'stats'       => [{ 'label' => "Receptions",        'stat'  => :rec     },
-                      { 'label' => "Receiving Yards",   'stat'  => :yards   },
-                      { 'label' => "Receiving TD",      'stat'  => :td      },
+    'stats'       => [{ 'label' => "Receptions",        'stat'  => :rec,    'filter' =>  nil },
+                      { 'label' => "Receiving Yards",   'stat'  => :yards,  'filter' =>  nil },
+                      { 'label' => "Receiving TD",      'stat'  => :td,     'filter' =>  nil },
                       { 'label' => "Yards Per Catch",   'stat'  => :avg,    'filter' => :rec }]},
 
   'all-purpose'   => {  'class' => AllPurpose,          'types' => ['QB','RB','WR','TE'],
@@ -347,17 +347,17 @@ end
                       { 'label' => "Int. Return TD",    'stat'  => :td      }]},
 
   'kick-returns'  => {  'class' => KickReturns,         'types' => ['RB','WR','TE'],
-    'stats'       => [{ 'label' => "Kick Return Avg.",  'stat'  => :avg     },
-                      { 'label' => "Kick Return TD",    'stat'  => :td      }]},
+    'stats'       => [{ 'label' => "Kick Return Avg.",  'stat'  => :avg,    'filter' => :ret },
+                      { 'label' => "Kick Return TD",    'stat'  => :td,     'filter' =>  nil }]},
 
   'punt-returns'  => {  'class' => PuntReturns,         'types' => ['RB','WR','TE'],
-    'stats'       => [{ 'label' => "Punt Return Avg.",  'stat'  => :avg     },
-                      { 'label' => "Punt Return TD",    'stat'  => :td      }]},
+    'stats'       => [{ 'label' => "Punt Return Avg.",  'stat'  => :avg,    'filter' => :ret },
+                      { 'label' => "Punt Return TD",    'stat'  => :td,     'filter' =>  nil }]},
 
   'kicking'       => {  'class' => Kicking,             'types' => ['K'],
-    'stats'       => [{ 'label' => "Points",            'stat'  => :points  },
-                      { 'label' => "Field Goal Pct.",   'stat'  => :fg_pct  }]},
+    'stats'       => [{ 'label' => "Points",            'stat'  => :points, 'filter' =>  nil },
+                      { 'label' => "Field Goal Pct.",   'stat'  => :fg_pct, 'filter' => :fga }]},
 
   'punting'       => {  'class' => Punting,             'types' => ['P'],
-    'stats'       => [{ 'label' => "Yards Per Punt",    'stat'  => :avg  }]}
+    'stats'       => [{ 'label' => "Yards Per Punt",    'stat'  => :avg, 'filter' => :punts }]}
 }
