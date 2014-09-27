@@ -62,7 +62,7 @@ static void printTeam( const team_s *team )
 
           printf( "%-2s %2d %-20s", getDisplayPosition( player->position ), player->number, display_name );
 
-          printf( "  %d days", player->injuries );
+          printf( "  Up to %d week%s", player->injuries, (player->injuries > 1) ? "s" : "" );
 
           printf( "\n" );
      }

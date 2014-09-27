@@ -10,6 +10,7 @@ S??
 *.a
 *.lock
 *.ods
+*.swp
 TAGS
 
 # executables
