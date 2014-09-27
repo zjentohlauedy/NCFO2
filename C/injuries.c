@@ -26,6 +26,17 @@ static char *getDisplayPosition( const position_e position )
      }
 }
 
+static char *getDisplayInjuryStatus( const int injuries )
+{
+     switch ( injuries )
+     {
+     case 3:  return "Doubtful";
+     case 2:  return "Questionable";
+     case 1:  return "Probable";
+     default: return "Unknown";
+     }
+}
+
 
 static void printPlayer( const player_s *player )
 {
@@ -62,7 +73,7 @@ static void printTeam( const team_s *team )
 
           printf( "%-2s %2d %-20s", getDisplayPosition( player->position ), player->number, display_name );
 
-          printf( "  Up to %d week%s", player->injuries, (player->injuries > 1) ? "s" : "" );
+          printf( "  %s", getDisplayInjuryStatus( player->injuries ) );
 
           printf( "\n" );
      }

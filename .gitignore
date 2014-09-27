@@ -11,6 +11,7 @@ S??
 *.lock
 *.ods
 *.swp
+*.xcf
 TAGS
 
 # executables
