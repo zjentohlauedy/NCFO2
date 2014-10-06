@@ -8,6 +8,8 @@ then
     exit;
 fi
 
+echo "Backing up save state files..."
+
 cp ncfo1.nst .ncfo1.nst.bak
 cp ncfo2.nst .ncfo2.nst.bak
 
