@@ -4,6 +4,15 @@
 #include "bool.h"
 #include "organization.h"
 
+typedef enum
+{
+     ht_Two_Stripe   = 0x40,
+     ht_One_Stripe   = 0x41,
+     ht_Ram_Horn     = 0x42,
+     ht_Tiger_Stripe = 0x43
+
+} tsb_helmet_type_e;
+
 typedef struct
 {
      unsigned char identifier [ 4 ];
@@ -147,6 +156,40 @@ typedef struct
 } tsb_playbook_gfx_s;
 
 typedef struct
+{                // helmet type:    Two_Stripe           One_Stripe             Ram_Horn               Tiger_Stripe
+     unsigned char helmet   [3]; // inner/outer/helmet   hilite/helmet/stripe   spiral/helmet/hilite   hilite/helmet/stripes
+     unsigned char facemask [2]; // edge/center
+     unsigned char logo     [3];
+
+} helmet_colors_s;
+
+typedef struct
+{
+     unsigned char home      [3]; // helmet/dark skin color/jersey
+     unsigned char road      [3]; // helmet/dark skin color/jersey
+     unsigned char use_flags [4]; // bitwise by opponent: 0 - use home, 1 - use road; last 2 bits always 0
+
+} tsb_uniforms_s;
+
+typedef struct
+{
+     unsigned char home      [2]; // helmet/jersey
+     unsigned char road      [2]; // helmet/jersey
+     unsigned char use_flags [4]; // bitwise by opponent: 0 - use home, 1 - use road; last 2 bits always 0
+
+} tsb_uniforms2_s;
+
+typedef struct
+{
+     unsigned char top_left_tile     [1];
+     unsigned char top_right_tile    [1];
+     unsigned char bottom_left_tile  [1];
+     unsigned char bottom_right_tile [1];
+     unsigned char palette           [1];
+
+} mini_helmet_s;
+
+typedef struct
 {
      nes_header_s       header;                                         // 0x00000 - 0x0000f
      nes_pointer_s      team_pointers               [    28 ];          // 0x00010 - 0x00047
@@ -201,7 +244,14 @@ typedef struct
      unsigned char      formations1                 [    28 ];          // 0x21fe0 - 0x21ffb
      unsigned char      unknown18b                  [  6615 ];          // 0x21ffc - 0x239d2
      unsigned char      kick_and_punt_returners1    [    28 ];          // 0x239d3 - 0x239ee - 1 byte per team by nibble: [KR, PR]
-     unsigned char      unknown18c                  [  1569 ];          // 0x239ef - 0x2400f
+     unsigned char      unknown18c                  [   471 ];          // 0x239ef - 0x23d78
+     mini_helmet_s      mini_helmets                [    28 ];          // 0x23bc6 - 0x23c51
+     unsigned char      mini_helmet_logo_offsets    [    15 ];          // 0x23c52 - 0x23c60
+     unsigned char      mini_helmet_logo_designs    [   136 ];          // 0x23c61 - 0x23ce8
+     unsigned char      unknown18d                  [   144 ];          // 0x23ce9 - 0x23d78
+     helmet_colors_s    helmet_colors               [    28 ];          // 0x23d79 - 0x23e58
+     unsigned char      helmet_type                 [    28 ];          // 0x23e59 - 0x23e74
+     unsigned char      unknown18e                  [   411 ];          // 0x23e75 - 0x2400f
      unsigned char      unknown19                   [  8192 ];          // 0x24010 - 0x2600f
      unsigned char      unknown20                   [  2048 ];          // 0x26010 - 0x2680f
      unsigned char      unknown21a                  [  3318 ];          // 0x26810 - 0x27525
@@ -211,7 +261,9 @@ typedef struct
      tsb_playbook_gfx_s playbook_gfx                [    64 ];          // 0x27546 - 0x27fc5
      unsigned char      filler7                     [    74 ];          // 0x27fc6 - 0x2800f
      unsigned char      unknown22                   [ 16384 ];          // 0x28010 - 0x2c00f
-     unsigned char      unknown23                   [  4096 ];          // 0x2c010 - 0x2d00f
+     unsigned char      unknown23a                  [   724 ];          // 0x2c010 - 0x2c2e3
+     tsb_uniforms_s     field_uniforms              [    28 ];          // 0x2c2e4 - 0x2c3fb
+     unsigned char      unknown23b                  [  3092 ];          // 0x2c3fc - 0x2d00f
      unsigned char      unknown24                   [  4096 ];          // 0x2d010 - 0x2e00f
      unsigned char      unknown25                   [  8192 ];          // 0x2e010 - 0x3000f
      unsigned char      unknown26a                  [  7792 ];          // 0x30010 - 0x31e7f
@@ -221,7 +273,9 @@ typedef struct
      unsigned char      kick_and_punt_returners2    [    28 ];          // 0x328d3 - 0x328ee - 1 byte per team by nibble: [KR, PR]
      unsigned char      unknown27b                  [   184 ];          // 0x328ef - 0x329a6
      tsb_schedule_u     schedule                    [     1 ];          // 0x329a7 - 0x3400f
-     unsigned char      unknown28                   [  7168 ];          // 0x34010 - 0x35c0f
+     unsigned char      unknown28a                  [   712 ];          // 0x34010 - 0x342d7
+     tsb_uniforms2_s    action_uniforms             [    28 ];          // 0x342d8 - 0x343b7
+     unsigned char      unknown28b                  [  6232 ];          // 0x343b8 - 0x35c0f
      unsigned char      unknown29                   [  1024 ];          // 0x35c10 - 0x3600f
      unsigned char      unknown30                   [  8192 ];          // 0x36010 - 0x3800f
      unsigned char      unknown31                   [ 16384 ];          // 0x38010 - 0x3c00f
