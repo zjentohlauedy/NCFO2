@@ -12,6 +12,8 @@ S??
 *.ods
 *.swp
 *.xcf
+*.zip
+*.jpg
 TAGS
 
 # executables
@@ -53,3 +55,4 @@ C/print_rosters
 C/standings
 C/extract_data
 C/injuries
+C/reorg

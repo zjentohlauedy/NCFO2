@@ -10,7 +10,8 @@ progs = \
    print_rosters \
    standings \
    extract_data \
-   injuries
+   injuries \
+   reorg
 
 tests = \
    test_file_utils \
@@ -67,6 +68,9 @@ extract_data: extract_data.o file_utils.o convert_organization.o libncfodata.a
 
 injuries: injuries.o file_utils.o convert_organization.o libncfodata.a
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfodata
+
+reorg: reorg.o file_utils.o
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
 
 
 TESTS: $(tests) ncfo_test.db TAGS

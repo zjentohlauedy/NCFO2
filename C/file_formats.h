@@ -250,7 +250,7 @@ typedef struct
      unsigned char      mini_helmet_logo_designs    [   136 ];          // 0x23c61 - 0x23ce8
      unsigned char      unknown18d                  [   144 ];          // 0x23ce9 - 0x23d78
      helmet_colors_s    helmet_colors               [    28 ];          // 0x23d79 - 0x23e58
-     unsigned char      helmet_type                 [    28 ];          // 0x23e59 - 0x23e74
+     unsigned char      helmet_types                [    28 ];          // 0x23e59 - 0x23e74
      unsigned char      unknown18e                  [   411 ];          // 0x23e75 - 0x2400f
      unsigned char      unknown19                   [  8192 ];          // 0x24010 - 0x2600f
      unsigned char      unknown20                   [  2048 ];          // 0x26010 - 0x2680f
@@ -266,15 +266,17 @@ typedef struct
      unsigned char      unknown23b                  [  3092 ];          // 0x2c3fc - 0x2d00f
      unsigned char      unknown24                   [  4096 ];          // 0x2d010 - 0x2e00f
      unsigned char      unknown25                   [  8192 ];          // 0x2e010 - 0x3000f
-     unsigned char      unknown26a                  [  7792 ];          // 0x30010 - 0x31e7f
+     unsigned char      unknown26a                  [  4400 ];          // 0x30010 - 0x3113f
+     unsigned char      team_background_colors      [    28 ];          // 0x31140 - 0x3115b
+     unsigned char      unknown26b                  [  3364 ];          // 0x3115c - 0x31e7f
      unsigned char      formations2                 [    28 ];          // 0x31e80 - 0x31e9b
-     unsigned char      unknown26b                  [   372 ];          // 0x31e9c - 0x3200f
+     unsigned char      unknown26c                  [   372 ];          // 0x31e9c - 0x3200f
      unsigned char      unknown27a                  [  2243 ];          // 0x32010 - 0x328d2
      unsigned char      kick_and_punt_returners2    [    28 ];          // 0x328d3 - 0x328ee - 1 byte per team by nibble: [KR, PR]
      unsigned char      unknown27b                  [   184 ];          // 0x328ef - 0x329a6
      tsb_schedule_u     schedule                    [     1 ];          // 0x329a7 - 0x3400f
      unsigned char      unknown28a                  [   712 ];          // 0x34010 - 0x342d7
-     tsb_uniforms2_s    action_uniforms             [    28 ];          // 0x342d8 - 0x343b7
+     tsb_uniforms2_s    cutscene_uniforms           [    28 ];          // 0x342d8 - 0x343b7
      unsigned char      unknown28b                  [  6232 ];          // 0x343b8 - 0x35c0f
      unsigned char      unknown29                   [  1024 ];          // 0x35c10 - 0x3600f
      unsigned char      unknown30                   [  8192 ];          // 0x36010 - 0x3800f
