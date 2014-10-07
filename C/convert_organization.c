@@ -1382,14 +1382,14 @@ static organization_conference_s *assembleConferences( void )
           conferences[i].conference->conference_id = i + 1;
      }
 
-     sprintf( conferences[0].conference->name, "New England" );
-     sprintf( conferences[1].conference->name, "Atlantic"    );
-     sprintf( conferences[2].conference->name, "Southeast"   );
-     sprintf( conferences[3].conference->name, "Great Lake"  );
-     sprintf( conferences[4].conference->name, "Southwest"   );
-     sprintf( conferences[5].conference->name, "Northwest"   );
-     sprintf( conferences[6].conference->name, "Midwest"     );
-     sprintf( conferences[7].conference->name, "South"       );
+     sprintf( conferences[0].conference->name, "Atlantic"    );
+     sprintf( conferences[1].conference->name, "Great Lake"  );
+     sprintf( conferences[2].conference->name, "Midwest"     );
+     sprintf( conferences[3].conference->name, "New England" );
+     sprintf( conferences[4].conference->name, "North"       );
+     sprintf( conferences[5].conference->name, "Pacific"     );
+     sprintf( conferences[6].conference->name, "Southeast"   );
+     sprintf( conferences[7].conference->name, "Southwest"   );
 
      conferences[8] = organization_conference_sentinel;
 
