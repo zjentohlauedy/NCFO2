@@ -11,7 +11,8 @@ progs = \
    standings \
    extract_data \
    injuries \
-   reorg
+   reorg \
+   set_uniforms
 
 tests = \
    test_file_utils \
@@ -70,6 +71,9 @@ injuries: injuries.o file_utils.o convert_organization.o libncfodata.a
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfodata
 
 reorg: reorg.o file_utils.o
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
+
+set_uniforms: set_uniforms.o file_utils.o
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
 
 
