@@ -260,52 +260,52 @@ static char *getTeamName( const int team_number )
 {
      switch ( team_number )
      {
-     case  0: return "Connecticut";
-     case  1: return "Maine";
-     case  2: return "Massachusetts";
-     case  3: return "New Hampshire";
-     case  4: return "Rhode Island";
-     case  5: return "Vermont";
-     case  6: return "Delaware";
-     case  7: return "Maryland";
-     case  8: return "New Jersey";
+     case  0: return "Delaware";
+     case  1: return "Maryland";
+     case  2: return "New Jersey";
+     case  3: return "Pennsylvania";
+     case  4: return "Virginia";
+     case  5: return "West Virginia";
+     case  6: return "Illinois";
+     case  7: return "Michigan";
+     case  8: return "Minnesota";
      case  9: return "New York";
-     case 10: return "Virginia";
-     case 11: return "West Virginia";
-     case 12: return "Alabama";
-     case 13: return "Florida";
-     case 14: return "Georgia";
-     case 15: return "North Carolina";
-     case 16: return "South Carolina";
+     case 10: return "Ohio";
+     case 11: return "Wisconsin";
+     case 12: return "Arkansas";
+     case 13: return "Indiana";
+     case 14: return "Kansas";
+     case 15: return "Kentucky";
+     case 16: return "Missouri";
      case 17: return "Tennessee";
-     case 18: return "Illinois";
-     case 19: return "Indiana";
-     case 20: return "Kentucky";
-     case 21: return "Michigan";
-     case 22: return "Ohio";
-     case 23: return "Pennsylvania";
-     case 24: return "Arizona";
-     case 25: return "California";
-     case 26: return "Colorado";
-     case 27: return "Nevada";
-     case 28: return "New Mexico";
-     case 29: return "Utah";
-     case 30: return "Idaho";
-     case 31: return "Montana";
-     case 32: return "Nebraska";
+     case 18: return "Connecticut";
+     case 19: return "Maine";
+     case 20: return "Massachusetts";
+     case 21: return "New Hampshire";
+     case 22: return "Rhode Island";
+     case 23: return "Vermont";
+     case 24: return "Iowa";
+     case 25: return "Montana";
+     case 26: return "Nebraska";
+     case 27: return "North Dakota";
+     case 28: return "South Dakota";
+     case 29: return "Wyoming";
+     case 30: return "California";
+     case 31: return "Idaho";
+     case 32: return "Nevada";
      case 33: return "Oregon";
-     case 34: return "Washington";
-     case 35: return "Wyoming";
-     case 36: return "Iowa";
-     case 37: return "Kansas";
-     case 38: return "Minnesota";
-     case 39: return "North Dakota";
-     case 40: return "South Dakota";
-     case 41: return "Wisconsin";
-     case 42: return "Arkansas";
-     case 43: return "Louisiana";
-     case 44: return "Mississippi";
-     case 45: return "Missouri";
+     case 34: return "Utah";
+     case 35: return "Washington";
+     case 36: return "Alabama";
+     case 37: return "Florida";
+     case 38: return "Georgia";
+     case 39: return "Mississippi";
+     case 40: return "North Carolina";
+     case 41: return "South Carolina";
+     case 42: return "Arizona";
+     case 43: return "Colorado";
+     case 44: return "Louisiana";
+     case 45: return "New Mexico";
      case 46: return "Oklahoma";
      case 47: return "Texas";
      }
@@ -375,7 +375,7 @@ static char *zerror( const int error )
      }
 }
 
-static boolean_e loadSaveState2( unsigned char *save_state, int *save_state_size, const unsigned char *data, const size_t datasize )
+static boolean_e loadSaveState( unsigned char *save_state, int *save_state_size, const unsigned char *data, const size_t datasize )
 {
      const  unsigned char      *p_data             = data;
      /**/   unsigned char      *p_save_state       = save_state;
@@ -409,7 +409,7 @@ static boolean_e loadSaveState2( unsigned char *save_state, int *save_state_size
                     MEMCMP( section_header, ==, "WRK",     3 ) ||
                     MEMCMP( section_header, ==, "POW",     3 )    )
           {
-               if ( ! loadSaveState2( p_save_state, &real_section_len, p_data, section_length )) return bl_False;
+               if ( ! loadSaveState( p_save_state, &real_section_len, p_data, section_length )) return bl_False;
 
                int2dword( real_section_len, p_save_state - 4 );
 
@@ -421,7 +421,7 @@ static boolean_e loadSaveState2( unsigned char *save_state, int *save_state_size
                if ( isupper( *p_data ) )
                {
                     // Section header
-                    if ( ! loadSaveState2( p_save_state, &real_section_len, p_data, section_length )) return bl_False;
+                    if ( ! loadSaveState( p_save_state, &real_section_len, p_data, section_length )) return bl_False;
 
                     int2dword( real_section_len, p_save_state - 4 );
 
@@ -503,347 +503,6 @@ static boolean_e loadSaveState2( unsigned char *save_state, int *save_state_size
      *save_state_size = p_save_state - save_state;
 }
 
-static boolean_e loadSaveState( unsigned char *save_state, int *save_state_size, const unsigned char *data, const size_t datasize )
-{
-     const unsigned char      *p_data             = data;
-     /**/  unsigned char      *p_save_state       = save_state;
-     const unsigned char      *section_header     = NULL;
-     /**/           int        section_length     = 0;
-     /**/           boolean_e  inside_img_section = bl_False;
-
-     while ( (p_data - data) < datasize )
-     {
-          section_header = p_data;
-          section_length = dword2int( p_data + 4 );
-
-          memcpy( p_save_state, p_data, 8 );
-
-          p_data       += 8;
-          p_save_state += 8;
-
-          if      ( MEMCMP( section_header, ==, "NST\x1A", 4 ) )
-          {
-               // do nothing - file header
-          }
-          else if ( MEMCMP( section_header, ==, "CPU", 3 ) )
-          {
-               // do nothing - parent section header
-               inside_img_section = bl_False;
-          }
-          else if ( MEMCMP( section_header, ==, "APU", 3 ) )
-          {
-               // do nothing - parent section header
-               inside_img_section = bl_False;
-          }
-          else if ( MEMCMP( section_header, ==, "PPU", 3 ) )
-          {
-               // do nothing - parent section header
-               inside_img_section = bl_False;
-          }
-          else if ( MEMCMP( section_header, ==, "IMG", 3 ) )
-          {
-               // do nothing - parent section header
-               inside_img_section = bl_True;
-          }
-          else if ( MEMCMP( section_header, ==, "SQ0", 3 ) )
-          {
-               // do nothing - parent section header
-          }
-          else if ( MEMCMP( section_header, ==, "SQ1", 3 ) )
-          {
-               // do nothing - parent section header
-          }
-          else if ( MEMCMP( section_header, ==, "TRI", 3 ) )
-          {
-               // do nothing - parent section header
-          }
-          else if ( MEMCMP( section_header, ==, "NOI", 3 ) )
-          {
-               // do nothing - parent section header
-          }
-          else if ( MEMCMP( section_header, ==, "DMC", 3 ) )
-          {
-               // do nothing - parent section header
-          }
-          else if ( MEMCMP( section_header, ==, "MPR", 3 ) )
-          {
-               // do nothing - parent section header
-          }
-          else if ( MEMCMP( section_header, ==, "PRG", 3 ) )
-          {
-               // do nothing - parent section header
-          }
-          else if ( MEMCMP( section_header, ==, "CHR", 3 ) )
-          {
-               // do nothing - parent section header
-          }
-          else if ( MEMCMP( section_header, ==, "WRK", 3 ) )
-          {
-               // do nothing - parent section header
-          }
-          else if ( MEMCMP( section_header, ==, "POW", 3 ) )
-          {
-               // do nothing - does not contain data - seems to be just a trigger
-          }
-          else if ( MEMCMP( section_header, ==, "NFO", 3 ) )
-          {
-               inside_img_section = bl_False;
-
-               memcpy( p_save_state, p_data, section_length );
-
-               p_data       += section_length;
-               p_save_state += section_length;
-          }
-          else if ( MEMCMP( section_header, ==, "REG", 3 ) )
-          {
-               memcpy( p_save_state, p_data, section_length );
-
-               p_data       += section_length;
-               p_save_state += section_length;
-          }
-          else if ( MEMCMP( section_header, ==, "FRM", 3 ) )
-          {
-               memcpy( p_save_state, p_data, section_length );
-
-               p_data       += section_length;
-               p_save_state += section_length;
-          }
-          else if ( MEMCMP( section_header, ==, "CLK", 3 ) )
-          {
-               memcpy( p_save_state, p_data, section_length );
-
-               p_data       += section_length;
-               p_save_state += section_length;
-          }
-          else if ( MEMCMP( section_header, ==, "IRQ", 3 ) )
-          {
-               memcpy( p_save_state, p_data, section_length );
-
-               p_data       += section_length;
-               p_save_state += section_length;
-          }
-          else if ( MEMCMP( section_header, ==, "EXT", 3 ) )
-          {
-               memcpy( p_save_state, p_data, section_length );
-
-               p_data       += section_length;
-               p_save_state += section_length;
-          }
-          else if ( MEMCMP( section_header, ==, "LEN", 3 ) )
-          {
-               memcpy( p_save_state, p_data, section_length );
-
-               p_data       += section_length;
-               p_save_state += section_length;
-          }
-          else if ( MEMCMP( section_header, ==, "ENV", 3 ) )
-          {
-               memcpy( p_save_state, p_data, section_length );
-
-               p_data       += section_length;
-               p_save_state += section_length;
-          }
-          else if ( MEMCMP( section_header, ==, "VSS", 3 ) )
-          {
-               memcpy( p_save_state, p_data, section_length );
-
-               p_data       += section_length;
-               p_save_state += section_length;
-          }
-          else if ( MEMCMP( section_header, ==, "ACC", 3 ) )
-          {
-               memcpy( p_save_state, p_data, section_length );
-
-               p_data       += section_length;
-               p_save_state += section_length;
-          }
-          else if ( MEMCMP( section_header, ==, "BNK", 3 ) )
-          {
-               memcpy( p_save_state, p_data, section_length );
-
-               p_data       += section_length;
-               p_save_state += section_length;
-          }
-          else if ( MEMCMP( section_header, ==, "PRT", 3 ) )
-          {
-               inside_img_section = bl_False;
-
-               memcpy( p_save_state, p_data, section_length );
-
-               p_data       += section_length;
-               p_save_state += section_length;
-          }
-          else if ( MEMCMP( section_header, ==, "RAM", 3 ) )
-          {
-               uLongf dest_len = 50000 - (p_save_state - save_state);
-               int    ret;
-
-               if ( *p_data )
-               {
-                    *p_save_state = *p_data;
-                    p_save_state++;
-
-                    if ( (ret = uncompress( p_save_state, &dest_len, p_data + 1, section_length - 1)) != Z_OK )
-                    {
-                         sprintf( error_message, "Cannot uncompress RAM data: %s", zerror(ret) );
-
-                         return bl_False;
-                    }
-
-                    p_data       += section_length;
-                    p_save_state += dest_len;
-               }
-               else
-               {
-                    p_data       += section_length;
-                    p_save_state += section_length;
-               }
-          }
-          else if ( MEMCMP( section_header, ==, "PAL", 3 ) )
-          {
-               uLongf dest_len = 50000 - (p_save_state - save_state);
-               int    ret;
-
-               if ( *p_data )
-               {
-                    *p_save_state = *p_data;
-                    p_save_state++;
-
-                    if ( (ret = uncompress( p_save_state, &dest_len, p_data + 1, section_length - 1)) != Z_OK )
-                    {
-                         sprintf( error_message, "Cannot uncompress PAL data: %s", zerror(ret) );
-
-                         return bl_False;
-                    }
-
-                    p_data       += section_length;
-                    p_save_state += dest_len;
-               }
-               else
-               {
-                    p_data       += section_length;
-                    p_save_state += section_length;
-               }
-          }
-          else if ( MEMCMP( section_header, ==, "OAM", 3 ) )
-          {
-               uLongf dest_len = 50000 - (p_save_state - save_state);
-               int    ret;
-
-               if ( *p_data )
-               {
-                    *p_save_state = *p_data;
-                    p_save_state++;
-
-                    if ( (ret = uncompress( p_save_state, &dest_len, p_data + 1, section_length - 1)) != Z_OK )
-                    {
-                         sprintf( error_message, "Cannot uncompress OAM data: %s", zerror(ret) );
-
-                         return bl_False;
-                    }
-
-                    p_data       += section_length;
-                    p_save_state += dest_len;
-               }
-               else
-               {
-                    p_data       += section_length;
-                    p_save_state += section_length;
-               }
-          }
-          else if ( MEMCMP( section_header, ==, "NMT", 3 ) )
-          {
-               //********************* MAY BE A PARENT SECTION HEADER OR DATA HEADER ********************
-               if ( ! inside_img_section )
-               {
-                    uLongf dest_len = 50000 - (p_save_state - save_state);
-                    int    ret;
-
-                    if ( *p_data )
-                    {
-                         *p_save_state = *p_data;
-                         p_save_state++;
-
-                         if ( (ret = uncompress( p_save_state, &dest_len, p_data + 1, section_length - 1)) != Z_OK )
-                         {
-                              sprintf( error_message, "Cannot uncompress NMT data: %s", zerror(ret) );
-
-                              return bl_False;
-                         }
-
-                         p_data       += section_length;
-                         p_save_state += dest_len;
-                    }
-                    else
-                    {
-                         p_data       += section_length;
-                         p_save_state += section_length;
-                    }
-               }
-          }
-          else if ( MEMCMP( section_header, ==, "WRM", 3 ) )
-          {
-               uLongf dest_len = 50000 - (p_save_state - save_state);
-               int    ret;
-
-               if ( *p_data )
-               {
-                    *p_save_state = *p_data;
-                    p_save_state++;
-
-                    if ( (ret = uncompress( p_save_state, &dest_len, p_data + 1, section_length - 1)) != Z_OK )
-                    {
-                         sprintf( error_message, "Cannot uncompress WRM data: %s", zerror(ret) );
-
-                         return bl_False;
-                    }
-
-                    p_data       += section_length;
-                    p_save_state += dest_len;
-               }
-               else
-               {
-                    p_data       += section_length;
-                    p_save_state += section_length;
-               }
-          }
-          else if ( MEMCMP( section_header, ==, "VRM", 3 ) )
-          {
-               uLongf dest_len = 50000 - (p_save_state - save_state);
-               int    ret;
-
-               if ( *p_data )
-               {
-                    *p_save_state = *p_data;
-                    p_save_state++;
-
-                    if ( (ret = uncompress( p_save_state, &dest_len, p_data + 1, section_length - 1)) != Z_OK )
-                    {
-                         sprintf( error_message, "Cannot uncompress VRM data: %s", zerror(ret) );
-
-                         return bl_False;
-                    }
-
-                    p_data       += section_length;
-                    p_save_state += dest_len;
-               }
-               else
-               {
-                    p_data       += section_length;
-                    p_save_state += dest_len;
-               }
-          }
-          else
-          {
-               memcpy( p_save_state, p_data, section_length );
-
-               p_data       += section_length;
-               p_save_state += section_length;
-          }
-     }
-
-     *save_state_size = p_save_state - save_state;
-}
 
 unsigned char *readNstSaveState( const char *filename, int *save_state_size )
 {
@@ -874,7 +533,7 @@ unsigned char *readNstSaveState( const char *filename, int *save_state_size )
           return NULL;
      }
 
-     if ( ! loadSaveState2( save_state, save_state_size, filedata, filesize ) )
+     if ( ! loadSaveState( save_state, save_state_size, filedata, filesize ) )
      {
           free( filedata   );
           free( save_state );
