@@ -1123,6 +1123,22 @@ static void fixTeamName( char *name )
      if ( strcmp( name, "R. Cajuns"  ) == 0 ) sprintf( name, "Ragin Cajuns"    );
 }
 
+static boolean_e useFeatureBack( const formation_e offensive_formation, const tsb_playbook_s *playbook )
+{
+     if ( offensive_formation == form_Two_Back )
+     {
+          if ( (playbook->rushing[0] == 0x20  &&  playbook->rushing[1] == 0x33) ||
+               (playbook->rushing[0] == 0x67  &&  playbook->rushing[1] == 0x03) ||
+               (playbook->rushing[0] == 0x00  &&  playbook->rushing[1] == 0x35) ||
+               (playbook->rushing[0] == 0x10  &&  playbook->rushing[1] == 0x05)    )
+          {
+               return bl_True;
+          }
+     }
+
+     return bl_False;
+}
+
 static conference_team_s *convertTeams(
      const tsbrom_s         *rom,
      const nst_save_state_s *save_state,
@@ -1184,24 +1200,9 @@ static conference_team_s *convertTeams(
           teams[i].team->sim_offense = (rom->sim_data[rom_team_idx].team[0] >> 4   );
           teams[i].team->sim_defense = (rom->sim_data[rom_team_idx].team[0] &  0x0f);
 
-          teams[i].team->offensive_formation = rom->formations1[rom_team_idx];
-
+          teams[i].team->offensive_formation  = rom->formations1[rom_team_idx];
           teams[i].team->offensive_preference = rom->offensive_preference[rom_team_idx];
-
-          if ( teams[i].team->offensive_formation == form_Two_Back )
-          {
-               if ( (rom->default_playbooks[rom_team_idx].rushing[0] == 0x20  &&  rom->default_playbooks[rom_team_idx].rushing[1] == 0x33) ||
-                    (rom->default_playbooks[rom_team_idx].rushing[0] == 0x67  &&  rom->default_playbooks[rom_team_idx].rushing[1] == 0x03) ||
-                    (rom->default_playbooks[rom_team_idx].rushing[0] == 0x00  &&  rom->default_playbooks[rom_team_idx].rushing[1] == 0x35) ||
-                    (rom->default_playbooks[rom_team_idx].rushing[0] == 0x10  &&  rom->default_playbooks[rom_team_idx].rushing[1] == 0x05)    )
-               {
-                    teams[i].team->use_feature_back = bl_True;
-               }
-               else
-               {
-                    teams[i].team->use_feature_back = bl_False;
-               }
-          }
+          teams[i].team->use_feature_back     = useFeatureBack( teams[i].team->offensive_formation, &(rom->default_playbooks[rom_team_idx]) );
 
           const nst_teams_s *team_stats = NULL;
 
