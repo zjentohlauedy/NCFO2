@@ -299,14 +299,14 @@ static char *convertOrganization_ShouldReturnAnOrganizationObjectWithConferences
      assertEquals( -1, org->conferences[8].organization_id );
      assertEquals( -1, org->conferences[8].conference_id   );
 
-     assertEqualsStr( "New England", org->conferences[0].conference->name );
-     assertEqualsStr( "Atlantic",    org->conferences[1].conference->name );
-     assertEqualsStr( "Southeast",   org->conferences[2].conference->name );
-     assertEqualsStr( "Great Lake",  org->conferences[3].conference->name );
-     assertEqualsStr( "Southwest",   org->conferences[4].conference->name );
-     assertEqualsStr( "Northwest",   org->conferences[5].conference->name );
-     assertEqualsStr( "Midwest",     org->conferences[6].conference->name );
-     assertEqualsStr( "South",       org->conferences[7].conference->name );
+     assertEqualsStr( "Atlantic",    org->conferences[0].conference->name );
+     assertEqualsStr( "Great Lake",  org->conferences[1].conference->name );
+     assertEqualsStr( "Midwest",     org->conferences[2].conference->name );
+     assertEqualsStr( "New England", org->conferences[3].conference->name );
+     assertEqualsStr( "North",       org->conferences[4].conference->name );
+     assertEqualsStr( "Pacific",     org->conferences[5].conference->name );
+     assertEqualsStr( "Southeast",   org->conferences[6].conference->name );
+     assertEqualsStr( "Southwest",   org->conferences[7].conference->name );
 
      free_organization( org );
 
@@ -564,11 +564,16 @@ static char *convertOrganization_ShouldReturnAnOrganizationObjectWithPlayers()
 
      for ( int i = 0; i < 28; ++i )
      {
-          rom1.formations1[i] = 0;
-          rom1.formations2[i] = 0;
-          rom2.formations1[i] = 0;
-          rom2.formations2[i] = 0;
+          rom1.formations1[i] = form_Two_Back;
+          rom1.formations2[i] = form_Two_Back;
+          rom2.formations1[i] = form_Two_Back;
+          rom2.formations2[i] = form_Two_Back;
      }
+
+     rom1.offensive_preference[0] = pref_HeavyRush;
+
+     rom1.default_playbooks[0].rushing[0] = 0x20;
+     rom1.default_playbooks[0].rushing[1] = 0x33;
 
      organization_s *org = convertOrganization( &rom1, &save_state1, &rom2, &save_state2, 0, bg_None );
 
@@ -628,38 +633,48 @@ static char *convertOrganization_ShouldReturnAnOrganizationObjectWithPlayers()
 
           switch ( i )
           {
-          case  0:
-          case  1: assertEquals( pos_Quarterback,   players[i].player->position ); break;
-          case  2:
-          case  3:
-          case  4:
-          case  5: assertEquals( pos_Runningback,   players[i].player->position ); break;
-          case  6:
-          case  7:
-          case  8:
-          case  9: assertEquals( pos_WideReceiver,  players[i].player->position ); break;
-          case 10:
-          case 11: assertEquals( pos_TightEnd,      players[i].player->position ); break;
+          case  0: assertEquals( bl_True,           players[i].player->starter  ); assertEquals( pos_Quarterback,   players[i].player->position ); break;
+          case  1: assertEquals( bl_False,          players[i].player->starter  ); assertEquals( pos_Quarterback,   players[i].player->position ); break;
+          case  2: assertEquals( bl_True,           players[i].player->starter  ); assertEquals( pos_Runningback,   players[i].player->position ); break;
+          case  3: assertEquals( bl_True,           players[i].player->starter  ); assertEquals( pos_Runningback,   players[i].player->position ); break;
+          case  4: assertEquals( bl_False,          players[i].player->starter  ); assertEquals( pos_Runningback,   players[i].player->position ); break;
+          case  5: assertEquals( bl_False,          players[i].player->starter  ); assertEquals( pos_Runningback,   players[i].player->position ); break;
+          case  6: assertEquals( bl_True,           players[i].player->starter  ); assertEquals( pos_WideReceiver,  players[i].player->position ); break;
+          case  7: assertEquals( bl_True,           players[i].player->starter  ); assertEquals( pos_WideReceiver,  players[i].player->position ); break;
+          case  8: assertEquals( bl_False,          players[i].player->starter  ); assertEquals( pos_WideReceiver,  players[i].player->position ); break;
+          case  9: assertEquals( bl_False,          players[i].player->starter  ); assertEquals( pos_WideReceiver,  players[i].player->position ); break;
+          case 10: assertEquals( bl_True,           players[i].player->starter  ); assertEquals( pos_TightEnd,      players[i].player->position ); break;
+          case 11: assertEquals( bl_False,          players[i].player->starter  ); assertEquals( pos_TightEnd,      players[i].player->position ); break;
           case 12:
           case 13:
           case 14:
           case 15:
-          case 16: assertEquals( pos_OffensiveLine, players[i].player->position ); break;
+          case 16: assertEquals( bl_True,           players[i].player->starter  );
+               /**/assertEquals( pos_OffensiveLine, players[i].player->position ); break;
           case 17:
           case 18:
-          case 19: assertEquals( pos_DefensiveLine, players[i].player->position ); break;
+          case 19: assertEquals( bl_True,           players[i].player->starter  );
+               /**/assertEquals( pos_DefensiveLine, players[i].player->position ); break;
           case 20:
           case 21:
           case 22:
-          case 23: assertEquals( pos_Linebacker,    players[i].player->position ); break;
+          case 23: assertEquals( bl_True,           players[i].player->starter  );
+               /**/assertEquals( pos_Linebacker,    players[i].player->position ); break;
           case 24:
-          case 25: assertEquals( pos_Cornerback,    players[i].player->position ); break;
+          case 25: assertEquals( bl_True,           players[i].player->starter  );
+               /**/assertEquals( pos_Cornerback,    players[i].player->position ); break;
           case 26:
-          case 27: assertEquals( pos_Safety,        players[i].player->position ); break;
-          case 28: assertEquals( pos_Kicker,        players[i].player->position ); break;
-          case 29: assertEquals( pos_Punter,        players[i].player->position ); break;
+          case 27: assertEquals( bl_True,           players[i].player->starter  );
+               /**/assertEquals( pos_Safety,        players[i].player->position ); break;
+          case 28: assertEquals( bl_True,           players[i].player->starter  );
+               /**/assertEquals( pos_Kicker,        players[i].player->position ); break;
+          case 29: assertEquals( bl_True,           players[i].player->starter  );
+               /**/assertEquals( pos_Punter,        players[i].player->position ); break;
           }
      }
+
+     assertEquals( bl_True,  players[2].player->feature_back );
+     assertEquals( bl_False, players[3].player->feature_back );
 
      assertEquals( -1, players[30].team_id   );
      assertEquals( -1, players[30].player_id );

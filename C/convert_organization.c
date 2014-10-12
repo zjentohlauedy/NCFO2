@@ -637,9 +637,11 @@ static boolean_e convertPlayerByPosition(
 {
      boolean_e retval = bl_True;
 
+     players[player_idx].player->starter = bl_False;
+
      switch ( player_idx )
      {
-     case  0:
+     case  0: players[player_idx].player->starter = bl_True;
      case  1:
           retval = convertQuarterback( &(team_player_ratings->quarterback[player_idx]),
                                        sim_data->quarterbacks[player_idx],
@@ -649,6 +651,8 @@ static boolean_e convertPlayerByPosition(
           break;
 
      case  2:
+          players[player_idx].player->starter = bl_True;
+
           retval = convertRunningback( &(team_player_ratings->offense[player_idx - 2]),
                                        sim_data->offense[player_idx - 2],
                                        &(player_stats->offense[player_idx - 2]),
@@ -657,6 +661,8 @@ static boolean_e convertPlayerByPosition(
           break;
 
      case  3:
+          players[player_idx].player->starter = bl_True;
+
           if ( formation == form_Two_Back )
           {
                retval = convertRunningback( &(team_player_ratings->offense[player_idx - 2]),
@@ -686,6 +692,8 @@ static boolean_e convertPlayerByPosition(
 
      case  6:
      case  7:
+          players[player_idx].player->starter = bl_True;
+
           retval = convertWideReceiver( &(team_player_ratings->offense[player_idx - 2]),
                                         sim_data->offense[player_idx - 2],
                                         &(player_stats->offense[player_idx - 2]),
@@ -720,8 +728,9 @@ static boolean_e convertPlayerByPosition(
                                         players[player_idx].player );
           break;
 
-     case 10:
+     case 10: players[player_idx].player->starter = bl_True;
      case 11:
+
           if ( formation == form_Four_Wide )
           {
                retval = convertWideReceiver( &(team_player_ratings->offense[player_idx - 2]),
@@ -745,12 +754,14 @@ static boolean_e convertPlayerByPosition(
      case 14:
      case 15:
      case 16:
+          players[player_idx].player->starter = bl_True;
           retval = convertOffensiveLine( &(team_player_ratings->linesmen[player_idx - 12]), players[player_idx].player );
           break;
 
      case 17:
      case 18:
      case 19:
+          players[player_idx].player->starter = bl_True;
           retval = convertDefensiveLine( &(team_player_ratings->defense[player_idx - 17]),
                                          sim_data, player_idx - 17,
                                          &(player_stats->defense[player_idx - 17]),
@@ -762,6 +773,7 @@ static boolean_e convertPlayerByPosition(
      case 21:
      case 22:
      case 23:
+          players[player_idx].player->starter = bl_True;
           retval = convertLinebacker( &(team_player_ratings->defense[player_idx - 17]),
                                       sim_data, player_idx - 17,
                                       &(player_stats->defense[player_idx - 17]),
@@ -771,6 +783,7 @@ static boolean_e convertPlayerByPosition(
 
      case 24:
      case 25:
+          players[player_idx].player->starter = bl_True;
           retval = convertCornerback( &(team_player_ratings->defense[player_idx - 17]),
                                       sim_data, player_idx - 17,
                                       &(player_stats->defense[player_idx - 17]),
@@ -780,6 +793,7 @@ static boolean_e convertPlayerByPosition(
 
      case 26:
      case 27:
+          players[player_idx].player->starter = bl_True;
           retval = convertSafety( &(team_player_ratings->defense[player_idx - 17]),
                                   sim_data, player_idx - 17,
                                   &(player_stats->defense[player_idx - 17]),
@@ -788,6 +802,7 @@ static boolean_e convertPlayerByPosition(
           break;
 
      case 28:
+          players[player_idx].player->starter = bl_True;
           retval = convertKicker( &(team_player_ratings->kickers[0]),
                                   sim_data,
                                   player_stats->kicker,
@@ -796,6 +811,7 @@ static boolean_e convertPlayerByPosition(
           break;
 
      case 29:
+          players[player_idx].player->starter = bl_True;
           retval = convertPunter( &(team_player_ratings->kickers[1]),
                                   sim_data,
                                   player_stats->punter,
@@ -810,13 +826,14 @@ static boolean_e convertPlayerByPosition(
 static team_player_s *convertPlayers(
      const tsbrom_s         *rom,
      const nst_save_state_s *save_state,
-     const formation_e       formation,
+     const team_s           *team,
      const int               season,
      const bowl_game_e       bowl,
      const int               team_idx )
 {
      team_player_s  team_player_sentinel = TEAM_PLAYER_SENTINEL;
      team_player_s *players              = NULL;
+     formation_e    formation            = team->offensive_formation;
 
      if ( (players = malloc( sizeof(team_player_s) * 31 )) == NULL )
      {
@@ -922,170 +939,9 @@ static team_player_s *convertPlayers(
                // cleanup
                return NULL;
           }
-
-/*
-          switch ( i )
-          {
-          case  0:
-          case  1:
-               if ( ! convertQuarterback( &(team_player_ratings->quarterback[i]),
-                                          sim_data->quarterbacks[i],
-                                          &(player_stats->quarterback[i]),
-                                          season, bowl,
-                                          players[i].player ) )
-               {
-                    // cleanup
-                    return NULL;
-               }
-
-               break;
-
-          case  2:
-          case  3:
-          case  4:
-          case  5:
-               if ( ! convertRunningback( &(team_player_ratings->offense[i - 2]),
-                                          sim_data->offense[i - 2],
-                                          &(player_stats->offense[i - 2]),
-                                          season, bowl,
-                                          players[i].player ) )
-               {
-                    // cleanup
-                    return NULL;
-               }
-
-               break;
-
-          case  6:
-          case  7:
-          case  8:
-          case  9:
-               if ( ! convertWideReceiver( &(team_player_ratings->offense[i - 2]),
-                                           sim_data->offense[i - 2],
-                                           &(player_stats->offense[i - 2]),
-                                           season, bowl,
-                                           players[i].player ) )
-               {
-                    // cleanup
-                    return NULL;
-               }
-
-               break;
-
-          case 10:
-          case 11:
-               if ( ! convertTightEnd( &(team_player_ratings->offense[i - 2]),
-                                       sim_data->offense[i - 2],
-                                       &(player_stats->offense[i - 2]),
-                                       season, bowl,
-                                       players[i].player ) )
-               {
-                    // cleanup
-                    return NULL;
-               }
-
-               break;
-
-          case 12:
-          case 13:
-          case 14:
-          case 15:
-          case 16:
-               if ( ! convertOffensiveLine( &(team_player_ratings->linesmen[i - 12]), players[i].player ) )
-               {
-                    // cleanup
-                    return NULL;
-               }
-
-               break;
-
-          case 17:
-          case 18:
-          case 19:
-               if ( ! convertDefensiveLine( &(team_player_ratings->defense[i - 17]),
-                                            sim_data, i - 17,
-                                            &(player_stats->defense[i - 17]),
-                                            season, bowl,
-                                            players[i].player ) )
-               {
-                    // cleanup
-                    return NULL;
-               }
-
-               break;
-
-          case 20:
-          case 21:
-          case 22:
-          case 23:
-               if ( ! convertLinebacker( &(team_player_ratings->defense[i - 17]),
-                                         sim_data, i - 17,
-                                         &(player_stats->defense[i - 17]),
-                                         season, bowl,
-                                         players[i].player ) )
-               {
-                    // cleanup
-                    return NULL;
-               }
-
-               break;
-
-          case 24:
-          case 25:
-               if ( ! convertCornerback( &(team_player_ratings->defense[i - 17]),
-                                         sim_data, i - 17,
-                                         &(player_stats->defense[i - 17]),
-                                         season, bowl,
-                                         players[i].player ) )
-               {
-                    // cleanup
-                    return NULL;
-               }
-
-               break;
-
-          case 26:
-          case 27:
-               if ( ! convertSafety( &(team_player_ratings->defense[i - 17]),
-                                     sim_data, i - 17,
-                                     &(player_stats->defense[i - 17]),
-                                     season, bowl,
-                                     players[i].player ) )
-               {
-                    // cleanup
-                    return NULL;
-               }
-
-               break;
-
-          case 28:
-               if ( ! convertKicker( &(team_player_ratings->kickers[0]),
-                                     sim_data,
-                                     player_stats->kicker,
-                                     season, bowl,
-                                     players[i].player ) )
-               {
-                    // cleanup
-                    return NULL;
-               }
-
-               break;
-
-          case 29:
-               if ( ! convertPunter( &(team_player_ratings->kickers[1]),
-                                     sim_data,
-                                     player_stats->punter,
-                                     season, bowl,
-                                     players[i].player ) )
-               {
-                    // cleanup
-                    return NULL;
-               }
-
-               break;
-          }
-*/
      }
+
+     if ( team->use_feature_back ) players[2].player->feature_back = bl_True;
 
      players[30] = team_player_sentinel;
 
@@ -1332,13 +1188,28 @@ static conference_team_s *convertTeams(
 
           teams[i].team->offensive_preference = rom->offensive_preference[rom_team_idx];
 
+          if ( teams[i].team->offensive_formation == form_Two_Back )
+          {
+               if ( (rom->default_playbooks[rom_team_idx].rushing[0] == 0x20  &&  rom->default_playbooks[rom_team_idx].rushing[1] == 0x33) ||
+                    (rom->default_playbooks[rom_team_idx].rushing[0] == 0x67  &&  rom->default_playbooks[rom_team_idx].rushing[1] == 0x03) ||
+                    (rom->default_playbooks[rom_team_idx].rushing[0] == 0x00  &&  rom->default_playbooks[rom_team_idx].rushing[1] == 0x35) ||
+                    (rom->default_playbooks[rom_team_idx].rushing[0] == 0x10  &&  rom->default_playbooks[rom_team_idx].rushing[1] == 0x05)    )
+               {
+                    teams[i].team->use_feature_back = bl_True;
+               }
+               else
+               {
+                    teams[i].team->use_feature_back = bl_False;
+               }
+          }
+
           const nst_teams_s *team_stats = NULL;
 
           if ( rom_team_idx < 9 ) team_stats = save_state->stats1[rom_team_idx    ].team_stats;
           else                    team_stats = save_state->stats2[rom_team_idx - 9].team_stats;
 
           teams[i].team->stats         = convertTeamStats( team_stats, season, bowl, teams[i].team_id );
-          teams[i].team->players       = convertPlayers( rom, save_state, teams[i].team->offensive_formation, season, bowl, team_idx );
+          teams[i].team->players       = convertPlayers( rom, save_state, teams[i].team, season, bowl, team_idx );
           teams[i].team->offense_stats = convertTeamOffenseStats( teams[i].team->players, season, bowl, teams[i].team_id );
           teams[i].team->defense_stats = convertTeamDefenseStats( teams[i].team->players, season, bowl, teams[i].team_id );
           teams[i].team->kicking_stats = convertTeamKickingStats( teams[i].team->players, season, bowl, teams[i].team_id );

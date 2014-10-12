@@ -272,6 +272,8 @@ typedef struct
      int                     receiving_score;
      int                     passrush_score;
      int                     coverage_score;
+     boolean_e               starter;
+     boolean_e               feature_back;
      int                     injuries;
      condition_e             condition;
 

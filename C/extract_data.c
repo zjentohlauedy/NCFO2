@@ -190,7 +190,13 @@ static void printPlayer( const player_s *player )
      printf( ",\"last_name\":\"%s\"",                      player->last_name  );
      printf( ",\"position\":\"%s\"",   getDisplayPosition( player->position   ) );
      printf( ",\"number\":%d",                             player->number     );
+     printf( ",\"starter\":%s",                            player->starter    ?   "true" : "false" );
      printf( ",\"score\":%d",          calcPlayerScore(    player             ) );
+
+     if ( player->position == pos_Runningback )
+     {
+          printf( ",\"feature_back\":%s", player->feature_back ? "true" : "false" );
+     }
 
      if ( player->ratings != NULL )
      {
