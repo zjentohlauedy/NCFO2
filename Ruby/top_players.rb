@@ -300,6 +300,13 @@ class StatRankings
       players.select! { |p| (p.send filter) > (mean - stddev) }
     end
 
+    players.select! { |p| (p.send stat) > 0 }
+
+    if players.length == 0
+      puts "--"
+      return
+    end
+
     i = 0
 
     while i < [count, players.length].min
