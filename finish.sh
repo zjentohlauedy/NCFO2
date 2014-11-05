@@ -9,3 +9,5 @@ fi
 
 echo "Converting schedule.ods to csv..."
 soffice -env:UserInstallation=file://~/.libreoffice-alt --headless --convert-to csv --outdir . ./schedule.ods
+
+~/NES/NCFO/Ruby/boxscores.rb
