@@ -452,6 +452,8 @@ static boolean_e loadSaveState( unsigned char *save_state, int *save_state_size,
                     }
                     else
                     {
+                         memcpy( p_save_state, p_data, section_length );
+
                          p_data       += section_length;
                          p_save_state += section_length;
                     }
