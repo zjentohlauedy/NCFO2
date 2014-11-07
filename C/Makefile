@@ -1,7 +1,7 @@
 AR = ar
 ARFLAGS = -rc
 CC = cc
-CFLAGS = -std=c99 -g -Werror-implicit-function-declaration
+CFLAGS = -std=c99 -g -Werror-implicit-function-declaration -D_GNU_SOURCE
 LDFLAGS = -L. -lm -lsqlite3 -lz
 
 progs = \
@@ -12,7 +12,8 @@ progs = \
    extract_data \
    injuries \
    reorg \
-   set_uniforms
+   set_uniforms \
+   copy_playoff_teams
 
 tests = \
    test_file_utils \
@@ -74,6 +75,9 @@ reorg: reorg.o file_utils.o
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
 
 set_uniforms: set_uniforms.o file_utils.o
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
+
+copy_playoff_teams: copy_playoff_teams.o file_utils.o
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
 
 
