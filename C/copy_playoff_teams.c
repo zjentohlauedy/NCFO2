@@ -211,6 +211,8 @@ static void copyTeamPlayerData( tsbrom_s *output_rom, tsbrom_s *source_rom1, tsb
           output_rom->mini_helmets             [i] = source_rom->mini_helmets             [team_idx];
           output_rom->field_uniforms           [i] = source_rom->field_uniforms           [team_idx];
           output_rom->cutscene_uniforms        [i] = source_rom->cutscene_uniforms        [team_idx];
+          output_rom->cutscene_uniforms2       [i] = source_rom->cutscene_uniforms2       [team_idx];
+          output_rom->cutscene_uniforms3       [i] = source_rom->cutscene_uniforms3       [team_idx];
           output_rom->team_background_colors   [i] = source_rom->team_background_colors   [team_idx];
           output_rom->team_player_ratings      [i] = source_rom->team_player_ratings      [team_idx];
           output_rom->sim_data                 [i] = source_rom->sim_data                 [team_idx];

@@ -181,6 +181,27 @@ typedef struct
 
 typedef struct
 {
+     unsigned char jersey_dark_shadow [1];
+     unsigned char jersey_main_color  [1];
+     unsigned char jersey_shadow      [1];
+
+     unsigned char helmet_highlight   [1];
+     unsigned char helmet_main_color  [1];
+
+} tsb_uniforms3_s;
+
+typedef struct
+{
+     unsigned char helmet_pants_color [1];
+
+     unsigned char jersey_main_color1 [1]; // should be the same as color 2
+     unsigned char jersey_highlight   [1];
+     unsigned char jersey_main_color2 [1]; // should be the same as color 1
+
+} tsb_uniforms4_s;
+
+typedef struct
+{
      unsigned char top_left_tile     [1];
      unsigned char top_right_tile    [1];
      unsigned char bottom_left_tile  [1];
@@ -276,8 +297,12 @@ typedef struct
      unsigned char      unknown27b                  [   184 ];          // 0x328ef - 0x329a6
      tsb_schedule_u     schedule                    [     1 ];          // 0x329a7 - 0x3400f
      unsigned char      unknown28a                  [   712 ];          // 0x34010 - 0x342d7
-     tsb_uniforms2_s    cutscene_uniforms           [    28 ];          // 0x342d8 - 0x343b7
-     unsigned char      unknown28b                  [  6232 ];          // 0x343b8 - 0x35c0f
+     tsb_uniforms2_s    cutscene_uniforms           [    28 ];          // 0x342d8 - 0x343b7 - in-game action cutscenes
+     unsigned char      unknown28b                  [    48 ];          // 0x343b8 - 0x343e7
+     tsb_uniforms3_s    cutscene_uniforms2          [    28 ];          // 0x343e8 - 0x34473 - division champions cutscene
+     unsigned char      unknown28c                  [    32 ];          // 0x34474 - 0x34493
+     tsb_uniforms4_s    cutscene_uniforms3          [    28 ];          // 0x34494 - 0x34503 - conference champions & overall champions cutscene
+     unsigned char      unknown28d                  [  5900 ];          // 0x34504 - 0x35c0f
      unsigned char      unknown29                   [  1024 ];          // 0x35c10 - 0x3600f
      unsigned char      unknown30                   [  8192 ];          // 0x36010 - 0x3800f
      unsigned char      unknown31                   [ 16384 ];          // 0x38010 - 0x3c00f
