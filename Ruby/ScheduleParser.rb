@@ -2,7 +2,7 @@ class ScheduleParser
 
   class Game
     attr_reader :played, :home_team, :road_team, :home_score, :road_score
-    attr_accessor :televised, :number
+    attr_accessor :televised, :number, :name
 
     def initialize( road_team, home_team, road_score = nil, home_score = nil )
       @home_team = home_team
@@ -14,6 +14,7 @@ class ScheduleParser
 
       @played = !home_score.nil?
       @televised = false
+      @name = nil
     end
   end
 
@@ -78,9 +79,9 @@ class ScheduleParser
 
   def initialize
     @line_count  = 0
-    @skip_record = false
     @road_fields = []
     @home_fields = []
+    @game_names  = []
     @schedule = Schedule.new
   end
 
@@ -95,17 +96,20 @@ class ScheduleParser
       return
     end
 
-    if @skip_record
-      return
-    end
-
     unless @road_fields.length > 0
       @road_fields = line.split ","
     else
       @home_fields = line.split "," unless @home_fields.length > 0
     end
 
-    if @home_fields.length > 0  && @road_fields.length > 0
+    if @home_fields.length > 0  &&  @road_fields.length > 0
+
+      if @home_fields[0].length == 0
+        @game_names  = @road_fields
+        @road_fields = @home_fields
+        @home_fields = []
+        return
+      end
 
       gameday = Day.new @home_fields[0]
 
@@ -113,11 +117,22 @@ class ScheduleParser
 
       while index < @home_fields.length
 
-        if @road_fields[index+1] && @road_fields[index+1].length > 0
-          gameday.add_game Game.new @road_fields[index], @home_fields[index], @road_fields[index+1], @home_fields[index+1]
-        else
-          gameday.add_game Game.new @road_fields[index], @home_fields[index]
+        if @road_fields[index].length == 0  &&  @home_fields[index].length == 0
+          index += 2
+          next
         end
+
+        if @road_fields[index+1] && @road_fields[index+1].length > 0
+          game = Game.new @road_fields[index], @home_fields[index], @road_fields[index+1], @home_fields[index+1]
+        else
+          game =  Game.new @road_fields[index], @home_fields[index]
+        end
+
+        if @game_names[index]  &&  @game_names[index].length > 0
+          game.name = @game_names[index]
+        end
+
+        gameday.add_game game
 
         index += 2
       end
@@ -126,6 +141,7 @@ class ScheduleParser
 
       @road_fields = []
       @home_fields = []
+      @game_names  = []
     end
 
   end

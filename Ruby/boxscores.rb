@@ -279,58 +279,7 @@ def print_punting( stream, team )
   end
 end
 
-
-path = ARGV[0] || '.'
-
-# parse schedule
-sp = ScheduleParser.new
-fp = FileParser.new sp
-
-fp.process_file "#{path}/schedule.csv"
-
-schedule = sp.schedule
-
-week = nil
-schedule.days.each do |day|
-  break if ! day.completed
-  week = day
-end
-
-exit if week.nil?
-
-puts "Week: #{week.day}"
-
-week_folder = sprintf "#{path}/W%02d", week.day
-
-puts "Creating boxscore files in #{week_folder}/"
-Dir.mkdir week_folder
-
-
-#extract data
-extract_data = ProgRunner.new "#{location}/../C", "extract_data"
-
-extract_data.execute "#{path}/ncfo1.nes", "#{path}/ncfo1.nst", "#{path}/ncfo2.nes", "#{path}/ncfo2.nst"
-
-org = JSON.parse extract_data.get_output, {:symbolize_names => true}
-
-if File.file?("#{path}/.ncfo1.nst.bak") and File.file?("#{path}/.ncfo2.nst.bak")
-  extract_data.execute "#{path}/ncfo1.nes", "#{path}/.ncfo1.nst.bak", "#{path}/ncfo2.nes", "#{path}/.ncfo2.nst.bak"
-
-  old_org = JSON.parse extract_data.get_output, {:symbolize_names => true}
-
-  Utils::org_delta org, old_org
-end
-
-
-week.games.each do |game|
-  roadteam = get_team org, game.road_team
-  hometeam = get_team org, game.home_team
-
-  boxscore_file = sprintf "#{week_folder}/W%02dG%02d.txt", week.day, game.number
-
-  puts "Saving #{game.road_team} @ #{game.home_team} to #{boxscore_file}"
-
-  File.open( boxscore_file, 'w' ) do |stream|
+def print_boxscore( stream, roadteam, hometeam )
     stream.puts
     stream.printf "%27s  %d\n", roadteam[:location].gsub(/([A-Za-z])/, '\1 '), roadteam[:stats][:points_scored]
     stream.printf "%27s  %d\n", hometeam[:location].gsub(/([A-Za-z])/, '\1 '), hometeam[:stats][:points_scored]
@@ -409,5 +358,101 @@ week.games.each do |game|
     print_punting stream, hometeam
     stream.puts
     stream.puts
+end
+
+def get_data( cwd, path )
+  extract_data = ProgRunner.new "#{cwd}/../C", "extract_data"
+
+  extract_data.execute "#{path}/ncfo1.nes", "#{path}/ncfo1.nst", "#{path}/ncfo2.nes", "#{path}/ncfo2.nst"
+
+  org = JSON.parse extract_data.get_output, {:symbolize_names => true}
+
+  if File.file?("#{path}/.ncfo1.nst.bak") and File.file?("#{path}/.ncfo2.nst.bak")
+    extract_data.execute "#{path}/ncfo1.nes", "#{path}/.ncfo1.nst.bak", "#{path}/ncfo2.nes", "#{path}/.ncfo2.nst.bak"
+
+    old_org = JSON.parse extract_data.get_output, {:symbolize_names => true}
+
+    Utils::org_delta org, old_org
+  end
+
+  return org
+end
+
+def get_game_data( cwd, path, game_name )
+  game = game_name.gsub ' ', '_'
+
+  boxscore = ProgRunner.new "#{cwd}/../C", "boxscore"
+
+  boxscore.execute "#{path}/playoffs.nes", "#{path}/#{game}.nst"
+
+  unless boxscore.success?
+    puts "ERROR: #{boxscore.get_output}"
+
+    return nil
+  end
+
+  return JSON.parse boxscore.get_output, {:symbolize_names => true}
+end
+
+
+path = ARGV[0] || '.'
+
+# parse schedule
+sp = ScheduleParser.new
+fp = FileParser.new sp
+
+fp.process_file "#{path}/schedule.csv"
+
+schedule = sp.schedule
+
+week = nil
+schedule.days.each do |day|
+  break if ! day.completed
+  week = day
+end
+
+exit if week.nil?
+
+puts "Week: #{week.day}"
+
+week_folder = sprintf "#{path}/W%02d", week.day
+
+puts "Creating boxscore files in #{week_folder}/"
+Dir.mkdir week_folder
+
+if week.day <= 10
+  org = get_data location, path
+
+  week.games.each do |game|
+    roadteam = get_team org, game.road_team
+    hometeam = get_team org, game.home_team
+
+    if game.name.nil?
+      boxscore_file = sprintf "#{week_folder}/W%02dG%02d.txt", week.day, game.number
+    else
+      boxscore_file = "#{week_folder}/#{game.name.gsub ' ', '_'}.txt"
+    end
+
+    puts "Saving #{game.road_team} @ #{game.home_team} to #{boxscore_file}"
+
+    File.open( boxscore_file, 'w' ) do |stream|
+      print_boxscore stream, roadteam, hometeam
+    end
+  end
+else
+  week.games.each do |game|
+    next if game.name.nil?
+
+    data = get_game_data location, path, game.name
+
+    next if data.nil?
+
+    boxscore_file = "#{week_folder}/#{game.name.gsub ' ', '_'}.txt"
+
+    puts "Saving #{game.road_team} @ #{game.home_team} to #{boxscore_file}"
+
+    File.open( boxscore_file, 'w' ) do |stream|
+      print_boxscore stream, data[:road_team], data[:home_team]
+    end
   end
 end

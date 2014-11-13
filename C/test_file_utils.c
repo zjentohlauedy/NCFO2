@@ -19,6 +19,13 @@ static char *tsbrom_s__ShouldBeExactly393232BytesInSize()
      return NULL;
 }
 
+static char *nst_save_state_s__ShouldBeExactly8192BytesInSize()
+{
+     assertEquals( 0x2000, sizeof(nst_save_state_s) );
+
+     return NULL;
+}
+
 static char *readTsbRom_ShouldReturnAPointerToATsbRomObject_GivenAFilename()
 {
      assertNotNull( readTsbRom( tsbrom_file_name ) );
@@ -255,6 +262,7 @@ static void check_file_utils_error()
 static void run_all_tests()
 {
      run_test( tsbrom_s__ShouldBeExactly393232BytesInSize, null );
+     run_test( nst_save_state_s__ShouldBeExactly8192BytesInSize, null );
 
      run_test( readTsbRom_ShouldReturnAPointerToATsbRomObject_GivenAFilename, check_file_utils_error );
      run_test( writeTsbRom_ShouldCreateATsbRom_GivenATsbRomObjectAndFilename, check_file_utils_error );

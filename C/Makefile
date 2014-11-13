@@ -13,7 +13,8 @@ progs = \
    injuries \
    reorg \
    set_uniforms \
-   copy_playoff_teams
+   copy_playoff_teams \
+   boxscore
 
 tests = \
    test_file_utils \
@@ -79,6 +80,9 @@ set_uniforms: set_uniforms.o file_utils.o
 
 copy_playoff_teams: copy_playoff_teams.o file_utils.o
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
+
+boxscore: boxscore.o file_utils.o convert_organization.o libncfodata.a
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfodata
 
 
 TESTS: $(tests) ncfo_test.db TAGS

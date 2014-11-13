@@ -212,17 +212,95 @@ typedef struct
 
 typedef struct
 {
-     unsigned char unknown1     [ 1726 ]; // 0x0000 - 0x06bd
-     unsigned char checksum     [    2 ]; // 0x06be - 0x06bf
-     unsigned char unknown2     [  152 ]; // 0x06c0 - 0x0757
-     unsigned char current_week [    1 ]; // 0x0758 - 0x0758
-     unsigned char game_of_week [    1 ]; // 0x0759 - 0x0759
-     nst_matchup_s matches      [   14 ]; // 0x075a - 0x0775
-     unsigned char unknown3     [   56 ]; // 0x0776 - 0x07ad
-     nst_stats_s   stats1       [    9 ]; // 0x07ae - 0x0efd
-     unsigned char unknown4     [  260 ]; // 0x0efe - 0x1001 - For some reason the teams are broken up by this empty space
-     nst_stats_s   stats2       [   19 ]; // 0x1002 - 0x1f71
-     unsigned char unknown5     [  142 ]; // 0x1f72 - 0x1fff
+     unsigned char pass_attempts    [ 1 ];
+     unsigned char pass_completions [ 1 ];
+     unsigned char pass_touchdowns  [ 1 ];
+     unsigned char interceptions    [ 1 ];
+     unsigned char pass_yards       [ 2 ];
+     unsigned char rush_attempts    [ 1 ];
+     unsigned char rush_yards       [ 2 ];
+     unsigned char rush_touchdowns  [ 1 ];
+
+} nst_quarterback_game_s;
+
+typedef struct
+{
+     unsigned char receptions           [ 1 ];
+     unsigned char receiving_yards      [ 2 ];
+     unsigned char receiving_touchdowns [ 1 ];
+     unsigned char kick_returns         [ 1 ];
+     unsigned char kr_yards             [ 2 ];
+     unsigned char kr_touchdowns        [ 1 ];
+     unsigned char punt_returns         [ 1 ];
+     unsigned char pr_yards             [ 2 ];
+     unsigned char pr_touchdowns        [ 1 ];
+     unsigned char rush_attempts        [ 1 ];
+     unsigned char rush_yards           [ 2 ];
+     unsigned char rush_touchdowns      [ 1 ];
+
+} nst_offense_game_s;
+
+typedef struct
+{
+     unsigned char sacks             [ 1 ];
+     unsigned char interceptions     [ 1 ];
+     unsigned char return_yards      [ 2 ];
+     unsigned char return_touchdowns [ 1 ];
+
+} nst_defense_game_s;
+
+typedef struct
+{
+     unsigned char xp_made     [ 1 ];
+     unsigned char xp_attempts [ 1 ];
+     unsigned char fg_made     [ 1 ];
+     unsigned char fg_attempts [ 1 ];
+
+} nst_kicker_game_s;
+
+typedef struct
+{
+     unsigned char punts      [ 1 ];
+     unsigned char punt_yards [ 2 ];
+
+} nst_punter_game_s;
+
+typedef struct
+{
+     nst_quarterback_game_s quarterback [  2 ];
+     nst_offense_game_s     offense     [ 10 ];
+     nst_defense_game_s     defense     [ 11 ];
+     nst_kicker_game_s      kicker      [  1 ];
+     nst_punter_game_s      punter      [  1 ];
+
+} nst_game_stats_s;
+
+typedef struct
+{
+     nst_matchup_s match;
+     unsigned char road_score [ 1 ];
+     unsigned char home_score [ 1 ];
+
+} nst_playoff_s;
+
+typedef struct
+{
+     unsigned char    unknown1      [ 1030 ]; // 0x0000 - 0x06bd
+     nst_game_stats_s road_team     [    1 ]; // 0x0406 - 0x04f7
+     unsigned char    unknown2      [   19 ]; // 0x04f8 - 0x050a
+     nst_game_stats_s home_team     [    1 ]; // 0x050b - 0x05fc
+     unsigned char    unknown3      [  193 ]; // 0x05fd - 0x06bd
+     unsigned char    checksum      [    2 ]; // 0x06be - 0x06bf
+     unsigned char    unknown4      [  152 ]; // 0x06c0 - 0x0757
+     unsigned char    current_week  [    1 ]; // 0x0758 - 0x0758
+     unsigned char    game_of_week  [    1 ]; // 0x0759 - 0x0759 - also doubles as the postseason game counter - week never changes
+     nst_matchup_s    matches       [   14 ]; // 0x075a - 0x0775
+     nst_playoff_s    playoffs      [   11 ]; // 0x0776 - 0x07a1
+     unsigned char    playoff_teams [   12 ]; // 0x07a2 - 0x07ad
+     nst_stats_s      stats1        [    9 ]; // 0x07ae - 0x0efd
+     unsigned char    unknown6      [  260 ]; // 0x0efe - 0x1001 - For some reason the teams are broken up by this empty space
+     nst_stats_s      stats2        [   19 ]; // 0x1002 - 0x1f71
+     unsigned char    unknown7      [  142 ]; // 0x1f72 - 0x1fff
 
 } nst_save_state_s;
 
