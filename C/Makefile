@@ -13,6 +13,7 @@ progs = \
    injuries \
    reorg \
    set_uniforms \
+   set_playoff_uniforms \
    copy_playoff_teams \
    boxscore
 
@@ -76,6 +77,9 @@ reorg: reorg.o file_utils.o
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
 
 set_uniforms: set_uniforms.o file_utils.o
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
+
+set_playoff_uniforms: set_playoff_uniforms.o file_utils.o
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
 
 copy_playoff_teams: copy_playoff_teams.o file_utils.o
