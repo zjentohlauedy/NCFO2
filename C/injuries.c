@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
 #include "conversion.h"
 #include "file_formats.h"
@@ -81,24 +82,50 @@ static void printTeam( const team_s *team )
      if ( ! print_team ) printf( "\n" );
 }
 
-static void printConference( const conference_s *conference )
+static void printInjuries( team_s *teams[] )
 {
-     if ( conference->teams == NULL ) return;
-
-     for ( int i = 0; conference->teams[i].team != NULL; ++i )
+     for ( int i = 0; teams[i] != NULL; ++i )
      {
-          printTeam( conference->teams[i].team );
+          printTeam( teams[i] );
      }
 }
 
-static void printRosters( const organization_s *organization )
+static void extractTeams( team_s *teams[], const organization_s *organization )
 {
      if ( organization->conferences == NULL ) return;
 
+     int team_count = 0;
+
      for ( int i = 0; organization->conferences[i].conference != NULL; ++i )
      {
-          printConference( organization->conferences[i].conference );
+          const conference_s *conference = organization->conferences[i].conference;
+
+          if ( conference->teams == NULL ) continue;
+
+          for ( int j = 0; conference->teams[j].team != NULL; ++j )
+          {
+               teams[team_count] = conference->teams[j].team;
+
+               team_count++;
+          }
      }
+}
+
+static int compareTeamsByLocation( const void *a, const void *b )
+{
+     team_s *team_a = *((team_s **)a);
+     team_s *team_b = *((team_s **)b);
+
+     if ( team_a->location == NULL )
+     {
+          if ( team_b->location == NULL ) return 0;
+
+          return 1;
+     }
+
+     if ( team_b->location == NULL ) return -1;
+
+     return strcmp( team_a->location, team_b->location );
 }
 
 int main( const int argc, const char *argv[] )
@@ -109,6 +136,7 @@ int main( const int argc, const char *argv[] )
      const char              *ss1_filename  = NULL;
      const char              *ss2_filename  = NULL;
 
+     team_s           *teams[48 + 1] = { 0 };
      unsigned char    *state_file1   = NULL;
      unsigned char    *state_file2   = NULL;
      nst_save_state_s *save_state1   = NULL;
@@ -121,9 +149,9 @@ int main( const int argc, const char *argv[] )
      if ( argc == 3 )
      {
           rom1_filename = argv[1];
-          rom2_filename = argv[2];
+          rom2_filename = argv[1];
+          ss1_filename  = argv[2];
 
-          save_state1 = &empty_save_state;
           save_state2 = &empty_save_state;
      }
      else if ( argc == 5 )
@@ -136,7 +164,7 @@ int main( const int argc, const char *argv[] )
      }
      else
      {
-          printf( "Usage: %s <rom-file1> [save-state1] <rom-file2> [save-state2]\n", argv[0] );
+          printf( "Usage: %s <rom-file1> <save-state1> [<rom-file2> <save-state2>]\n", argv[0] );
 
           return EXIT_SUCCESS;
      }
@@ -221,7 +249,11 @@ int main( const int argc, const char *argv[] )
           return EXIT_FAILURE;
      }
 
-     printRosters( organization );
+     extractTeams( teams, organization );
+
+     qsort( teams, 48, sizeof(team_s *), compareTeamsByLocation );
+
+     printInjuries( teams );
 
      free( rom1 );
      free( rom2 );
