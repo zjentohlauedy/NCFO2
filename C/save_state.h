@@ -251,10 +251,10 @@ typedef struct
 
 typedef struct
 {
-     unsigned char xp_made     [ 1 ];
      unsigned char xp_attempts [ 1 ];
-     unsigned char fg_made     [ 1 ];
+     unsigned char xp_made     [ 1 ];
      unsigned char fg_attempts [ 1 ];
+     unsigned char fg_made     [ 1 ];
 
 } nst_kicker_game_s;
 
