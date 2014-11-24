@@ -53,6 +53,7 @@ static boolean_e convertQuarterback(
 {
      player_quarterback_ratings_s *qb_ratings = NULL;
      player_offense_stats_s       *off_stats  = NULL;
+     player_offense_stats_s        sentinel   = PLAYER_OFFENSE_STATS_SENTINEL;
 
      if ( (qb_ratings = malloc( sizeof(player_quarterback_ratings_s) )) == NULL )
      {
@@ -63,7 +64,7 @@ static boolean_e convertQuarterback(
 
      memset( qb_ratings, '\0', sizeof(player_quarterback_ratings_s) );
 
-     if ( (off_stats = malloc( sizeof(player_offense_stats_s) )) == NULL )
+     if ( (off_stats = malloc( sizeof(player_offense_stats_s) * 2 )) == NULL )
      {
           sprintf( error_message, "Cannot allocate memory for player offense stats" );
 
@@ -72,7 +73,7 @@ static boolean_e convertQuarterback(
           return bl_False;
      }
 
-     memset( off_stats, '\0', sizeof(player_offense_stats_s) );
+     memset( off_stats, '\0', sizeof(player_offense_stats_s) * 2 );
 
      qb_ratings->pass_speed       = (tsb_ratings->qb_ratings[0] >> 4   );
      qb_ratings->pass_control     = (tsb_ratings->qb_ratings[0] &  0x0f);
@@ -83,17 +84,19 @@ static boolean_e convertQuarterback(
      qb_ratings->sim_pass         = (sim_data[0] &  0x0f);
      qb_ratings->sim_pocket       = (sim_data[1] &  0x0f);
 
-     off_stats->player_id       = player->player_id;
-     off_stats->season          = season;
-     off_stats->bowl_game       = bowl;
-     off_stats->pass_attempts   = ((stats->pass_attempts_modifier    [0] &  0x03) << 8) + stats->pass_attempts    [0];
-     off_stats->completions     = ((stats->pass_completions_modifier [0] &  0x03) << 8) + stats->pass_completions [0];
-     off_stats->interceptions   =  (stats->pass_completions_modifier [0] >> 2   );
-     off_stats->pass_yards      = ((stats->yards_modifiers           [0] &  0xf8) << 5) + stats->pass_yards       [0];
-     off_stats->pass_touchdowns =  (stats->pass_attempts_modifier    [0] >> 2   );
-     off_stats->rush_attempts   =   stats->rush_attempts             [0];
-     off_stats->rush_yards      = ((stats->yards_modifiers           [0] &  0x07) << 8) + stats->rush_yards       [0];
-     off_stats->rush_touchdowns =  (stats->rush_touchdowns           [0] >> 2   );
+     off_stats[0].player_id       = player->player_id;
+     off_stats[0].season          = season;
+     off_stats[0].bowl_game       = bowl;
+     off_stats[0].pass_attempts   = ((stats->pass_attempts_modifier    [0] &  0x03) << 8) + stats->pass_attempts    [0];
+     off_stats[0].completions     = ((stats->pass_completions_modifier [0] &  0x03) << 8) + stats->pass_completions [0];
+     off_stats[0].interceptions   =  (stats->pass_completions_modifier [0] >> 2   );
+     off_stats[0].pass_yards      = ((stats->yards_modifiers           [0] &  0xf8) << 5) + stats->pass_yards       [0];
+     off_stats[0].pass_touchdowns =  (stats->pass_attempts_modifier    [0] >> 2   );
+     off_stats[0].rush_attempts   =   stats->rush_attempts             [0];
+     off_stats[0].rush_yards      = ((stats->yards_modifiers           [0] &  0x07) << 8) + stats->rush_yards       [0];
+     off_stats[0].rush_touchdowns =  (stats->rush_touchdowns           [0] >> 2   );
+
+     off_stats[1] = sentinel;
 
      if ( (player->ratings = convertPlayerRatings( &(tsb_ratings->player) )) == NULL )
      {
@@ -113,25 +116,28 @@ static boolean_e convertQuarterback(
 static player_offense_stats_s *convertOffenseStats( const nst_offense_s *stats, const int season, const bowl_game_e bowl, const int player_id )
 {
      player_offense_stats_s *off_stats = NULL;
+     player_offense_stats_s  sentinel  = PLAYER_OFFENSE_STATS_SENTINEL;
 
-     if ( (off_stats = malloc( sizeof(player_offense_stats_s) )) == NULL )
+     if ( (off_stats = malloc( sizeof(player_offense_stats_s) * 2 )) == NULL )
      {
           sprintf( error_message, "Cannot allocate memory for player offense stats" );
 
           return NULL;
      }
 
-     memset( off_stats, '\0', sizeof(player_offense_stats_s) );
+     memset( off_stats, '\0', sizeof(player_offense_stats_s) * 2 );
 
-     off_stats->player_id            = player_id;
-     off_stats->season               = season;
-     off_stats->bowl_game            = bowl;
-     off_stats->rush_attempts        =   stats->rush_attempts       [0];
-     off_stats->rush_yards           = ((stats->rush_yards_modifier2[0] &  0x03) << 10) + ((stats->rush_yards_modifier1[0] & 0x03) << 8) + stats->rush_yards     [0];
-     off_stats->rush_touchdowns      =  (stats->rush_yards_modifier2[0] >> 2   );
-     off_stats->receptions           =   stats->receptions          [0];
-     off_stats->receiving_yards      = ((stats->rec_yards_modifier  [0] &  0x0f) <<  8)                                                  + stats->receiving_yards[0];
-     off_stats->receiving_touchdowns =  (stats->pr_yards_modifier   [0] >> 2   );
+     off_stats[0].player_id            = player_id;
+     off_stats[0].season               = season;
+     off_stats[0].bowl_game            = bowl;
+     off_stats[0].rush_attempts        =   stats->rush_attempts       [0];
+     off_stats[0].rush_yards           = ((stats->rush_yards_modifier2[0] &  0x03) << 10) + ((stats->rush_yards_modifier1[0] & 0x03) << 8) + stats->rush_yards     [0];
+     off_stats[0].rush_touchdowns      =  (stats->rush_yards_modifier2[0] >> 2   );
+     off_stats[0].receptions           =   stats->receptions          [0];
+     off_stats[0].receiving_yards      = ((stats->rec_yards_modifier  [0] &  0x0f) <<  8)                                                  + stats->receiving_yards[0];
+     off_stats[0].receiving_touchdowns =  (stats->pr_yards_modifier   [0] >> 2   );
+
+     off_stats[1] = sentinel;
 
      return off_stats;
 }
@@ -139,25 +145,28 @@ static player_offense_stats_s *convertOffenseStats( const nst_offense_s *stats, 
 static player_returns_stats_s *convertReturnsStats( const nst_offense_s *stats, const int season, const bowl_game_e bowl, const int player_id  )
 {
      player_returns_stats_s *ret_stats = NULL;
+     player_returns_stats_s  sentinel  = PLAYER_RETURNS_STATS_SENTINEL;
 
-     if ( (ret_stats = malloc( sizeof(player_returns_stats_s) )) == NULL )
+     if ( (ret_stats = malloc( sizeof(player_returns_stats_s) * 2 )) == NULL )
      {
           sprintf( error_message, "Cannot allocate memory for player returns stats" );
 
           return NULL;
      }
 
-     memset( ret_stats, '\0', sizeof(player_returns_stats_s) );
+     memset( ret_stats, '\0', sizeof(player_returns_stats_s) * 2 );
 
-     ret_stats->player_id              = player_id;
-     ret_stats->season                 = season;
-     ret_stats->bowl_game              = bowl;
-     ret_stats->kick_returns           =  (stats->kick_returns         [0] >> 1);
-     ret_stats->kick_return_yards      = ((stats->kr_yards_modifier    [0] &  0x07) << 8) + stats->kr_yards[0];
-     ret_stats->kick_return_touchdowns =  (stats->kr_yards_modifier    [0] >> 3);
-     ret_stats->punt_returns           =  (stats->rush_yards_modifier1 [0] >> 2);
-     ret_stats->punt_return_yards      = ((stats->pr_yards_modifier    [0] &  0x03) << 8) + stats->pr_yards[0];
-     ret_stats->punt_return_touchdowns =  (stats->rec_yards_modifier   [0] >> 4);
+     ret_stats[0].player_id              = player_id;
+     ret_stats[0].season                 = season;
+     ret_stats[0].bowl_game              = bowl;
+     ret_stats[0].kick_returns           =  (stats->kick_returns         [0] >> 1);
+     ret_stats[0].kick_return_yards      = ((stats->kr_yards_modifier    [0] &  0x07) << 8) + stats->kr_yards[0];
+     ret_stats[0].kick_return_touchdowns =  (stats->kr_yards_modifier    [0] >> 3);
+     ret_stats[0].punt_returns           =  (stats->rush_yards_modifier1 [0] >> 2);
+     ret_stats[0].punt_return_yards      = ((stats->pr_yards_modifier    [0] &  0x03) << 8) + stats->pr_yards[0];
+     ret_stats[0].punt_return_touchdowns =  (stats->rec_yards_modifier   [0] >> 4);
+
+     ret_stats[1] = sentinel;
 
      return ret_stats;
 }
@@ -327,23 +336,26 @@ static boolean_e convertOffensiveLine( const tsb_player_ratings_s *tsb_ratings, 
 static player_defense_stats_s *convertDefenseStats( const nst_defense_s *stats, const int season, const bowl_game_e bowl, const int player_id )
 {
      player_defense_stats_s *def_stats = NULL;
+     player_defense_stats_s  sentinel  = PLAYER_DEFENSE_STATS_SENTINEL;
 
-     if ( (def_stats = malloc( sizeof(player_defense_stats_s) )) == NULL )
+     if ( (def_stats = malloc( sizeof(player_defense_stats_s) * 2 )) == NULL )
      {
           sprintf( error_message, "Cannot allocate memory for player defense stats" );
 
           return NULL;
      }
 
-     memset( def_stats, '\0', sizeof(player_defense_stats_s) );
+     memset( def_stats, '\0', sizeof(player_defense_stats_s) * 2 );
 
-     def_stats->player_id         = player_id;
-     def_stats->season            = season;
-     def_stats->bowl_game         = bowl;
-     def_stats->sacks             = (stats->sacks[0] >> 1);
-     def_stats->interceptions     = ((stats->sacks[0] & 0x01) << 4) + (stats->interceptions[0] >> 4);
-     def_stats->return_yards      = ((stats->interceptions[0] & 0x01) << 8) + stats->ir_yards[0];
-     def_stats->return_touchdowns = ((stats->interceptions[0] & 0x0e) >> 1);
+     def_stats[0].player_id         = player_id;
+     def_stats[0].season            = season;
+     def_stats[0].bowl_game         = bowl;
+     def_stats[0].sacks             = (stats->sacks[0] >> 1);
+     def_stats[0].interceptions     = ((stats->sacks[0] & 0x01) << 4) + (stats->interceptions[0] >> 4);
+     def_stats[0].return_yards      = ((stats->interceptions[0] & 0x01) << 8) + stats->ir_yards[0];
+     def_stats[0].return_touchdowns = ((stats->interceptions[0] & 0x0e) >> 1);
+
+     def_stats[1] = sentinel;
 
      return def_stats;
 }
@@ -534,6 +546,7 @@ static boolean_e convertKicker(
      /**/  player_s           *player )
 {
      player_kicking_stats_s *kick_stats = NULL;
+     player_kicking_stats_s  sentinel   = PLAYER_KICKING_STATS_SENTINEL;
 
      player->position = pos_Kicker;
 
@@ -549,7 +562,7 @@ static boolean_e convertKicker(
           return bl_False;
      }
 
-     if ( (kick_stats = malloc( sizeof(player_kicking_stats_s) )) == NULL )
+     if ( (kick_stats = malloc( sizeof(player_kicking_stats_s) * 2 )) == NULL )
      {
           sprintf( error_message, "Cannot allocate memory for player kicking stats" );
 
@@ -559,15 +572,17 @@ static boolean_e convertKicker(
           return bl_False;
      }
 
-     memset( kick_stats, '\0', sizeof(player_kicking_stats_s) );
+     memset( kick_stats, '\0', sizeof(player_kicking_stats_s) * 2 );
 
-     kick_stats->player_id            = player->player_id;
-     kick_stats->season               = season;
-     kick_stats->bowl_game            = bowl;
-     kick_stats->extra_point_attempts = stats->xp_attempts [0];
-     kick_stats->extra_points_made    = stats->xp_made     [0];
-     kick_stats->field_goal_attempts  = stats->fg_attempts [0];
-     kick_stats->field_goals_made     = stats->fg_made     [0];
+     kick_stats[0].player_id            = player->player_id;
+     kick_stats[0].season               = season;
+     kick_stats[0].bowl_game            = bowl;
+     kick_stats[0].extra_point_attempts = stats->xp_attempts [0];
+     kick_stats[0].extra_points_made    = stats->xp_made     [0];
+     kick_stats[0].field_goal_attempts  = stats->fg_attempts [0];
+     kick_stats[0].field_goals_made     = stats->fg_made     [0];
+
+     kick_stats[1] = sentinel;
 
      player->stats.kicking = kick_stats;
 
@@ -585,6 +600,7 @@ static boolean_e convertPunter(
      /**/  player_s           *player )
 {
      player_kicking_stats_s *kick_stats = NULL;
+     player_kicking_stats_s  sentinel   = PLAYER_KICKING_STATS_SENTINEL;
 
      player->position = pos_Punter;
 
@@ -600,7 +616,7 @@ static boolean_e convertPunter(
           return bl_False;
      }
 
-     if ( (kick_stats = malloc( sizeof(player_kicking_stats_s) )) == NULL )
+     if ( (kick_stats = malloc( sizeof(player_kicking_stats_s) * 2 )) == NULL )
      {
           sprintf( error_message, "Cannot allocate memory for player kicking stats" );
 
@@ -610,13 +626,15 @@ static boolean_e convertPunter(
           return bl_False;
      }
 
-     memset( kick_stats, '\0', sizeof(player_kicking_stats_s) );
+     memset( kick_stats, '\0', sizeof(player_kicking_stats_s) * 2 );
 
-     kick_stats->player_id            = player->player_id;
-     kick_stats->season               = season;
-     kick_stats->bowl_game            = bowl;
-     kick_stats->punts                = stats->punts[0];
-     kick_stats->punt_yards           = ((stats->punt_yards_modifier[0] & 0x0f) << 8) + stats->punt_yards[0];
+     kick_stats[0].player_id            = player->player_id;
+     kick_stats[0].season               = season;
+     kick_stats[0].bowl_game            = bowl;
+     kick_stats[0].punts                = stats->punts[0];
+     kick_stats[0].punt_yards           = ((stats->punt_yards_modifier[0] & 0x0f) << 8) + stats->punt_yards[0];
+
+     kick_stats[1] = sentinel;
 
      player->stats.kicking = kick_stats;
 
@@ -954,25 +972,28 @@ static team_stats_s *convertTeamStats(
      const bowl_game_e  bowl,
      const int          team_id )
 {
-     team_stats_s *stats = NULL;
+     team_stats_s *stats    = NULL;
+     team_stats_s  sentinel = TEAM_STATS_SENTINEL;
 
-     if ( (stats = malloc( sizeof(team_stats_s) )) == NULL )
+     if ( (stats = malloc( sizeof(team_stats_s) * 2 )) == NULL )
      {
           sprintf( error_message, "Cannot allocate memory for team stats" );
 
           return NULL;
      }
 
-     memset( stats, '\0', sizeof(team_stats_s) );
+     memset( stats, '\0', sizeof(team_stats_s) * 2 );
 
-     stats->team_id        =           team_id;
-     stats->season         =           season;
-     stats->bowl_game      =           bowl;
-     stats->wins           =           tsb_stats->wins[0];
-     stats->losses         =           tsb_stats->losses[0];
-     stats->ties           =           tsb_stats->ties[0];
-     stats->points_scored  = word2int( tsb_stats->points_scored  );
-     stats->points_allowed = word2int( tsb_stats->points_allowed );
+     stats[0].team_id        =           team_id;
+     stats[0].season         =           season;
+     stats[0].bowl_game      =           bowl;
+     stats[0].wins           =           tsb_stats->wins[0];
+     stats[0].losses         =           tsb_stats->losses[0];
+     stats[0].ties           =           tsb_stats->ties[0];
+     stats[0].points_scored  = word2int( tsb_stats->points_scored  );
+     stats[0].points_allowed = word2int( tsb_stats->points_allowed );
+
+     stats[1] = sentinel;
 
      return stats;
 }
@@ -983,20 +1004,21 @@ static team_offense_stats_s *convertTeamOffenseStats(
      const bowl_game_e    bowl,
      const int            team_id )
 {
-     team_offense_stats_s *offense = NULL;
+     team_offense_stats_s *offense  = NULL;
+     team_offense_stats_s  sentinel = TEAM_OFFENSE_STATS_SENTINEL;
 
-     if ( (offense = malloc( sizeof(team_offense_stats_s) )) == NULL )
+     if ( (offense = malloc( sizeof(team_offense_stats_s) * 2 )) == NULL )
      {
           sprintf( error_message, "Cannot allocate memory for team offense stats" );
 
           return NULL;
      }
 
-     memset( offense, '\0', sizeof(team_offense_stats_s) );
+     memset( offense, '\0', sizeof(team_offense_stats_s) * 2 );
 
-     offense->team_id   = team_id;
-     offense->season    = season;
-     offense->bowl_game = bowl;
+     offense[0].team_id   = team_id;
+     offense[0].season    = season;
+     offense[0].bowl_game = bowl;
 
      for ( int i = 0; players[i].player != NULL; ++i )
      {
@@ -1004,15 +1026,17 @@ static team_offense_stats_s *convertTeamOffenseStats(
 
           if ( player->stats.offense == NULL ) continue;
 
-          offense->pass_attempts   += player->stats.offense->pass_attempts;
-          offense->completions     += player->stats.offense->completions;
-          offense->interceptions   += player->stats.offense->interceptions;
-          offense->pass_yards      += player->stats.offense->pass_yards;
-          offense->pass_touchdowns += player->stats.offense->pass_touchdowns;
-          offense->rush_attempts   += player->stats.offense->rush_attempts;
-          offense->rush_yards      += player->stats.offense->rush_yards;
-          offense->rush_touchdowns += player->stats.offense->rush_touchdowns;
+          offense[0].pass_attempts   += player->stats.offense->pass_attempts;
+          offense[0].completions     += player->stats.offense->completions;
+          offense[0].interceptions   += player->stats.offense->interceptions;
+          offense[0].pass_yards      += player->stats.offense->pass_yards;
+          offense[0].pass_touchdowns += player->stats.offense->pass_touchdowns;
+          offense[0].rush_attempts   += player->stats.offense->rush_attempts;
+          offense[0].rush_yards      += player->stats.offense->rush_yards;
+          offense[0].rush_touchdowns += player->stats.offense->rush_touchdowns;
      }
+
+     offense[1] = sentinel;
 
      return offense;
 }
@@ -1023,20 +1047,21 @@ static team_defense_stats_s *convertTeamDefenseStats(
      const bowl_game_e    bowl,
      const int            team_id )
 {
-     team_defense_stats_s *defense = NULL;
+     team_defense_stats_s *defense  = NULL;
+     team_defense_stats_s  sentinel = TEAM_DEFENSE_STATS_SENTINEL;
 
-     if ( (defense = malloc( sizeof(team_defense_stats_s) )) == NULL )
+     if ( (defense = malloc( sizeof(team_defense_stats_s) * 2 )) == NULL )
      {
           sprintf( error_message, "Cannot allocate memory for team defense stats" );
 
           return NULL;
      }
 
-     memset( defense, '\0', sizeof(team_defense_stats_s) );
+     memset( defense, '\0', sizeof(team_defense_stats_s) * 2 );
 
-     defense->team_id   = team_id;
-     defense->season    = season;
-     defense->bowl_game = bowl;
+     defense[0].team_id   = team_id;
+     defense[0].season    = season;
+     defense[0].bowl_game = bowl;
 
      for ( int i = 0; players[i].player != NULL; ++i )
      {
@@ -1044,11 +1069,13 @@ static team_defense_stats_s *convertTeamDefenseStats(
 
           if ( player->stats.defense == NULL ) continue;
 
-          defense->sacks             += player->stats.defense->sacks;
-          defense->interceptions     += player->stats.defense->interceptions;
-          defense->return_yards      += player->stats.defense->return_yards;
-          defense->return_touchdowns += player->stats.defense->return_touchdowns;
+          defense[0].sacks             += player->stats.defense->sacks;
+          defense[0].interceptions     += player->stats.defense->interceptions;
+          defense[0].return_yards      += player->stats.defense->return_yards;
+          defense[0].return_touchdowns += player->stats.defense->return_touchdowns;
      }
+
+     defense[1] = sentinel;
 
      return defense;
 }
@@ -1059,20 +1086,21 @@ static team_kicking_stats_s *convertTeamKickingStats(
      const bowl_game_e    bowl,
      const int            team_id )
 {
-     team_kicking_stats_s *kicking = NULL;
+     team_kicking_stats_s *kicking  = NULL;
+     team_kicking_stats_s  sentinel = TEAM_KICKING_STATS_SENTINEL;
 
-     if ( (kicking = malloc( sizeof(team_kicking_stats_s) )) == NULL )
+     if ( (kicking = malloc( sizeof(team_kicking_stats_s) * 2 )) == NULL )
      {
           sprintf( error_message, "Cannot allocate memory for team kicking stats" );
 
           return NULL;
      }
 
-     memset( kicking, '\0', sizeof(team_kicking_stats_s) );
+     memset( kicking, '\0', sizeof(team_kicking_stats_s) * 2 );
 
-     kicking->team_id   = team_id;
-     kicking->season    = season;
-     kicking->bowl_game = bowl;
+     kicking[0].team_id   = team_id;
+     kicking[0].season    = season;
+     kicking[0].bowl_game = bowl;
 
      for ( int i = 0; players[i].player != NULL; ++i )
      {
@@ -1080,24 +1108,26 @@ static team_kicking_stats_s *convertTeamKickingStats(
 
           if ( player->stats.kicking != NULL )
           {
-               kicking->extra_point_attempts   += player->stats.kicking->extra_point_attempts;
-               kicking->extra_points_made      += player->stats.kicking->extra_points_made;
-               kicking->field_goal_attempts    += player->stats.kicking->field_goal_attempts;
-               kicking->field_goals_made       += player->stats.kicking->field_goals_made;
-               kicking->punts                  += player->stats.kicking->punts;
-               kicking->punt_yards             += player->stats.kicking->punt_yards;
+               kicking[0].extra_point_attempts   += player->stats.kicking->extra_point_attempts;
+               kicking[0].extra_points_made      += player->stats.kicking->extra_points_made;
+               kicking[0].field_goal_attempts    += player->stats.kicking->field_goal_attempts;
+               kicking[0].field_goals_made       += player->stats.kicking->field_goals_made;
+               kicking[0].punts                  += player->stats.kicking->punts;
+               kicking[0].punt_yards             += player->stats.kicking->punt_yards;
           }
 
           if ( player->stats.returns != NULL )
           {
-               kicking->kick_returns           += player->stats.returns->kick_returns;
-               kicking->kick_return_yards      += player->stats.returns->kick_return_yards;
-               kicking->kick_return_touchdowns += player->stats.returns->kick_return_touchdowns;
-               kicking->punt_returns           += player->stats.returns->punt_returns;
-               kicking->punt_return_yards      += player->stats.returns->punt_return_yards;
-               kicking->punt_return_touchdowns += player->stats.returns->punt_return_touchdowns;
+               kicking[0].kick_returns           += player->stats.returns->kick_returns;
+               kicking[0].kick_return_yards      += player->stats.returns->kick_return_yards;
+               kicking[0].kick_return_touchdowns += player->stats.returns->kick_return_touchdowns;
+               kicking[0].punt_returns           += player->stats.returns->punt_returns;
+               kicking[0].punt_return_yards      += player->stats.returns->punt_return_yards;
+               kicking[0].punt_return_touchdowns += player->stats.returns->punt_return_touchdowns;
           }
      }
+
+     kicking[1] = sentinel;
 
      return kicking;
 }

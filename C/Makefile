@@ -15,7 +15,8 @@ progs = \
    set_uniforms \
    set_playoff_uniforms \
    copy_playoff_teams \
-   boxscore
+   boxscore \
+   import_season
 
 tests = \
    test_file_utils \
@@ -86,6 +87,9 @@ copy_playoff_teams: copy_playoff_teams.o file_utils.o
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
 
 boxscore: boxscore.o file_utils.o convert_organization.o libncfodata.a
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfodata
+
+import_season: import_season.o file_utils.o convert_organization.o libncfodata.a
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfodata
 
 

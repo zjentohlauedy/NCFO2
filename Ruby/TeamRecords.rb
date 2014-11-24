@@ -1,5 +1,5 @@
 class TeamRecords
-  attr_accessor :opponents, :overall, :points_scored, :points_allowed
+  attr_accessor :opponents, :overall, :home, :road, :points_scored, :points_allowed
 
   class Record
     attr_accessor :wins, :losses, :ties
