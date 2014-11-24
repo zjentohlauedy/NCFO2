@@ -38,7 +38,7 @@ then
 
     source .setgames
 
-    echo "Setting uniforms..."
+    echo "Setting playoff uniforms..."
     ~/NES/NCFO/C/set_playoff_uniforms .playoffs.nes.bak playoffs.nes
 
     exit
