@@ -160,8 +160,8 @@ describe 'TeamService' do
 
     it 'should return a team with stats when stats are available for that team' do
       db.execute 'insert into teams_t values (1, "tname", "teamloc", "TN")'
-      db.execute "insert into team_stats_t values (1, 2, #{Bowls::SugarBowl}, 8, 6, 5, 1, 3, 5, 282, 268)"
-      db.execute "insert into team_stats_t values (1, 3, #{Bowls::None     }, 6, 4, 5, 0, 1, 4, 367, 314)"
+      db.execute "insert into team_stats_t values (1, 2, #{Bowls::SugarBowl}, 8, 6, 2, 5, 1, 4, 3, 5, 1, 282, 268)"
+      db.execute "insert into team_stats_t values (1, 3, #{Bowls::None     }, 6, 4, 5, 5, 0, 2, 1, 4, 3, 367, 314)"
 
       team = @team_service.get 1
 

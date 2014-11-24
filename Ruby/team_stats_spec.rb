@@ -16,10 +16,13 @@ describe TeamStats do
       expect( team_stats.bowl_game      ).to eq Bowls::None
       expect( team_stats.wins           ).to be_a Integer
       expect( team_stats.losses         ).to be_a Integer
+      expect( team_stats.ties           ).to be_a Integer
       expect( team_stats.home_wins      ).to be_a Integer
       expect( team_stats.home_losses    ).to be_a Integer
+      expect( team_stats.home_ties      ).to be_a Integer
       expect( team_stats.road_wins      ).to be_a Integer
       expect( team_stats.road_losses    ).to be_a Integer
+      expect( team_stats.road_ties      ).to be_a Integer
       expect( team_stats.points_scored  ).to be_a Integer
       expect( team_stats.points_allowed ).to be_a Integer
     end
@@ -28,14 +31,14 @@ describe TeamStats do
   describe '#build_insert' do
     it 'should return a well formed SQL insert statement' do
       team_stats = TeamStats.new
-      expect( team_stats.build_insert ).to eq 'INSERT INTO Team_Stats_T ( Team_Id, Season, Bowl_Game, Wins, Losses, Home_Wins, Home_Losses, Road_Wins, Road_Losses, Points_Scored, Points_Allowed ) VALUES ( :team_id, :season, :bowl_game, :wins, :losses, :home_wins, :home_losses, :road_wins, :road_losses, :points_scored, :points_allowed )'
+      expect( team_stats.build_insert ).to eq 'INSERT INTO Team_Stats_T ( Team_Id, Season, Bowl_Game, Wins, Losses, Ties, Home_Wins, Home_Losses, Home_Ties, Road_Wins, Road_Losses, Road_Ties, Points_Scored, Points_Allowed ) VALUES ( :team_id, :season, :bowl_game, :wins, :losses, :ties, :home_wins, :home_losses, :home_ties, :road_wins, :road_losses, :road_ties, :points_scored, :points_allowed )'
     end
   end
 
   describe '#build_select' do
     it 'should return a well formed SQL select statement' do
       team_stats = TeamStats.new
-      expect( team_stats.build_select ).to eq 'SELECT Team_Id, Season, Bowl_Game, Wins, Losses, Home_Wins, Home_Losses, Road_Wins, Road_Losses, Points_Scored, Points_Allowed FROM Team_Stats_T WHERE Team_Id = :team_id AND Season = :season AND Bowl_Game = :bowl_game'
+      expect( team_stats.build_select ).to eq 'SELECT Team_Id, Season, Bowl_Game, Wins, Losses, Ties, Home_Wins, Home_Losses, Home_Ties, Road_Wins, Road_Losses, Road_Ties, Points_Scored, Points_Allowed FROM Team_Stats_T WHERE Team_Id = :team_id AND Season = :season AND Bowl_Game = :bowl_game'
     end
   end
 
@@ -43,14 +46,14 @@ describe TeamStats do
     it 'should return a well formed SQL select statement' do
       team_stats = TeamStats.new
       result = team_stats.build_select_by_team
-      expect( result ).to eq 'SELECT Team_Id, Season, Bowl_Game, Wins, Losses, Home_Wins, Home_Losses, Road_Wins, Road_Losses, Points_Scored, Points_Allowed FROM Team_Stats_T WHERE Team_Id = :team_id'
+      expect( result ).to eq 'SELECT Team_Id, Season, Bowl_Game, Wins, Losses, Ties, Home_Wins, Home_Losses, Home_Ties, Road_Wins, Road_Losses, Road_Ties, Points_Scored, Points_Allowed FROM Team_Stats_T WHERE Team_Id = :team_id'
     end
   end
 
   describe '#build_update' do
     it 'should return a well formed SQL update statement' do
       team_stats = TeamStats.new
-      expect( team_stats.build_update ).to eq 'UPDATE Team_Stats_T SET Wins = :wins, Losses = :losses, Home_Wins = :home_wins, Home_Losses = :home_losses, Road_Wins = :road_wins, Road_Losses = :road_losses, Points_Scored = :points_scored, Points_Allowed = :points_allowed WHERE Team_Id = :team_id AND Season = :season AND Bowl_Game = :bowl_game'
+      expect( team_stats.build_update ).to eq 'UPDATE Team_Stats_T SET Wins = :wins, Losses = :losses, Ties = :ties, Home_Wins = :home_wins, Home_Losses = :home_losses, Home_Ties = :home_ties, Road_Wins = :road_wins, Road_Losses = :road_losses, Road_Ties = :road_ties, Points_Scored = :points_scored, Points_Allowed = :points_allowed WHERE Team_Id = :team_id AND Season = :season AND Bowl_Game = :bowl_game'
     end
   end
 
@@ -67,25 +70,31 @@ describe TeamStats do
 
       team_stats.wins           = 8
       team_stats.losses         = 6
+      team_stats.ties           = 1
       team_stats.home_wins      = 5
       team_stats.home_losses    = 1
+      team_stats.home_ties      = 0
       team_stats.road_wins      = 3
       team_stats.road_losses    = 5
+      team_stats.road_ties      = 2
       team_stats.points_scored  = 82
       team_stats.points_allowed = 68
 
       result = team_stats.to_hash
 
-      expect( result.keys.length        ).to eq 11
+      expect( result.keys.length        ).to eq 14
       expect( result[ :team_id        ] ).to eq 1
       expect( result[ :season         ] ).to eq 2
       expect( result[ :bowl_game      ] ).to eq Bowls::None
       expect( result[ :wins           ] ).to eq 8
       expect( result[ :losses         ] ).to eq 6
+      expect( result[ :ties           ] ).to eq 1
       expect( result[ :home_wins      ] ).to eq 5
       expect( result[ :home_losses    ] ).to eq 1
+      expect( result[ :home_ties      ] ).to eq 0
       expect( result[ :road_wins      ] ).to eq 3
       expect( result[ :road_losses    ] ).to eq 5
+      expect( result[ :road_ties      ] ).to eq 2
       expect( result[ :points_scored  ] ).to eq 82
       expect( result[ :points_allowed ] ).to eq 68
     end
@@ -113,10 +122,13 @@ describe TeamStats do
         bowl_game:      Bowls::None,
         wins:           8,
         losses:         6,
+        ties:           1,
         home_wins:      5,
         home_losses:    1,
+        home_ties:      0,
         road_wins:      3,
         road_losses:    5,
+        road_ties:      2,
         points_scored:  82,
         points_allowed: 68
       }
@@ -128,10 +140,13 @@ describe TeamStats do
       expect( team_stats.bowl_game      ).to eq hash[ :bowl_game      ]
       expect( team_stats.wins           ).to eq hash[ :wins           ]
       expect( team_stats.losses         ).to eq hash[ :losses         ]
+      expect( team_stats.ties           ).to eq hash[ :ties           ]
       expect( team_stats.home_wins      ).to eq hash[ :home_wins      ]
       expect( team_stats.home_losses    ).to eq hash[ :home_losses    ]
+      expect( team_stats.home_ties      ).to eq hash[ :home_ties      ]
       expect( team_stats.road_wins      ).to eq hash[ :road_wins      ]
       expect( team_stats.road_losses    ).to eq hash[ :road_losses    ]
+      expect( team_stats.road_ties      ).to eq hash[ :road_ties      ]
       expect( team_stats.points_scored  ).to eq hash[ :points_scored  ]
       expect( team_stats.points_allowed ).to eq hash[ :points_allowed ]
     end

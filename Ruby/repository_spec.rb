@@ -108,7 +108,7 @@ describe 'Repository' do
     it 'should return the object from the database matching the provided key' do
       team_stats = TeamStats.new
 
-      db.execute "insert into team_stats_t values ( 1, 2, #{Bowls::RoseBowl}, 8, 2, 5, 0, 3, 2, 341, 262 )"
+      db.execute "insert into team_stats_t values ( 1, 2, #{Bowls::RoseBowl}, 8, 2, 0, 5, 0, 0, 3, 2, 0, 341, 262 )"
 
       team_stats.team_id   = 1
       team_stats.season    = 2
@@ -174,7 +174,7 @@ describe 'Repository' do
     it 'should update the record in the database with the provided object values' do
       team_stats = TeamStats.build 1, 2, Bowls::LibertyBowl
 
-      db.execute "insert into team_stats_t values ( 1, 2, #{Bowls::LibertyBowl}, 8, 2, 5, 0, 3, 2, 341, 262 )"
+      db.execute "insert into team_stats_t values ( 1, 2, #{Bowls::LibertyBowl}, 8, 2, 0, 5, 0, 0, 3, 2, 0, 341, 262 )"
 
       @repository.update team_stats
 
