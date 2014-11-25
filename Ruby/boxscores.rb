@@ -29,6 +29,14 @@ def get_team( org, team_to_find )
   end
 end
 
+def get_playoff_team( teams, team_to_find )
+  if teams[:road_team][:location] == team_to_find
+    return teams[:road_team]
+  end
+
+  return teams[:home_team]
+end
+
 def get_total_plays( team, opponent )
   return 0 if team[:offense_stats].nil?
   return 0 if opponent[:defense_stats].nil?
@@ -451,8 +459,11 @@ else
 
     puts "Saving #{game.road_team} @ #{game.home_team} to #{boxscore_file}"
 
+    road_team = get_playoff_team data, game.road_team
+    home_team = get_playoff_team data, game.home_team
+
     File.open( boxscore_file, 'w' ) do |stream|
-      print_boxscore stream, data[:road_team], data[:home_team]
+      print_boxscore stream, road_team, home_team
     end
   end
 end
