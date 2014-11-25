@@ -186,6 +186,47 @@ static char *populateRoms_ShouldReturnAnErrorIfATeamIsShortPlayers_GivenATsbRomA
      return NULL;
 }
 
+static char *populateRoms_ShouldWriteTheTeamIdsInTheTeamIdsSection_GivenATsbRomAndOrganization()
+{
+     tsbrom_s        tsbrom1 = { 0 };
+     tsbrom_s        tsbrom2 = { 0 };
+     organization_s *org     = get_test_org();
+
+     assertEquals( bl_True, populateRoms( &tsbrom1, &tsbrom2, org ) );
+
+     team_s *team1  = org->conferences[0].conference->teams[0].team;
+     team_s *team25 = org->conferences[4].conference->teams[0].team;
+
+     assertEquals( team1 ->team_id, tsbrom1.team_ids[0] );
+     assertEquals( team25->team_id, tsbrom2.team_ids[0] );
+
+     free_organization( org );
+
+     return NULL;
+}
+
+static char *populateRoms_ShouldWriteThePlayerIdsInThePlayerIdsSection_GivenATsbRomAndOrganization()
+{
+     tsbrom_s        tsbrom1 = { 0 };
+     tsbrom_s        tsbrom2 = { 0 };
+     organization_s *org     = get_test_org();
+
+     assertEquals( bl_True, populateRoms( &tsbrom1, &tsbrom2, org ) );
+
+     player_s *player1 = org->conferences[0].conference->teams[0].team->players[0].player;
+     player_s *player2 = org->conferences[0].conference->teams[0].team->players[1].player;
+
+     assertEquals( player1->player_id, pointer2int( &(tsbrom1.player_ids[0][0]) ) );
+     assertEquals( player2->player_id, pointer2int( &(tsbrom1.player_ids[0][1]) ) );
+
+     assertEquals( player1->player_id, pointer2int( &(tsbrom2.player_ids[0][0]) ) );
+     assertEquals( player2->player_id, pointer2int( &(tsbrom2.player_ids[0][1]) ) );
+
+     free_organization( org );
+
+     return NULL;
+}
+
 static char *populateRoms_ShouldWriteThePlayerIdentifiersInThePlayerIdentifiersSection_GivenATsbRomAndOrganization()
 {
      tsbrom_s        tsbrom1 = { 0 };
@@ -718,6 +759,8 @@ static void run_all_tests()
 {
      run_test( populateRoms_ShouldReturnTrueOnSuccess_GivenATsbRomAndOrganization,                                    check_populate_roms_error );
      run_test( populateRoms_ShouldReturnAnErrorIfATeamIsShortPlayers_GivenATsbRomAndOrganization,                     check_populate_roms_error );
+     run_test( populateRoms_ShouldWriteTheTeamIdsInTheTeamIdsSection_GivenATsbRomAndOrganization,                     check_populate_roms_error );
+     run_test( populateRoms_ShouldWriteThePlayerIdsInThePlayerIdsSection_GivenATsbRomAndOrganization,                 check_populate_roms_error );
      run_test( populateRoms_ShouldWriteThePlayerIdentifiersInThePlayerIdentifiersSection_GivenATsbRomAndOrganization, check_populate_roms_error );
      run_test( populateRoms_ShouldWriteTheOffsetsInThePlayerPointersSection_GivenATsbRomAndOrganization,              check_populate_roms_error );
      run_test( populateRoms_ShouldWriteThePlayerRatingsInTheTeamPlayerRatingsSection_GivenATsbRomAndOrganization,     check_populate_roms_error );

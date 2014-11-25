@@ -864,10 +864,11 @@ static team_player_s *convertPlayers(
 
      for ( int i = 0; i < 30; ++i )
      {
-          int player_idx = (team_idx * 30) + i;
+          int player_idx   = (team_idx * 30) + i;
+          int rom_team_idx =  team_idx % 24;
 
-          players[i].team_id   = team_idx + 1;
-          players[i].player_id = player_idx + 1;
+          players[i].team_id   = team->team_id;
+          players[i].player_id = pointer2int( &(rom->player_ids[rom_team_idx][i]) );
 
           if ( (players[i].player = malloc( sizeof(player_s) )) == NULL )
           {
@@ -881,8 +882,6 @@ static team_player_s *convertPlayers(
           memset( players[i].player, '\0', sizeof(player_s) );
 
           players[i].player->player_id = players[i].player_id;
-
-          int rom_team_idx = team_idx % 24;
 
           int start_offset = pointer2int( &(rom->player_pointers[rom_team_idx][i    ]) ) - 0x86ca;
           int end_offset   = pointer2int( &(rom->player_pointers[rom_team_idx][i + 1]) ) - 0x86ca;
@@ -1190,10 +1189,11 @@ static conference_team_s *convertTeams(
 
      for ( int i = 0; i < 6; ++i )
      {
-          int team_idx = (conference_idx * 6) + i;
+          int team_idx     = ( conference_idx      * 6) + i;
+          int rom_team_idx = ((conference_idx % 4) * 6) + i;
 
           teams[i].conference_id = conference_idx + 1;
-          teams[i].team_id       = team_idx + 1;
+          teams[i].team_id       = rom->team_ids[rom_team_idx];
 
           if ( (teams[i].team = malloc( sizeof(team_s) )) == NULL )
           {
@@ -1207,8 +1207,6 @@ static conference_team_s *convertTeams(
           memset( teams[i].team, '\0', sizeof(team_s) );
 
           teams[i].team->team_id = teams[i].team_id;
-
-          int rom_team_idx = ((conference_idx % 4) * 6) + i;
 
           int abbr_offset =  pointer2int( &(rom->team_abbr_pointers[rom_team_idx    ]) ) - 0xbcf0;
           int abbr_length = (pointer2int( &(rom->team_abbr_pointers[rom_team_idx + 1]) ) - 0xbcf0) - abbr_offset;

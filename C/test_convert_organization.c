@@ -165,6 +165,8 @@ static void setupRom( tsbrom_s *rom )
 
      for ( int i = 0; i < 28; ++i )
      {
+          rom->team_ids[i] = 99;
+
           rom->offensive_preference[i] = 3;
 
           rom->formations1[i] = 1;
@@ -182,6 +184,8 @@ static void setupRom( tsbrom_s *rom )
      {
           for ( int j = 0; j < 30; ++j )
           {
+               int2pointer( 456, &(rom->player_ids[i][j]) );
+
                int2pointer( player_base + player_offset, &(rom->player_pointers[i][j]) );
 
                rom->player_identifiers[player_offset++] = number;
@@ -337,8 +341,8 @@ static char *convertOrganization_ShouldReturnAnOrganizationObjectWithTeams()
           assertNotNull( teams[i].team );
 
           assertEqualsInt( 1,              teams[i].conference_id              );
-          assertEqualsInt( i + 1,          teams[i].team_id                    );
-          assertEqualsInt( i + 1,          teams[i].team->team_id              );
+          assertEqualsInt( 99,             teams[i].team_id                    );
+          assertEqualsInt( 99,             teams[i].team->team_id              );
           assertEqualsBfr( "UXZ",          teams[i].team->abbreviation,      3 );
           assertEqualsBfr( "Xanadu Zero",  teams[i].team->location,         11 );
           assertEqualsBfr( "Utopians",     teams[i].team->name,              8 );
@@ -387,7 +391,7 @@ static char *convertOrganization_ShouldReturnAnOrganizationObjectWithTeamsWithSt
 
           team_stats_s *stats = teams[i].team->stats;
 
-          assertEquals( i + 1,         stats->team_id        );
+          assertEquals( 99,            stats->team_id        );
           assertEquals( 3,             stats->season         );
           assertEquals( bg_OrangeBowl, stats->bowl_game      );
           assertEquals( 6,             stats->wins           );
@@ -437,7 +441,7 @@ static char *convertOrganization_ShouldReturnAnOrganizationObjectWithTeamsWithOf
 
           team_offense_stats_s *offense = teams[i].team->offense_stats;
 
-          assertEquals(         i + 1, offense->team_id         );
+          assertEquals(            99, offense->team_id         );
           assertEquals(             3, offense->season          );
           assertEquals( bg_OrangeBowl, offense->bowl_game       );
           assertEquals(          1304, offense->pass_attempts   );
@@ -484,7 +488,7 @@ static char *convertOrganization_ShouldReturnAnOrganizationObjectWithTeamsWithDe
 
           team_defense_stats_s *defense = teams[i].team->defense_stats;
 
-          assertEquals(         i + 1, defense->team_id           );
+          assertEquals(            99, defense->team_id           );
           assertEquals(             3, defense->season            );
           assertEquals( bg_OrangeBowl, defense->bowl_game         );
           assertEquals(          1056, defense->sacks             );
@@ -527,7 +531,7 @@ static char *convertOrganization_ShouldReturnAnOrganizationObjectWithTeamsWithKi
 
           team_kicking_stats_s *kicking = teams[i].team->kicking_stats;
 
-          assertEquals(         i + 1, kicking->team_id                );
+          assertEquals(            99, kicking->team_id                );
           assertEquals(             3, kicking->season                 );
           assertEquals( bg_OrangeBowl, kicking->bowl_game              );
           assertEquals(            32, kicking->extra_point_attempts   );
@@ -590,9 +594,9 @@ static char *convertOrganization_ShouldReturnAnOrganizationObjectWithPlayers()
      {
           assertNotNull( players[i].player );
 
-          assertEqualsInt( 1,      players[i].team_id            );
-          assertEqualsInt( i + 1,  players[i].player_id          );
-          assertEqualsInt( i + 1,  players[i].player->player_id  );
+          assertEqualsInt( 99,     players[i].team_id            );
+          assertEqualsInt( 456,    players[i].player_id          );
+          assertEqualsInt( 456,    players[i].player->player_id  );
           assertEqualsInt( 55,     players[i].player->number     );
           assertEqualsStr( "Joe",  players[i].player->first_name );
           assertEqualsStr( "Cool", players[i].player->last_name  );
@@ -820,7 +824,7 @@ static char *convertOrganization_ShouldReturnAnOrganizationObjectWithPlayersWith
 
                player_offense_stats_s *off_stats = players[i].player->stats.offense;
 
-               assertEquals(        i + 1, off_stats->player_id            );
+               assertEquals(          456, off_stats->player_id            );
                assertEquals(            5, off_stats->season               );
                assertEquals( bg_SugarBowl, off_stats->bowl_game            );
                assertEquals(          652, off_stats->pass_attempts        );
@@ -846,7 +850,7 @@ static char *convertOrganization_ShouldReturnAnOrganizationObjectWithPlayersWith
 
                player_offense_stats_s *off_stats = players[i].player->stats.offense;
 
-               assertEquals(        i + 1, off_stats->player_id            );
+               assertEquals(          456, off_stats->player_id            );
                assertEquals(            5, off_stats->season               );
                assertEquals( bg_SugarBowl, off_stats->bowl_game            );
                assertEquals(            0, off_stats->pass_attempts        );
@@ -863,7 +867,7 @@ static char *convertOrganization_ShouldReturnAnOrganizationObjectWithPlayersWith
 
                player_returns_stats_s *ret_stats = players[i].player->stats.returns;
 
-               assertEquals(        i + 1, ret_stats->player_id              );
+               assertEquals(          456, ret_stats->player_id              );
                assertEquals(            5, ret_stats->season                 );
                assertEquals( bg_SugarBowl, ret_stats->bowl_game              );
                assertEquals(          104, ret_stats->kick_returns           );
@@ -885,7 +889,7 @@ static char *convertOrganization_ShouldReturnAnOrganizationObjectWithPlayersWith
 
                player_defense_stats_s *def_stats = players[i].player->stats.defense;
 
-               assertEquals(        i + 1, def_stats->player_id         );
+               assertEquals(          456, def_stats->player_id         );
                assertEquals(            5, def_stats->season            );
                assertEquals( bg_SugarBowl, def_stats->bowl_game         );
                assertEquals(           96, def_stats->sacks             );
@@ -902,7 +906,7 @@ static char *convertOrganization_ShouldReturnAnOrganizationObjectWithPlayersWith
 
                player_kicking_stats_s *kick_stats = players[i].player->stats.kicking;
 
-               assertEquals(        i + 1, kick_stats->player_id            );
+               assertEquals(          456, kick_stats->player_id            );
                assertEquals(            5, kick_stats->season               );
                assertEquals( bg_SugarBowl, kick_stats->bowl_game            );
                assertEquals(           32, kick_stats->extra_point_attempts );
@@ -921,7 +925,7 @@ static char *convertOrganization_ShouldReturnAnOrganizationObjectWithPlayersWith
 
                player_kicking_stats_s *kick_stats = players[i].player->stats.kicking;
 
-               assertEquals(        i + 1, kick_stats->player_id            );
+               assertEquals(          456, kick_stats->player_id            );
                assertEquals(            5, kick_stats->season               );
                assertEquals( bg_SugarBowl, kick_stats->bowl_game            );
                assertEquals(            0, kick_stats->extra_point_attempts );

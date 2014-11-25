@@ -799,25 +799,30 @@ static void injectData( tsbrom_s *rom, team_s **teams, player_s **players )
           int team_sim_offense = 8;
           int team_sim_defense = 8;
 
-          if ( teams[i] != NULL  &&  teams[i]->offensive_formation != form_Two_Back )
+          if ( teams[i] != NULL )
           {
-               int start_idx = i * 30;
+               rom->team_ids[i] = teams[i]->team_id;
 
-               // Move WR3 to RB2 slot, then shift running backs down: rb2->rb3->rb4->wr3
-               player_s *player = players[start_idx + 8];
-
-               players[start_idx + 8] = players[start_idx + 5];
-               players[start_idx + 5] = players[start_idx + 4];
-               players[start_idx + 4] = players[start_idx + 3];
-               players[start_idx + 3] = player;
-
-               if ( teams[i]->offensive_formation == form_Four_Wide )
+               if ( teams[i]->offensive_formation != form_Two_Back )
                {
-                    // Switch WR4 and TE1 slots
-                    player = players[start_idx + 9];
+                    int start_idx = i * 30;
 
-                    players[start_idx +  9] = players[start_idx + 10];
-                    players[start_idx + 10] = player;
+                    // Move WR3 to RB2 slot, then shift running backs down: rb2->rb3->rb4->wr3
+                    player_s *player = players[start_idx + 8];
+
+                    players[start_idx + 8] = players[start_idx + 5];
+                    players[start_idx + 5] = players[start_idx + 4];
+                    players[start_idx + 4] = players[start_idx + 3];
+                    players[start_idx + 3] = player;
+
+                    if ( teams[i]->offensive_formation == form_Four_Wide )
+                    {
+                         // Switch WR4 and TE1 slots
+                         player = players[start_idx + 9];
+
+                         players[start_idx +  9] = players[start_idx + 10];
+                         players[start_idx + 10] = player;
+                    }
                }
           }
 
@@ -826,9 +831,11 @@ static void injectData( tsbrom_s *rom, team_s **teams, player_s **players )
                const player_s *player = players[(i * 30) + j];
 
                // always update the pointer
-               int2pointer( 0x86ca + offset, &(rom->player_pointers[i][j]) );
+               int2pointer( 0x86ca + offset,   &(rom->player_pointers[i][j]) );
 
                if ( player == NULL ) continue;
+
+               int2pointer( player->player_id, &(rom->player_ids[i][j]) );
 
                rom->player_identifiers[offset++] = number2hex( player->number );
 

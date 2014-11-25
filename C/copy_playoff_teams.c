@@ -206,6 +206,7 @@ static void copyTeamPlayerData( tsbrom_s *output_rom, tsbrom_s *source_rom1, tsb
           tsbrom_s *source_rom = (team_list[i] > 24) ? source_rom2 : source_rom1;
           int team_idx = (team_list[i] - 1) % 24;
 
+          output_rom->team_ids                 [i] = source_rom->team_ids                 [team_idx];
           output_rom->helmet_colors            [i] = source_rom->helmet_colors            [team_idx];
           output_rom->helmet_types             [i] = source_rom->helmet_types             [team_idx];
           output_rom->mini_helmets             [i] = source_rom->mini_helmets             [team_idx];
@@ -239,6 +240,8 @@ static void copyPlayerIdentifiers( tsbrom_s *output_rom, tsbrom_s *source_rom1, 
           {
                int start_offset = pointer2int( &(source_rom->player_pointers[team_idx][j    ]) ) - start;
                int end_offset   = pointer2int( &(source_rom->player_pointers[team_idx][j + 1]) ) - start;
+
+               output_rom->player_ids[i][j] = source_rom->player_ids[team_idx][j];
 
                int2pointer( start + offset, &(output_rom->player_pointers[i][j]) );
 
@@ -306,6 +309,8 @@ static void copyStats( nst_save_state_s *output_stats, nst_save_state_s *source_
 
 static void initializeData( tsbrom_s *rom )
 {
+     memset( rom->team_ids,                 0xff, sizeof(rom->team_ids)                 );
+     memset( rom->player_ids,               0xff, sizeof(rom->player_ids)               );
      memset( rom->player_pointers,          0xff, sizeof(rom->player_pointers)          );
      memset( rom->player_identifiers,       0xff, sizeof(rom->player_identifiers)       );
      memset( rom->team_abbr_pointers,       0xff, sizeof(rom->team_abbr_pointers)       );

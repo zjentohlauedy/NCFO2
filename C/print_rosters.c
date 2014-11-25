@@ -389,6 +389,8 @@ static void printPlayer( const player_s *player )
 
                break;
           }
+
+          printf( "  %d", player->player_id );
      }
      else if ( print_style == ps_Stats )
      {
@@ -565,6 +567,8 @@ static void printTeam( const team_s *team )
 
           printf( "  %s", getDisplayFormation(  team->offensive_formation  ) );
           printf( "  %s", getDisplayPreference( team->offensive_preference ) );
+
+          printf( "  %d", team->team_id );
 
           printf( "\n" );
      }

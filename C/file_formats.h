@@ -227,7 +227,10 @@ typedef struct
      unsigned char      player_offensive_commands   [  8192 ];          // 0x08010 - 0x0a00f
      unsigned char      player_defensive_commands   [  8192 ];          // 0x0a010 - 0x0c00f
      unsigned char      unknown04                   [  8192 ];          // 0x0c010 - 0x0e00f  - seems to be intro/credits info/graphics?
-     unsigned char      unknown05                   [  8192 ];          // 0x0e010 - 0x1000f  - seems to be text/gphx for stats/shedule/game intro
+     unsigned char      unknown05a                  [  4864 ];          // 0x0e010 - 0x1000f  - seems to be text/gphx for stats/shedule/game intro
+     unsigned char      team_ids                    [    28 ];          // 0x0f310 - 0x0f32b
+     nes_pointer_s      player_ids                  [    28 ][ 30 ];    // 0x0f32c - 0x0f9bb
+     unsigned char      unknown05b                  [  1620 ];          // 0x0f9bc - 0x1000f  - seems to be text/gphx for stats/shedule/game intro
      unsigned char      unknown06                   [  8192 ];          // 0x10010 - 0x1200f
      unsigned char      unknown07                   [  8192 ];          // 0x12010 - 0x1400f
      unsigned char      unknown08                   [  4096 ];          // 0x14010 - 0x1500f
