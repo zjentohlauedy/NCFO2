@@ -11,6 +11,24 @@
 #define  PLAYER_IDENTIFIERS_START_OFFSET  0x86ca
 
 
+static const struct {
+     char *top;
+     char *bottom;
+} big_numbers[] =
+{
+     { "\x90\x91", "\x92\x93" },
+     { "\xAE\xA8", "\xC6\xC7" },
+     { "\x9C\xCD", "\x82\x83" },
+     { "\x9C\xCD", "\x9E\xCF" },
+     { "\xB0\xB1", "\xB2\xB3" },
+     { "\xC0\xAC", "\x9F\xCF" },
+     { "\xD0\x9D", "\xD2\xCF" },
+     { "\xD4\xD5", "\xDA\xDB" },
+     { "\xCC\xCD", "\xCE\xCF" },
+     { "\xCC\xD1", "\x9E\xD3" }
+};
+
+
 static void *allocations[10]  = { 0 };
 static  int   allocation_count =   0;
 
@@ -307,6 +325,35 @@ static void copyStats( nst_save_state_s *output_stats, nst_save_state_s *source_
      }
 }
 
+static void copySeason( void *output_rom, void *output_state, void *source_rom )
+{
+     char season_str[10] = { 0 };
+
+     memcpy( season_str, source_rom + 0x1e129, 2 );
+
+     memcpy( output_rom + 0x1e129, season_str, 2 );
+     memcpy( output_rom + 0x1e28b, season_str, 2 );
+     memcpy( output_rom + 0x1e2be, season_str, 2 );
+     memcpy( output_rom + 0x1e378, season_str, 2 );
+     memcpy( output_rom + 0x1f89c, season_str, 2 );
+
+     memcpy( output_state + 0xb7b, season_str, 2 );
+     memcpy( output_state + 0xf73, season_str, 2 );
+
+     int tens = season_str[0] - '0';
+     int ones = season_str[1] - '0';
+
+     memcpy( output_rom + 0x16db6, big_numbers[tens].top,    2 );
+     memcpy( output_rom + 0x16db8, big_numbers[ones].top,    2 );
+     memcpy( output_rom + 0x16dba, big_numbers[tens].bottom, 2 );
+     memcpy( output_rom + 0x16dbc, big_numbers[ones].bottom, 2 );
+
+     memcpy( output_state + 0xab1, big_numbers[tens].top,    2 );
+     memcpy( output_state + 0xab3, big_numbers[ones].top,    2 );
+     memcpy( output_state + 0xad1, big_numbers[tens].bottom, 2 );
+     memcpy( output_state + 0xad3, big_numbers[ones].bottom, 2 );
+}
+
 static void initializeData( tsbrom_s *rom )
 {
      memset( rom->team_ids,                 0xff, sizeof(rom->team_ids)                 );
@@ -490,6 +537,7 @@ int main( const int argc, const char const *argv[] )
      copyTeams( output_rom,   source_rom1,   source_rom2,   team_list );
      copyStats( output_stats, source_stats1, source_stats2, team_list );
 
+     copySeason( output_rom, save_state, source_rom1 );
 
      sprintf( filename_buffer, "%s/playoffs.nes", output_path );
 

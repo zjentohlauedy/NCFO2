@@ -1,9 +1,24 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sqlite3.h>
 #include <time.h>
 #include "file_formats.h"
 #include "schedule.h"
+
+
+static void injectSeason( void *rom, int season )
+{
+     char season_str[10] = { 0 };
+
+     sprintf( season_str, "%02d", season );
+
+     memcpy( rom + 0x1e129, season_str, 2 );
+     memcpy( rom + 0x1e28b, season_str, 2 );
+     memcpy( rom + 0x1e2be, season_str, 2 );
+     memcpy( rom + 0x1e378, season_str, 2 );
+     memcpy( rom + 0x1f89c, season_str, 2 );
+}
 
 int main( const int argc, const char const *argv[] )
 {
@@ -78,6 +93,9 @@ int main( const int argc, const char const *argv[] )
 
           return EXIT_FAILURE;
      }
+
+     injectSeason( rom1, organization->season );
+     injectSeason( rom2, organization->season );
 
      if ( (schedule = generateSchedule( rom1, rom2 )) == NULL )
      {
