@@ -363,6 +363,41 @@ describe 'TeamService' do
     end
   end
 
+  describe '#get_teams' do
+    before :each do
+      @repository    = Repository.new db
+      @mock_player_service = double( 'PlayerService' )
+      @team_service = TeamService.new @repository, @mock_player_service
+
+      @repository.start_transaction
+    end
+
+    after :each do
+      @repository.cancel_transaction
+    end
+
+    it 'should return a list of teams from the database' do
+      db.execute 'insert into teams_t values (1, "tname1", "teamloc1", "TN1")'
+      db.execute 'insert into teams_t values (2, "tname2", "teamloc2", "TN2")'
+      db.execute 'insert into teams_t values (3, "tname3", "teamloc3", "TN3")'
+      db.execute 'insert into teams_t values (4, "tname4", "teamloc4", "TN4")'
+
+      teams = @team_service.get_teams
+
+      expect( teams ).to_not be_nil
+      expect( teams ).to     be_a   Array
+
+      expect( teams.length ).to eq 4
+
+      teams.sort { |a,b| a.team_id <=> b.team_id }
+
+      expect( teams[0].team_id ).to eq 1
+      expect( teams[1].team_id ).to eq 2
+      expect( teams[2].team_id ).to eq 3
+      expect( teams[3].team_id ).to eq 4
+    end
+  end
+
   describe '#save' do
     before :each do
       @mock_repository = double( 'Repository' )

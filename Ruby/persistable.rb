@@ -14,6 +14,10 @@ class Persistable
     "SELECT #{@FieldNames.join ', '} FROM #{@TableName} WHERE #{where_placeholders @KeyFields}"
   end
 
+  def build_select_all
+    "SELECT #{@FieldNames.join ', '} FROM #{@TableName}"
+  end
+
   def custom_select table, select_fields, where_fields
     "SELECT #{select_fields.join ', '} FROM #{table} WHERE #{where_placeholders where_fields}"
   end

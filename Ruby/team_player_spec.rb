@@ -32,6 +32,14 @@ describe TeamPlayer do
     end
   end
 
+  describe '#build_select_by_team_and_season' do
+    it 'should return a well formed SQL select statement' do
+      team_player = TeamPlayer.new
+      result = team_player.build_select_by_team_and_season
+      expect( result ).to eq 'SELECT Team_Id, Season, Player_Id FROM Team_Players_T WHERE Team_Id = :team_id AND Season = :season'
+    end
+  end
+
   describe '#build_delete' do
     it 'should return a well formed SQL delete statement' do
       team_player = TeamPlayer.new

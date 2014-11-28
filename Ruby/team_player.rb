@@ -34,6 +34,10 @@ class TeamPlayer < Persistable
     custom_select @TableName, @FieldNames, %w(Team_Id)
   end
 
+  def build_select_by_team_and_season
+    custom_select @TableName, @FieldNames, %w(Team_Id Season)
+  end
+
   def to_hash
     { team_id: @team_id, season: @season, player_id: @player_id }
   end

@@ -75,4 +75,11 @@ describe Persistable do
       expect( result ).to eq 'DELETE FROM TableName WHERE WhereField1 = :wherefield1 AND WhereField2 = :wherefield2'
     end
   end
+
+  describe '#build_select_all' do
+    it 'should return a well formed SQL select statement without a where clause' do
+      persistable = Persistable.new 'TableName', %w(KeyField1 KeyField2 FieldName1 FieldName2 FieldName3), %w(KeyField1 KeyField2)
+      expect( persistable.build_select_all ).to eq 'SELECT KeyField1, KeyField2, FieldName1, FieldName2, FieldName3 FROM TableName'
+    end
+  end
 end

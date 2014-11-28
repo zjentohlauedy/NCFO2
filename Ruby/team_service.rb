@@ -1,3 +1,4 @@
+require 'team'
 require 'team_accolade'
 require 'team_accolades'
 require 'team_player'
@@ -11,6 +12,26 @@ class TeamService
   def initialize repository, player_service
     @repository     = repository
     @player_service = player_service
+  end
+
+  def get_teams
+    team = Team.new
+
+    results = @repository.custom_read team.build_select_all
+
+    teams = []
+
+    unless results.nil? or results.length == 0
+      results.each do |result|
+        team.from_hash result
+
+        teams.push team
+
+        team = Team.new
+      end
+    end
+
+    return teams
   end
 
   def get team_id
