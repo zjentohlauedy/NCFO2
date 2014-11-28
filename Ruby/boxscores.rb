@@ -389,17 +389,17 @@ end
 def get_game_data( cwd, path, game_name )
   game = game_name.gsub ' ', '_'
 
-  boxscore = ProgRunner.new "#{cwd}/../C", "boxscore"
+  extract_data = ProgRunner.new "#{cwd}/../C", "extract_bowl_game_data"
 
-  boxscore.execute "#{path}/playoffs.nes", "#{path}/#{game}.nst"
+  extract_data.execute "#{path}/playoffs.nes", "#{path}/#{game}.nst"
 
-  unless boxscore.success?
-    puts "ERROR: #{boxscore.get_output}"
+  unless extract_data.success?
+    puts "ERROR: #{extract_data.get_output}"
 
     return nil
   end
 
-  return JSON.parse boxscore.get_output, {:symbolize_names => true}
+  return JSON.parse extract_data.get_output, {:symbolize_names => true}
 end
 
 

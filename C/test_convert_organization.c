@@ -942,23 +942,23 @@ static char *convertOrganization_ShouldReturnAnOrganizationObjectWithPlayersWith
      return NULL;
 }
 
-static void check_generate_org_error()
+static void check_convert_organization_error()
 {
      printf( "convert organization error: %s\n", getConvertOrganizationError() );
 }
 
 static void run_all_tests()
 {
-     run_test( convertOrganization_ShouldReturnAnOrganizationObject_GivenTsbRomsAndSaveStates, check_generate_org_error );
-     run_test( convertOrganization_ShouldReturnAnOrganizationObjectWithConferences,            check_generate_org_error );
-     run_test( convertOrganization_ShouldReturnAnOrganizationObjectWithTeams,                  check_generate_org_error );
-     run_test( convertOrganization_ShouldReturnAnOrganizationObjectWithTeamsWithStats,         check_generate_org_error );
-     run_test( convertOrganization_ShouldReturnAnOrganizationObjectWithTeamsWithOffenseStats,  check_generate_org_error );
-     run_test( convertOrganization_ShouldReturnAnOrganizationObjectWithTeamsWithDefenseStats,  check_generate_org_error );
-     run_test( convertOrganization_ShouldReturnAnOrganizationObjectWithTeamsWithKickingStats,  check_generate_org_error );
-     run_test( convertOrganization_ShouldReturnAnOrganizationObjectWithPlayers,                check_generate_org_error );
-     run_test( convertOrganization_ShouldReturnAnOrganizationObjectWithPlayersWithRatings,     check_generate_org_error );
-     run_test( convertOrganization_ShouldReturnAnOrganizationObjectWithPlayersWithStats,       check_generate_org_error );
+     run_test( convertOrganization_ShouldReturnAnOrganizationObject_GivenTsbRomsAndSaveStates, check_convert_organization_error );
+     run_test( convertOrganization_ShouldReturnAnOrganizationObjectWithConferences,            check_convert_organization_error );
+     run_test( convertOrganization_ShouldReturnAnOrganizationObjectWithTeams,                  check_convert_organization_error );
+     run_test( convertOrganization_ShouldReturnAnOrganizationObjectWithTeamsWithStats,         check_convert_organization_error );
+     run_test( convertOrganization_ShouldReturnAnOrganizationObjectWithTeamsWithOffenseStats,  check_convert_organization_error );
+     run_test( convertOrganization_ShouldReturnAnOrganizationObjectWithTeamsWithDefenseStats,  check_convert_organization_error );
+     run_test( convertOrganization_ShouldReturnAnOrganizationObjectWithTeamsWithKickingStats,  check_convert_organization_error );
+     run_test( convertOrganization_ShouldReturnAnOrganizationObjectWithPlayers,                check_convert_organization_error );
+     run_test( convertOrganization_ShouldReturnAnOrganizationObjectWithPlayersWithRatings,     check_convert_organization_error );
+     run_test( convertOrganization_ShouldReturnAnOrganizationObjectWithPlayersWithStats,       check_convert_organization_error );
 }
 
 int main( int argc, char *argv[] )

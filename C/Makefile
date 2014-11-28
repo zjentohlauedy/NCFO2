@@ -10,13 +10,15 @@ progs = \
    print_rosters \
    standings \
    extract_data \
+   extract_bowl_game_data \
    injuries \
    reorg \
    set_uniforms \
    set_playoff_uniforms \
    copy_playoff_teams \
    boxscore \
-   import_season
+   import_season \
+   import_bowl_game
 
 tests = \
    test_file_utils \
@@ -50,7 +52,8 @@ tests = \
    test_team_service \
    test_conference_service \
    test_organization_service \
-   test_convert_organization
+   test_convert_organization \
+   test_convert_bowl_game
 
 ALL: PROGS TESTS
 
@@ -69,6 +72,9 @@ standings: standings.o file_utils.o convert_organization.o libncfodata.a
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfodata
 
 extract_data: extract_data.o file_utils.o convert_organization.o libncfodata.a
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfodata
+
+extract_bowl_game_data: extract_bowl_game_data.o file_utils.o convert_bowl_game.o convert_organization.o libncfodata.a
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfodata
 
 injuries: injuries.o file_utils.o convert_organization.o libncfodata.a
@@ -90,6 +96,9 @@ boxscore: boxscore.o file_utils.o convert_organization.o libncfodata.a
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfodata
 
 import_season: import_season.o file_utils.o convert_organization.o libncfodata.a
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfodata
+
+import_bowl_game: import_bowl_game.o file_utils.o convert_bowl_game.o convert_organization.o libncfodata.a
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfodata
 
 
@@ -189,6 +198,9 @@ test_organization_service: test_organization_service.o libncfodata.a libncfobuil
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfodata -lncfobuilders -lncfocompares
 
 test_convert_organization: test_convert_organization.o convert_organization.o file_utils.o libncfodata.a
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfodata
+
+test_convert_bowl_game: test_convert_bowl_game.o convert_bowl_game.o convert_organization.o file_utils.o libncfodata.a
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfodata
 
 NCFODATA_OBJECTS = \

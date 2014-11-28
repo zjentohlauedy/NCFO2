@@ -143,10 +143,23 @@ int main( const int argc, const char *argv[] )
      sqlite3_open( db_filename, &db );
      sqlite3_exec( db, "begin", NULL, NULL, NULL );
 
-     save_organization( db, organization );
+     if ( save_organization( db, organization ) != SQLITE_OK )
+     {
+          printf( "Unable to import season data.\n" );
 
-     sqlite3_exec( db, "commit", NULL, NULL, NULL );
-     sqlite3_close( db );
+          if ( sqlite3_errcode( db ) != 0 )
+          {
+               printf( "sqlite3 error message: %s\n", sqlite3_errmsg( db ) );
+          }
+
+          sqlite3_exec( db, "rollback", NULL, NULL, NULL );
+          sqlite3_close( db );
+     }
+     else
+     {
+          sqlite3_exec( db, "commit", NULL, NULL, NULL );
+          sqlite3_close( db );
+     }
 
      free( rom1 );
      free( rom2 );
