@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <time.h>
 #include "file_formats.h"
 #include "schedule.h"
 #include "unit_test.h"
@@ -428,6 +429,8 @@ static void run_all_tests()
 
 int main( int argc, char *argv[] )
 {
+     srand( time( NULL ) );
+
      run_all_tests();
 
      show_test_results();

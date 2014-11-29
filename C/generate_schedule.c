@@ -298,10 +298,11 @@ static boolean_e pickTelevisionGame( week_s *week, boolean_e *teams_on_tv )
 static boolean_e selectTelevisionGames( schedule_s *schedule )
 {
      boolean_e teams_on_tv[48] = { 0 };
-     int       tv_games_needed =  24;
 
      for ( int tries = 0; tries < 10; ++tries )
      {
+          int tv_games_needed = 24;
+
           for ( int passes = 0; passes < 3; ++passes )
           {
                for ( int j = 0; j < 10; ++j )
@@ -316,6 +317,8 @@ static boolean_e selectTelevisionGames( schedule_s *schedule )
           }
 
           resetTelevisionGames( schedule );
+
+          for ( int i = 0; i < 48; ++i ) teams_on_tv[i] = bl_False;
      }
 
      return bl_False;
