@@ -39,7 +39,7 @@ class Stats
 end
 
 class Passing < Stats
-  attr_reader :att, :yards, :td, :pct, :avg, :qbr
+  attr_reader :att, :yards, :td, :pct, :avg, :qbr, :score, :pass_score
 
   def initialize( school, player )
     super()
@@ -55,6 +55,9 @@ class Passing < Stats
     @pct    = (@att == 0) ? 0.0 : @comp.to_f / @att.to_f * 100.0
     @avg    = (@att == 0) ? 0.0 : @yards.to_f / @att.to_f
     @qbr    = calc_qbr
+
+    @score  = player[:score]
+    @pass_score = calc_score player
   end
 
   def calc_qbr
@@ -65,10 +68,17 @@ class Passing < Stats
     return (qbr / 5.0)
   end
 
+  def calc_score( player )
+    score  = player[:ratings][:pass_control] * 5
+    score += player[:ratings][:pass_speed]   * 3
+    score += player[:ratings][:pass_accuracy]
+    score += player[:ratings][:avoid_pass_block]
+  end
+
 end
 
 class Rushing < Stats
-  attr_reader :att, :yards, :td, :avg
+  attr_reader :att, :yards, :td, :avg, :score, :rush_score
 
   def initialize( school, player )
     super()
@@ -80,12 +90,24 @@ class Rushing < Stats
     @yards  = player[:stats][:offense][:rush_yards]
     @td     = player[:stats][:offense][:rush_touchdowns]
     @avg    = (@att == 0) ? 0.0 : @yards.to_f / @att.to_f
+
+    @score  = player[:score]
+    @rush_score = calc_score player
+  end
+
+  def calc_score( player )
+    acceleration = (player[:ratings][:run_speed] > player[:ratings][:rush_power]) ? player[:ratings][:run_speed] : player[:ratings][:rush_power]
+
+    score  = player[:ratings][:max_speed] * 4
+    score += player[:ratings][:hit_power] * 3
+    score += player[:ratings][:ball_control].nil? ? 6 : player[:ratings][:ball_control]
+    score += acceleration * 2
   end
 
 end
 
 class Receiving < Stats
-  attr_reader :yards, :td, :rec, :avg
+  attr_reader :yards, :td, :rec, :avg, :score, :recv_score
 
   def initialize( school, player )
     super()
@@ -97,6 +119,17 @@ class Receiving < Stats
     @yards  = player[:stats][:offense][:receiving_yards]
     @td     = player[:stats][:offense][:receiving_touchdowns]
     @avg    = (@rec == 0) ? 0.0 : @yards.to_f / @rec.to_f
+
+    @score  = player[:score]
+    @recv_score = calc_score player
+  end
+
+  def calc_score( player )
+    acceleration = (player[:ratings][:run_speed] > player[:ratings][:rush_power]) ? player[:ratings][:run_speed] : player[:ratings][:rush_power]
+
+    score  = player[:ratings][:receiving] * 5
+    score += player[:ratings][:max_speed] * 3
+    score += acceleration * 2
   end
 
 end
@@ -144,7 +177,7 @@ class Overall < Stats
 end
 
 class Sacks < Stats
-  attr_reader :sacks
+  attr_reader :sacks, :score, :pr_score
 
   def initialize( school, player )
     super()
@@ -153,12 +186,24 @@ class Sacks < Stats
     @pos    = player[:position]
     @name   = "#{player[:last_name]}, #{player[:first_name]}"
     @sacks  = player[:stats][:defense][:sacks]
+
+    @score  = player[:score]
+    @pr_score = calc_score player
+  end
+
+  def calc_score( player )
+    acceleration = (player[:ratings][:run_speed] > player[:ratings][:rush_power]) ? player[:ratings][:run_speed] : player[:ratings][:rush_power]
+
+    score  = player[:ratings][:hit_power] * 6
+    score += player[:ratings][:max_speed] * 2
+    score += player[:ratings][:quickness]
+    score += acceleration
   end
 
 end
 
 class Interceptions < Stats
-  attr_reader :int, :yards, :td
+  attr_reader :int, :yards, :td, :score, :cvg_score
 
   def initialize( school, player )
     super()
@@ -170,6 +215,18 @@ class Interceptions < Stats
     @yards  = player[:stats][:defense][:return_yards]
     @td     = player[:stats][:defense][:return_touchdowns]
     @avg    = (@int == 0) ? 0.0 : @yards.to_f / @int.to_f
+
+    @score  = player[:score]
+    @cvg_score = calc_score player
+  end
+
+  def calc_score( player )
+    acceleration = (player[:ratings][:run_speed] > player[:ratings][:rush_power]) ? player[:ratings][:run_speed] : player[:ratings][:rush_power]
+
+    score  = player[:ratings][:interceptions] * 5
+    score += player[:ratings][:max_speed] * 3
+    score += player[:ratings][:quickness]
+    score += acceleration
   end
 
 end
