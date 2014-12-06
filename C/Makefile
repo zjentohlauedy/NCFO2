@@ -18,7 +18,8 @@ progs = \
    copy_playoff_teams \
    boxscore \
    import_season \
-   import_bowl_game
+   import_bowl_game \
+   copy_all_americans
 
 tests = \
    test_file_utils \
@@ -100,6 +101,9 @@ import_season: import_season.o file_utils.o convert_organization.o libncfodata.a
 
 import_bowl_game: import_bowl_game.o file_utils.o convert_bowl_game.o convert_organization.o libncfodata.a
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfodata
+
+copy_all_americans: copy_all_americans.o file_utils.o
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
 
 
 TESTS: $(tests) ncfo_test.db TAGS
