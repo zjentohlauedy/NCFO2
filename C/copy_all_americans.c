@@ -116,6 +116,174 @@ static void copySeason( void *output_rom, void *output_state, void *source_rom )
      memcpy( output_state + 0xad3, big_numbers[ones].bottom, 2 );
 }
 
+static void insertTeams( tsbrom_s *output_rom )
+{
+     const char *team1_abbr = "AME.";
+     const char *team2_abbr = "NAT.";
+
+     const char *team1_name = "AMERICAN";
+     const char *team2_name = "NATIONAL";
+
+     int start  = TEAM_CONF_NAMES_START_OFFSET;
+     int offset = 0;
+
+     int2pointer( start + offset, &(output_rom->team_abbr_pointers[0]) );
+
+     memcpy( output_rom->team_conference_names + offset, team1_abbr, strlen(team1_abbr) );
+
+     offset += strlen(team1_abbr);
+
+     int2pointer( start + offset, &(output_rom->team_abbr_pointers[1]) );
+
+     memcpy( output_rom->team_conference_names + offset, team2_abbr, strlen(team2_abbr) );
+
+     offset += strlen(team2_abbr);
+
+     for ( int i = 2; i < 28; ++i )
+     {
+          int2pointer( start + offset, &(output_rom->team_abbr_pointers[i]) );
+
+          memcpy( output_rom->team_conference_names + offset, " ", 1 );
+
+          offset++;
+     }
+
+     int2pointer( start + offset, &(output_rom->conference_abbr_pointers[0]) );
+
+     memcpy( output_rom->team_conference_names + offset, team1_abbr, strlen(team1_abbr) );
+
+     offset += strlen(team1_abbr);
+
+     int2pointer( start + offset, &(output_rom->conference_abbr_pointers[1]) );
+
+     memcpy( output_rom->team_conference_names + offset, team2_abbr, strlen(team2_abbr) );
+
+     offset += strlen(team2_abbr);
+
+     for ( int i = 2; i < 4; ++i )
+     {
+          int2pointer( start + offset, &(output_rom->conference_abbr_pointers[i]) );
+
+          memcpy( output_rom->team_conference_names + offset, " ", 1 );
+
+          offset++;
+     }
+
+     int2pointer( start + offset, &(output_rom->team_loc_pointers[0]) );
+
+     memcpy( output_rom->team_conference_names + offset, team1_name, strlen(team1_name) );
+
+     offset += strlen(team1_name);
+
+     int2pointer( start + offset, &(output_rom->team_loc_pointers[1]) );
+
+     memcpy( output_rom->team_conference_names + offset, team2_name, strlen(team2_name) );
+
+     offset += strlen(team2_name);
+
+     for ( int i = 2; i < 28; ++i )
+     {
+          int2pointer( start + offset, &(output_rom->team_loc_pointers[i]) );
+
+          memcpy( output_rom->team_conference_names + offset, " ", 1 );
+
+          offset++;
+     }
+
+     int2pointer( start + offset, &(output_rom->conference_loc_pointers[0]) );
+
+     memcpy( output_rom->team_conference_names + offset, team1_name, strlen(team1_name) );
+
+     offset += strlen(team1_name);
+
+     int2pointer( start + offset, &(output_rom->conference_loc_pointers[1]) );
+
+     memcpy( output_rom->team_conference_names + offset, team2_name, strlen(team2_name) );
+
+     offset += strlen(team2_name);
+
+     for ( int i = 2; i < 4; ++i )
+     {
+          int2pointer( start + offset, &(output_rom->conference_loc_pointers[i]) );
+
+          memcpy( output_rom->team_conference_names + offset, " ", 1 );
+
+          offset++;
+     }
+
+     int2pointer( start + offset, &(output_rom->team_name_pointers[0]) );
+
+     memcpy( output_rom->team_conference_names + offset, team1_name, strlen(team1_name) );
+
+     offset += strlen(team1_name);
+
+     int2pointer( start + offset, &(output_rom->team_name_pointers[1]) );
+
+     memcpy( output_rom->team_conference_names + offset, team2_name, strlen(team2_name) );
+
+     offset += strlen(team2_name);
+
+     for ( int i = 2; i < 28; ++i )
+     {
+          int2pointer( start + offset, &(output_rom->team_name_pointers[i]) );
+
+          memcpy( output_rom->team_conference_names + offset, " ", 1 );
+
+          offset++;
+     }
+
+     int2pointer( start + offset, &(output_rom->conference_name_pointers[0]) );
+
+     memcpy( output_rom->team_conference_names + offset, team1_name, strlen(team1_name) );
+
+     offset += strlen(team1_name);
+
+     int2pointer( start + offset, &(output_rom->conference_name_pointers[1]) );
+
+     memcpy( output_rom->team_conference_names + offset, team2_name, strlen(team2_name) );
+
+     offset += strlen(team2_name);
+
+     for ( int i = 2; i < 4; ++i )
+     {
+          int2pointer( start + offset, &(output_rom->conference_name_pointers[i]) );
+
+          memcpy( output_rom->team_conference_names + offset, " ", 1 );
+
+          offset++;
+     }
+
+     int2pointer( start + offset, &(output_rom->down_name_pointers[0]) ); memcpy( output_rom->team_conference_names + offset, "1ST", 3 ); offset += 3;
+     int2pointer( start + offset, &(output_rom->down_name_pointers[1]) ); memcpy( output_rom->team_conference_names + offset, "2ND", 3 ); offset += 3;
+     int2pointer( start + offset, &(output_rom->down_name_pointers[2]) ); memcpy( output_rom->team_conference_names + offset, "3RD", 3 ); offset += 3;
+     int2pointer( start + offset, &(output_rom->down_name_pointers[3]) ); memcpy( output_rom->team_conference_names + offset, "4TH", 3 ); offset += 3;
+
+     int2pointer( start + offset, &(output_rom->unknown_pointers1[0]) ); memcpy( output_rom->team_conference_names + offset, "\xd6\xd7\xb8", 3 ); offset += 3;
+     int2pointer( start + offset, &(output_rom->unknown_pointers1[1]) ); memcpy( output_rom->team_conference_names + offset, "\xd4\xd5\xd7", 3 ); offset += 3;
+     int2pointer( start + offset, &(output_rom->unknown_pointers1[2]) ); memcpy( output_rom->team_conference_names + offset, "\xd8\xd9\xda", 3 ); offset += 3;
+     int2pointer( start + offset, &(output_rom->unknown_pointers1[3]) ); memcpy( output_rom->team_conference_names + offset, "\xdb\xdc\xdd", 3 ); offset += 3;
+
+     int2pointer( start + offset, &(output_rom->misc_name_pointers[ 0]) ); memcpy( output_rom->team_conference_names + offset, "OFFENSE",   7 ); offset += 7;
+     int2pointer( start + offset, &(output_rom->misc_name_pointers[ 1]) ); memcpy( output_rom->team_conference_names + offset, "DEFENSE",   7 ); offset += 7;
+
+     int2pointer( start + offset, &(output_rom->misc_name_pointers[ 2]) ); memcpy( output_rom->team_conference_names + offset, "AMERICAN", 8 ); offset += 8;
+     int2pointer( start + offset, &(output_rom->misc_name_pointers[ 3]) ); memcpy( output_rom->team_conference_names + offset, "NATIONAL", 8 ); offset += 8;
+     int2pointer( start + offset, &(output_rom->misc_name_pointers[ 4]) ); memcpy( output_rom->team_conference_names + offset, " ",        1 ); offset += 1;
+     int2pointer( start + offset, &(output_rom->misc_name_pointers[ 5]) ); memcpy( output_rom->team_conference_names + offset, " ",        1 ); offset += 1;
+     int2pointer( start + offset, &(output_rom->misc_name_pointers[ 6]) ); memcpy( output_rom->team_conference_names + offset, " ",        1 ); offset += 1;
+     int2pointer( start + offset, &(output_rom->misc_name_pointers[ 7]) ); memcpy( output_rom->team_conference_names + offset, " ",        1 ); offset += 1;
+
+     int2pointer( start + offset, &(output_rom->misc_name_pointers[ 8]) ); memcpy( output_rom->team_conference_names + offset, "MAN",       3 ); offset += 3;
+     int2pointer( start + offset, &(output_rom->misc_name_pointers[ 9]) ); memcpy( output_rom->team_conference_names + offset, "COA",       3 ); offset += 3;
+     int2pointer( start + offset, &(output_rom->misc_name_pointers[10]) ); memcpy( output_rom->team_conference_names + offset, "COM",       3 ); offset += 3;
+     int2pointer( start + offset, &(output_rom->misc_name_pointers[11]) ); memcpy( output_rom->team_conference_names + offset, "SKP",       3 ); offset += 3;
+
+     int2pointer( start + offset, &(output_rom->misc_name_pointers[12]) ); memcpy( output_rom->team_conference_names + offset, "NEW ENGLAND", 11 ); offset += 11;
+     int2pointer( start + offset, &(output_rom->misc_name_pointers[13]) ); memcpy( output_rom->team_conference_names + offset, "MIDWEST",      7 ); offset +=  7;
+
+     int2pointer( start + offset, &(output_rom->misc_name_pointers[14]) );
+     int2pointer( start + offset, &(output_rom->misc_name_pointers[15]) );
+}
 
 static position_e getPosition( const int index )
 {
@@ -334,6 +502,16 @@ static void initializeData( tsbrom_s *rom )
      memset( rom->player_ids,               0xff, sizeof(rom->player_ids)               );
      memset( rom->player_pointers,          0xff, sizeof(rom->player_pointers)          );
      memset( rom->player_identifiers,       0xff, sizeof(rom->player_identifiers)       );
+     memset( rom->team_abbr_pointers,       0xff, sizeof(rom->team_abbr_pointers)       );
+     memset( rom->conference_abbr_pointers, 0xff, sizeof(rom->conference_abbr_pointers) );
+     memset( rom->team_loc_pointers,        0xff, sizeof(rom->team_loc_pointers)        );
+     memset( rom->conference_loc_pointers,  0xff, sizeof(rom->conference_loc_pointers)  );
+     memset( rom->team_name_pointers,       0xff, sizeof(rom->team_name_pointers)       );
+     memset( rom->conference_name_pointers, 0xff, sizeof(rom->conference_name_pointers) );
+     memset( rom->down_name_pointers,       0xff, sizeof(rom->down_name_pointers)       );
+     memset( rom->unknown_pointers1,        0xff, sizeof(rom->unknown_pointers1)        );
+     memset( rom->misc_name_pointers,       0xff, sizeof(rom->misc_name_pointers)       );
+     memset( rom->team_conference_names,    0xff, sizeof(rom->team_conference_names)    );
 
      memset( rom->team_player_ratings,      0,    sizeof(rom->team_player_ratings)      );
      memset( rom->sim_data,                 0,    sizeof(rom->sim_data)                 );
@@ -515,6 +693,8 @@ int main( const int argc, const char const *argv[] )
      copyPlayers( source_rom2, source_stats2, output_rom, output_stats, 1, team2_players );
 
      fillRemainingPlayers( output_rom, 2 );
+
+     insertTeams( output_rom );
 
      copySeason( output_rom, save_state, source_rom1 );
 
