@@ -127,6 +127,11 @@ static void insertTeams( tsbrom_s *output_rom )
      int start  = TEAM_CONF_NAMES_START_OFFSET;
      int offset = 0;
 
+
+     output_rom->team_ids[0] = 49;
+     output_rom->team_ids[1] = 50;
+
+
      int2pointer( start + offset, &(output_rom->team_abbr_pointers[0]) );
 
      memcpy( output_rom->team_conference_names + offset, team1_abbr, strlen(team1_abbr) );
@@ -368,7 +373,7 @@ static void copyPlayers(
 
           if ( result == 0 )
           {
-               printf( "Cannot find player in source rom with ID: %d", player_ids[i] );
+               printf( "Cannot find player in source rom with ID: %d\n", player_ids[i] );
 
                continue;
           }
@@ -377,7 +382,7 @@ static void copyPlayers(
 
           if ( position == pos_None )
           {
-               printf( "Unknown position for player at index %d", i );
+               printf( "Unknown position for player at index %d\n", i );
 
                continue;
           }
@@ -402,7 +407,7 @@ static void copyPlayers(
 
           if ( source_position != position )
           {
-               printf( "Position mismatch for player at index %d", i );
+               printf( "Position mismatch for player at index %d\n", i );
 
                continue;
           }
