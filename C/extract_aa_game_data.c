@@ -264,9 +264,7 @@ int main( const int argc, const char const *argv[] )
           return EXIT_FAILURE;
      }
 
-     copyScores( save_state, ram );
-
-     if ( (bowl_game = convertBowlGame( rom, save_state, 0, bg_None )) == NULL )
+     if ( (bowl_game = convertAAGame( rom, ram, save_state, 0, bg_None )) == NULL )
      {
           printf( "Error converting bowl game: %s\n", getConvertBowlGameError() );
 

@@ -254,6 +254,40 @@ static char *getSaveStateStats_ShouldReturnANstSaveState_GivenADecompressedSaveS
      return NULL;
 }
 
+static char *getSaveStateRam_ShouldReturnARamSection_GivenASaveStateBuffer()
+{
+     int len;
+
+     unsigned char *save_state = readNstSaveState( compressed_ss_file_name, &len );
+
+     assertNotNull( save_state );
+
+     unsigned char *ram = getSaveStateRam( save_state, len );
+
+     assertNotNull( ram );
+
+     free( save_state );
+
+     return NULL;
+}
+
+static char *getSaveStateRam_ShouldReturnARamSection_GivenADecompressedSaveStateBuffer()
+{
+     int len;
+
+     unsigned char *save_state = readNstSaveState( save_state_file_name, &len );
+
+     assertNotNull( save_state );
+
+     unsigned char *ram = getSaveStateRam( save_state, len );
+
+     assertNotNull( ram );
+
+     free( save_state );
+
+     return NULL;
+}
+
 static void check_file_utils_error()
 {
      printf( "file utils error: %s\n", getFileUtilsError() );
@@ -287,6 +321,8 @@ static void run_all_tests()
      run_test( writeNstSaveState_ShouldCreateASaveState_GivenASaveStateALengthAndFilename,                              check_file_utils_error );
      run_test( getSaveStateStats_ShouldReturnANstSaveState_GivenASaveStateBuffer,                                       check_file_utils_error );
      run_test( getSaveStateStats_ShouldReturnANstSaveState_GivenADecompressedSaveStateBuffer,                           check_file_utils_error );
+     run_test( getSaveStateRam_ShouldReturnARamSection_GivenASaveStateBuffer,                                           check_file_utils_error );
+     run_test( getSaveStateRam_ShouldReturnARamSection_GivenADecompressedSaveStateBuffer,                               check_file_utils_error );
 }
 
 

@@ -82,6 +82,7 @@ TESTARGS=""
 
 runTestProg test_convert_organization
 runTestProg test_convert_bowl_game
+runTestProg test_convert_aa_game
 runTestProg test_populate_roms
 runTestProg test_generate_schedule
 

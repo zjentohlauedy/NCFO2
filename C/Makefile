@@ -11,6 +11,7 @@ progs = \
    standings \
    extract_data \
    extract_bowl_game_data \
+   extract_aa_game_data \
    injuries \
    reorg \
    set_uniforms \
@@ -54,7 +55,8 @@ tests = \
    test_conference_service \
    test_organization_service \
    test_convert_organization \
-   test_convert_bowl_game
+   test_convert_bowl_game \
+   test_convert_aa_game
 
 ALL: PROGS TESTS
 
@@ -76,6 +78,9 @@ extract_data: extract_data.o file_utils.o convert_organization.o libncfodata.a
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfodata
 
 extract_bowl_game_data: extract_bowl_game_data.o file_utils.o convert_bowl_game.o convert_organization.o libncfodata.a
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfodata
+
+extract_aa_game_data: extract_aa_game_data.o file_utils.o convert_aa_game.o convert_bowl_game.o convert_organization.o libncfodata.a
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfodata
 
 injuries: injuries.o file_utils.o convert_organization.o libncfodata.a
@@ -205,6 +210,9 @@ test_convert_organization: test_convert_organization.o convert_organization.o fi
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfodata
 
 test_convert_bowl_game: test_convert_bowl_game.o convert_bowl_game.o convert_organization.o file_utils.o libncfodata.a
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfodata
+
+test_convert_aa_game: test_convert_aa_game.o convert_aa_game.o convert_bowl_game.o convert_organization.o file_utils.o libncfodata.a
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfodata
 
 NCFODATA_OBJECTS = \

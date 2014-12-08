@@ -386,12 +386,28 @@ def get_data( cwd, path )
   return org
 end
 
-def get_game_data( cwd, path, game_name )
+def get_bowl_game_data( cwd, path, game_name )
   game = game_name.gsub ' ', '_'
 
   extract_data = ProgRunner.new "#{cwd}/../C", "extract_bowl_game_data"
 
   extract_data.execute "#{path}/playoffs.nes", "#{path}/#{game}.nst"
+
+  unless extract_data.success?
+    puts "ERROR: #{extract_data.get_output}"
+
+    return nil
+  end
+
+  return JSON.parse extract_data.get_output, {:symbolize_names => true}
+end
+
+def get_aa_game_data( cwd, path, game_name )
+  game = game_name.gsub ' ', '_'
+
+  extract_data = ProgRunner.new "#{cwd}/../C", "extract_aa_game_data"
+
+  extract_data.execute "#{path}/all_americans.nes", "#{path}/#{game}.nst"
 
   unless extract_data.success?
     puts "ERROR: #{extract_data.get_output}"
@@ -447,11 +463,11 @@ if week.day <= 10
       print_boxscore stream, roadteam, hometeam
     end
   end
-else
+elsif week.day <= 13
   week.games.each do |game|
     next if game.name.nil?
 
-    data = get_game_data location, path, game.name
+    data = get_bowl_game_data location, path, game.name
 
     next if data.nil?
 
@@ -464,6 +480,22 @@ else
 
     File.open( boxscore_file, 'w' ) do |stream|
       print_boxscore stream, road_team, home_team
+    end
+  end
+else
+  week.games.each do |game|
+    next if game.name.nil?
+
+    data = get_aa_game_data location, path, game.name
+
+    next if data.nil?
+
+    boxscore_file = "#{week_folder}/#{game.name.gsub ' ', '_'}.txt"
+
+    puts "Saving #{game.road_team} @ #{game.home_team} to #{boxscore_file}"
+
+    File.open( boxscore_file, 'w' ) do |stream|
+      print_boxscore stream, data[:road_team], data[:home_team]
     end
   end
 end

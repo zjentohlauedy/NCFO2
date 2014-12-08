@@ -7,7 +7,7 @@
 
 static char error_message[ 999 + 1 ] = { 0 };
 
-char *getConvertBowlGameError( void )
+char *getConvertAAGameError( void )
 {
      return error_message;
 }
@@ -125,10 +125,10 @@ static void updatePunterStats( team_s *team, player_s *player, const nst_punter_
      team->kicking_stats->punt_yards += player->stats.kicking->punt_yards;
 }
 
-static void loadGameStats( team_s *road_team, team_s *home_team, const nst_save_state_s *save_state )
+static void loadGameStats( team_s *road_team, team_s *home_team, const unsigned char *ram, const nst_save_state_s *save_state )
 {
-     int road_score = hex2number( save_state->playoffs[save_state->game_of_week[0]].road_score[0] );
-     int home_score = hex2number( save_state->playoffs[save_state->game_of_week[0]].home_score[0] );
+     int road_score = hex2number( ram[ROAD_TEAM_SCORE_OFFSET] );
+     int home_score = hex2number( ram[HOME_TEAM_SCORE_OFFSET] );
 
      road_team->stats->wins           = (road_score  > home_score) ? 1 : 0;
      road_team->stats->losses         = (home_score  > road_score) ? 1 : 0;
@@ -167,7 +167,7 @@ static void loadGameStats( team_s *road_team, team_s *home_team, const nst_save_
      }
 }
 
-bowl_game_s *convertBowlGame( const tsbrom_s *rom, const nst_save_state_s *save_state, const int season, const bowl_game_e bowl )
+bowl_game_s *convertAAGame( const tsbrom_s *rom, const unsigned char *ram, const nst_save_state_s *save_state, const int season, const bowl_game_e bowl )
 {
      const nst_matchup_s    *match            = NULL;
      /**/  nst_save_state_s  empty_save_state = { 0 };
@@ -189,16 +189,10 @@ bowl_game_s *convertBowlGame( const tsbrom_s *rom, const nst_save_state_s *save_
           return NULL;
      }
 
-     if ( (match = findMatch( save_state )) == NULL )
-     {
-          sprintf( error_message, "Unable to retrieve match from save state" );
+     int road_team_id = ram[ROAD_TEAM_RAM_OFFSET] - 28;
+     int home_team_id = ram[HOME_TEAM_RAM_OFFSET] - 28;
 
-          freeBowlGame( bowl_game );
-
-          return NULL;
-     }
-
-     if ( (bowl_game->road_team = findTeam( bowl_game->_organization, match->road[0] )) == NULL )
+     if ( (bowl_game->road_team = findTeam( bowl_game->_organization, road_team_id )) == NULL )
      {
           sprintf( error_message, "Road team <%d> not found in rom", match->road[0] );
 
@@ -207,7 +201,7 @@ bowl_game_s *convertBowlGame( const tsbrom_s *rom, const nst_save_state_s *save_
           return NULL;
      }
 
-     if ( (bowl_game->home_team = findTeam( bowl_game->_organization, match->home[0] )) == NULL )
+     if ( (bowl_game->home_team = findTeam( bowl_game->_organization, home_team_id )) == NULL )
      {
           sprintf( error_message, "Home team <%d> not found in rom", match->home[0] );
 
@@ -216,22 +210,7 @@ bowl_game_s *convertBowlGame( const tsbrom_s *rom, const nst_save_state_s *save_
           return NULL;
      }
 
-     loadGameStats( bowl_game->road_team, bowl_game->home_team, save_state );
+     loadGameStats( bowl_game->road_team, bowl_game->home_team, ram, save_state );
 
      return bowl_game;
-}
-
-void copyScores( nst_save_state_s *save_state, const unsigned char *ram )
-{
-     save_state->playoffs[save_state->game_of_week[0]].road_score[0] = ram[ROAD_TEAM_SCORE_OFFSET];
-     save_state->playoffs[save_state->game_of_week[0]].home_score[0] = ram[HOME_TEAM_SCORE_OFFSET];
-}
-
-void freeBowlGame( bowl_game_s *bowl_game )
-{
-     if ( bowl_game == NULL ) return;
-
-     if ( bowl_game->_organization != NULL ) free_organization( bowl_game->_organization );
-
-     free( bowl_game );
 }

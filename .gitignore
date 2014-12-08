@@ -63,3 +63,5 @@ C/set_playoff_uniforms
 C/import_season
 C/import_bowl_game
 C/copy_all_americans
+C/extract_aa_game_data
+C/test_convert_aa_game

@@ -35,6 +35,7 @@ int main( const int argc, const char const *argv[] )
 
      tsbrom_s         *rom            = NULL;
      nst_save_state_s *save_state     = NULL;
+     unsigned char    *ram            = NULL;
      unsigned char    *state_file     = NULL;
      bowl_game_s      *bowl_game      = NULL;
      int               save_state_len = 0;
@@ -117,7 +118,17 @@ int main( const int argc, const char const *argv[] )
           return EXIT_FAILURE;
      }
 
-     copyScores( save_state, state_file );
+     if ( (ram = getSaveStateRam( state_file, save_state_len )) == NULL )
+     {
+          printf( "Error retrieving RAM from Save State: %s\n", getFileUtilsError() );
+
+          free( rom        );
+          free( state_file );
+
+          return EXIT_FAILURE;
+     }
+
+     copyScores( save_state, ram );
 
      if ( (bowl_game = convertBowlGame( rom, save_state, season, bowl )) == NULL )
      {

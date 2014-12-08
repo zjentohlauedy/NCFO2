@@ -308,5 +308,6 @@ typedef struct
 unsigned char    *readNstSaveState(  const char *filename, int *save_state_size );
 boolean_e         writeNstSaveState( const char *filename, const unsigned char *save_state, const size_t size );
 nst_save_state_s *getSaveStateStats(                       const unsigned char *save_state, const size_t size );
+unsigned char    *getSaveStateRam(                         const unsigned char *save_state, const size_t size );
 
 #endif

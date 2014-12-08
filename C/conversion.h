@@ -6,6 +6,13 @@
 #include "save_state.h"
 
 
+#define ROAD_TEAM_RAM_OFFSET   0x6c
+#define HOME_TEAM_RAM_OFFSET   0x6d
+
+#define ROAD_TEAM_SCORE_OFFSET 0x399
+#define HOME_TEAM_SCORE_OFFSET 0x39e
+
+
 typedef struct
 {
      team_s *road_team;
@@ -30,5 +37,8 @@ char        *getConvertBowlGameError( void );
 bowl_game_s *convertBowlGame( const tsbrom_s *rom, const nst_save_state_s *save_state, const int season, const bowl_game_e bowl );
 void         copyScores( nst_save_state_s *save_state, const unsigned char *state_file );
 void         freeBowlGame( bowl_game_s *bowl_game );
+
+char        *getConvertAAGameError( void );
+bowl_game_s *convertAAGame( const tsbrom_s *rom, const unsigned char *ram, const nst_save_state_s *save_state, const int season, const bowl_game_e bowl );
 
 #endif
