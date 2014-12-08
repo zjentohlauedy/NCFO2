@@ -10,7 +10,8 @@ typedef enum
      bg_SugarBowl        = 4,
      bg_FiestaBowl       = 5,
      bg_LibertyBowl      = 6,
-     bg_NCFOChampionship = 7
+     bg_NCFOChampionship = 7,
+     bg_AllAmericanBowl  = 8
 
 } bowl_game_e;
 

@@ -17,10 +17,11 @@ progs = \
    set_uniforms \
    set_playoff_uniforms \
    copy_playoff_teams \
+   copy_all_americans \
    boxscore \
    import_season \
    import_bowl_game \
-   copy_all_americans
+   import_aa_game
 
 tests = \
    test_file_utils \
@@ -98,6 +99,9 @@ set_playoff_uniforms: set_playoff_uniforms.o file_utils.o
 copy_playoff_teams: copy_playoff_teams.o file_utils.o
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
 
+copy_all_americans: copy_all_americans.o file_utils.o
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
+
 boxscore: boxscore.o file_utils.o convert_organization.o libncfodata.a
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfodata
 
@@ -107,8 +111,8 @@ import_season: import_season.o file_utils.o convert_organization.o libncfodata.a
 import_bowl_game: import_bowl_game.o file_utils.o convert_bowl_game.o convert_organization.o libncfodata.a
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfodata
 
-copy_all_americans: copy_all_americans.o file_utils.o
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
+import_aa_game: import_aa_game.o file_utils.o convert_aa_game.o convert_bowl_game.o convert_organization.o libncfodata.a
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfodata
 
 
 TESTS: $(tests) ncfo_test.db TAGS

@@ -65,3 +65,6 @@ C/import_bowl_game
 C/copy_all_americans
 C/extract_aa_game_data
 C/test_convert_aa_game
+C/import_aa_game
+C/extract_bowl_game_data
+C/test_convert_bowl_game
