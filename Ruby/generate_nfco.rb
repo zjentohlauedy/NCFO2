@@ -93,6 +93,11 @@ end
           { team_id: 48, name: 'Longhorns',       location: 'Texas',          abbreviation: 'UTX' },
          ]
 
+@all_american_teams = [
+                       { team_id: 49, name: 'American', location: 'American', abbreviation: 'AME' },
+                       { team_id: 50, name: 'National', location: 'National', abbreviation: 'NAT' }
+                      ]
+
 @positions = [
               Positions::Quarterback,
               Positions::Quarterback,
@@ -217,15 +222,22 @@ ts = TeamService.new repo, ps
 cs = ConferenceService.new repo, ts
 os = OrganizationService.new repo, cs
 
+aa_team = Team.new
+
 
 repo.start_transaction
 
 begin
   os.save ncfo
+
+  @all_american_teams.each do |team|
+    aa_team.from_hash team
+    ts.save aa_team
+  end
+
   repo.end_transaction
   puts "Done."
 rescue Exception => e
   repo.cancel_transaction
-  puts "Error." + e.message
-  exit
+  raise e
 end
