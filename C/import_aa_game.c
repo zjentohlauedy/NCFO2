@@ -17,6 +17,8 @@ static int importTeam( sqlite3 *db, team_s *team )
      {
           for ( int i = 0; team->players[i].player != NULL; ++i )
           {
+               if ( (rc = team_players_t_create( db, &(team->players[i]) )) != SQLITE_OK ) return rc;
+
                if ( (rc = save_player( db, team->players[i].player )) != SQLITE_OK ) return rc;
           }
      }

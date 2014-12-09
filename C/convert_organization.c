@@ -868,6 +868,7 @@ static team_player_s *convertPlayers(
           int rom_team_idx =  team_idx % 24;
 
           players[i].team_id   = team->team_id;
+          players[i].season    = season;
           players[i].player_id = pointer2int( &(rom->player_ids[rom_team_idx][i]) );
 
           if ( (players[i].player = malloc( sizeof(player_s) )) == NULL )
