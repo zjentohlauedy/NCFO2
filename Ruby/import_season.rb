@@ -8,6 +8,7 @@ require 'FileParser'
 require 'ScheduleParser'
 require 'TeamRecords'
 require 'repository'
+require 'organization'
 require 'conference_stats'
 require 'team_stats'
 require 'bowls'
@@ -106,40 +107,56 @@ def add_game( team_records, game )
   team_records.store game.home_team, team_record
 end
 
-def import_bowl_game( location, path, game_name, season, bowl )
+def import_bowl_game( location, path, game_name, bowl )
   game = game_name.gsub ' ', '_'
 
   import = ProgRunner.new "#{location}/../C", "import_bowl_game"
 
   puts "Importing #{game_name}..."
 
-  import.execute "#{location}/../ncfo.db", "#{path}/playoffs.nes", "#{path}/#{game}.nst", season, bowl
+  import.execute "#{location}/../ncfo.db", "#{path}/playoffs.nes", "#{path}/#{game}.nst", bowl
 
   if import.success?
-    puts "#{game_name} Imported Successfully!"
+    puts "#{game_name} Imported successfully!"
   else
     puts "Error Importing #{game_name}:"
     puts import.get_output
     exit
   end
-
 end
 
-season = ARGV[0] || abort( "Must supply a season." )
-path   = ARGV[1] || '.'
+def import_aa_game( location, path, game_name )
+  game = game_name.gsub ' ', '_'
+
+  import = ProgRunner.new "#{location}/../C", "import_aa_game"
+
+  puts "Importing #{game_name}..."
+
+  import.execute "#{location}/../ncfo.db", "#{path}/all_americans.nes", "#{path}/#{game}.nst"
+
+  if import.success?
+    puts "#{game_name} Imported successfully!"
+  else
+    puts "Error Importing #{game_name}:"
+    puts import.get_output
+    raise 'Import Exception'
+  end
+end
+
+path   = ARGV[0] || '.'
 
 import_season = ProgRunner.new "#{location}/../C", "import_season"
 
 puts "Importing Regular Season..."
 
-import_season.execute "#{location}/../ncfo.db", "#{path}/ncfo1.nes", "#{path}/ncfo1.nst", "#{path}/ncfo2.nes", "#{path}/ncfo2.nst", season
+import_season.execute "#{location}/../ncfo.db", "#{path}/ncfo1.nes", "#{path}/ncfo1.nst", "#{path}/ncfo2.nes", "#{path}/ncfo2.nst"
 
 if import_season.success?
-  puts "Regular Season Imported Successfully!"
+  puts "Regular season imported successfully!"
 else
-  puts "Error Importing Regular Season:"
+  puts "Error importing regular season:"
   puts import_season.get_output
-  exit
+  raise 'Import Exception'
 end
 
 sp = ScheduleParser.new
@@ -162,13 +179,17 @@ end
 
 repo = Repository.new Utils::get_db "#{location}/../ncfo.db"
 
+org = Organization.new 1
+
+repo.read org
+
 puts "Updating team stats records..."
 
 repo.start_transaction
 
 begin
   records.each do |team, team_record|
-    team_stats = TeamStats.new @teams[team][:id], season, Bowls::None
+    team_stats = TeamStats.new @teams[team][:id], org.season, Bowls::None
     repo.read team_stats
 
     team_stats.home_wins   = team_record.home.wins
@@ -183,39 +204,58 @@ begin
   end
 
   repo.end_transaction
-  puts "Done."
+
+  puts "Team stats records update successfully!"
 rescue Exception => e
   repo.cancel_transaction
-  puts "Error." + e.message
-  exit
+  raise e
 end
 
 (schedule.days[10].games + schedule.days[11].games + schedule.days[12].games).each do |game|
-  import_bowl_game location, path, game.name, season, @bowls[game.name]
+  import_bowl_game location, path, game.name, @bowls[game.name]
 
-  conf_stats = ConferenceStats.new @teams[game.road_team][:conference], season, @bowls[game.name]
+  puts "Creating conference stats records..."
 
-  conf_stats.wins           = (game.road_score > game.home_score) ? 1 : 0
-  conf_stats.losses         = (game.road_score < game.home_score) ? 1 : 0
-  conf_stats.home_wins      = 0
-  conf_stats.home_losses    = 0
-  conf_stats.road_wins      = 0
-  conf_stats.road_losses    = 0
-  conf_stats.points_scored  = game.road_score
-  conf_stats.points_allowed = game.home_score
+  repo.start_transaction
 
-  repo.create conf_stats
+  begin
+    conf_stats = ConferenceStats.new @teams[game.road_team][:conference], org.season, @bowls[game.name]
 
-  conf_stats = ConferenceStats.new @teams[game.home_team][:conference], season, @bowls[game.name]
+    conf_stats.wins           = (game.road_score > game.home_score) ? 1 : 0
+    conf_stats.losses         = (game.road_score < game.home_score) ? 1 : 0
+    conf_stats.home_wins      = 0
+    conf_stats.home_losses    = 0
+    conf_stats.road_wins      = 0
+    conf_stats.road_losses    = 0
+    conf_stats.points_scored  = game.road_score
+    conf_stats.points_allowed = game.home_score
 
-  conf_stats.wins           = (game.home_score > game.road_score) ? 1 : 0
-  conf_stats.losses         = (game.home_score < game.road_score) ? 1 : 0
-  conf_stats.home_wins      = 0
-  conf_stats.home_losses    = 0
-  conf_stats.road_wins      = 0
-  conf_stats.road_losses    = 0
-  conf_stats.points_scored  = game.home_score
-  conf_stats.points_allowed = game.road_score
+    repo.create conf_stats
 
-  repo.create conf_stats
+    conf_stats = ConferenceStats.new @teams[game.home_team][:conference], org.season, @bowls[game.name]
+
+    conf_stats.wins           = (game.home_score > game.road_score) ? 1 : 0
+    conf_stats.losses         = (game.home_score < game.road_score) ? 1 : 0
+    conf_stats.home_wins      = 0
+    conf_stats.home_losses    = 0
+    conf_stats.road_wins      = 0
+    conf_stats.road_losses    = 0
+    conf_stats.points_scored  = game.home_score
+    conf_stats.points_allowed = game.road_score
+
+    repo.create conf_stats
+
+    repo.end_transaction
+
+    puts "Conference stats records created successfully!"
+  rescue Exception => e
+    repo.cancel_transaction
+    raise e
+  end
 end
+
+schedule.days[13].games.each do |game|
+  import_aa_game location, path, game.name
+end
+
+puts "Done."

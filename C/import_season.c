@@ -22,14 +22,14 @@ int main( const int argc, const char *argv[] )
      nst_save_state_s *save_state2   = NULL;
      tsbrom_s         *rom1          = NULL;
      tsbrom_s         *rom2          = NULL;
+     organization_s    org           = { 0 };
      organization_s   *organization  = NULL;
      sqlite3          *db            = NULL;
-     int               season        = 0;
 
 
-     if ( argc != 7 )
+     if ( argc != 6 )
      {
-          printf( "Usage: %s <database> <rom-file1> <save-state1> <rom-file2> <save-state2> <season>\n", argv[0] );
+          printf( "Usage: %s <database> <rom-file1> <save-state1> <rom-file2> <save-state2>\n", argv[0] );
 
           return EXIT_SUCCESS;
      }
@@ -41,24 +41,6 @@ int main( const int argc, const char *argv[] )
 
      ss1_filename  = argv[3];
      ss2_filename  = argv[5];
-
-     errno = 0;
-
-     season = strtol( argv[6], NULL, 10 );
-
-     if ( errno != 0 )
-     {
-          printf( "Unable to determine season: %s\n", strerror( errno ) );
-
-          return EXIT_FAILURE;
-     }
-
-     if ( season < 1 )
-     {
-          printf( "Invalid season: <%s>\n", argv[6] );
-
-          return EXIT_FAILURE;
-     }
 
      if ( (rom1 = readTsbRom( rom1_filename )) == NULL )
      {
@@ -128,9 +110,22 @@ int main( const int argc, const char *argv[] )
           }
      }
 
-     if ( (organization = convertOrganization( rom1, save_state1, rom2, save_state2, season, bg_None )) == NULL )
+     sqlite3_open( db_filename, &db );
+     sqlite3_exec( db, "begin", NULL, NULL, NULL );
+
+     org.organization_id = 1;
+
+     if ( organizations_t_read( db, &org ) != SQLITE_OK )
      {
-          printf( "Error converting rom and save state data: %s\n", getConvertOrganizationError() );
+          printf( "Error retrieving organization.\n" );
+
+          if ( sqlite3_errcode( db ) != 0 )
+          {
+               printf( "sqlite3 error message: %s\n", sqlite3_errmsg( db ) );
+          }
+
+          sqlite3_exec( db, "rollback", NULL, NULL, NULL );
+          sqlite3_close( db );
 
           free( rom1 );
           free( rom2 );
@@ -140,8 +135,20 @@ int main( const int argc, const char *argv[] )
           return EXIT_FAILURE;
      }
 
-     sqlite3_open( db_filename, &db );
-     sqlite3_exec( db, "begin", NULL, NULL, NULL );
+     if ( (organization = convertOrganization( rom1, save_state1, rom2, save_state2, org.season, bg_None )) == NULL )
+     {
+          printf( "Error converting rom and save state data: %s\n", getConvertOrganizationError() );
+
+          sqlite3_exec( db, "rollback", NULL, NULL, NULL );
+          sqlite3_close( db );
+
+          free( rom1 );
+          free( rom2 );
+          free( state_file1 );
+          free( state_file2 );
+
+          return EXIT_FAILURE;
+     }
 
      if ( save_organization( db, organization ) != SQLITE_OK )
      {
