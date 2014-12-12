@@ -157,7 +157,7 @@ typedef struct
 
 typedef struct
 {                // helmet type:    Two_Stripe           One_Stripe             Ram_Horn               Tiger_Stripe
-     unsigned char helmet   [3]; // inner/outer/helmet   hilite/helmet/stripe   spiral/helmet/hilite   hilite/helmet/stripes
+     unsigned char helmet   [3]; // inner/helmet/outer   hilite/helmet/stripe   spiral/helmet/hilite   hilite/helmet/stripes
      unsigned char facemask [2]; // edge/center
      unsigned char logo     [3];
 
