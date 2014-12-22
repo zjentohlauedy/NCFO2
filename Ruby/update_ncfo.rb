@@ -1,13 +1,15 @@
 #!/usr/bin/env ruby
 #
 location = File.dirname __FILE__
-
 $: << "#{location}"
+
+require 'fileutils'
 require 'repository'
 require 'organization'
 require 'team_service'
 require 'team_player'
 require 'player_service'
+require 'name_manager'
 require 'player_generator'
 
 def get_team_players_by_season( team_id, season )
@@ -63,17 +65,19 @@ def get_next_player_id
 end
 
 
-if ARGV.length != 1
-  abort "Usage: #{__FILE__} <filename>\n"
+if ARGV.length != 2
+  abort "Usage: #{__FILE__} <db file> <names file>\n"
 end
 
-filename = ARGV[0]
+@db_file    = ARGV[0]
+@names_file = ARGV[1]
 
 @next_player_id = 0
-@repo = Repository.new Utils::get_db filename
+@repo = Repository.new Utils::get_db @db_file
 @ps = PlayerService.new @repo
 @ts = TeamService.new @repo, @ps
-@pg = PlayerGenerator.new
+@nm = NameManager.new @names_file
+@pg = PlayerGenerator.new @nm
 @prng = Random.new
 
 @org = Organization.new 1
@@ -85,6 +89,14 @@ if @org.nil?
   exit
 end
 
+names_backup = sprintf "%s.s%02d.bak", "#{File::dirname @names_file}/.#{File::basename @names_file}", @org.season
+
+if ! File::exist? names_backup
+  FileUtils::cp @names_file, names_backup
+end
+
+@nm.load_names
+
 @new_season = @org.season + 1
 
 @teams = @ts.get_teams
@@ -93,6 +105,8 @@ if @teams.nil? or @teams.length == 0
   puts "No teams found"
   exit
 end
+
+@teams.select! { |team| team.team_id <= 48 }
 
 result = @repo.custom_read 'SELECT MAX(Player_Id) player_id FROM Players_T'
 
@@ -152,3 +166,5 @@ rescue Exception => e
 end
 
 @repo.end_transaction
+
+@nm.save_names

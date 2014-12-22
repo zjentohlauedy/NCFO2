@@ -3,12 +3,14 @@
 location = File.dirname __FILE__
 $: << "#{location}"
 
+require 'fileutils'
 require 'repository'
 require 'organization_service'
 require 'conference_service'
 require 'team_service'
 require 'player_service'
 require 'positions'
+require 'name_manager'
 require 'player_generator'
 require 'organization'
 require 'organization_conference'
@@ -18,9 +20,12 @@ require 'team'
 require 'team_player'
 
 
-if ARGV.length != 1
-  abort "Usage: #{__FILE__} <filename>\n"
+if ARGV.length != 2
+  abort "Usage: #{__FILE__} <db file> <names file>\n"
 end
+
+@db_file    = ARGV[0]
+@names_file = ARGV[1]
 
 
 @organization = { organization_id: 1, name: 'National College Football Organization', abbreviation: 'NCFO', season: 1 }
@@ -133,9 +138,19 @@ end
               Positions::Punter
              ]
 
+
 @next_player_id = 0
-@pg = PlayerGenerator.new
+@nm = NameManager.new @names_file
+@pg = PlayerGenerator.new @nm
 @prng = Random.new
+
+names_backup = "#{File::dirname @names_file}/.#{File::basename @names_file}.orig.bak"
+
+if ! File::exist? names_backup
+  FileUtils::cp @names_file, names_backup
+end
+
+@nm.load_names
 
 def get_next_player_id
   @next_player_id += 1
@@ -213,10 +228,7 @@ ncfo.from_hash @organization
 
 ncfo.conferences = generate_conferences ncfo.organization_id, @conferences
 
-
-filename = ARGV[0]
-
-repo = Repository.new Utils::get_db filename
+repo = Repository.new Utils::get_db @db_file
 ps = PlayerService.new repo
 ts = TeamService.new repo, ps
 cs = ConferenceService.new repo, ts
@@ -241,3 +253,5 @@ rescue Exception => e
   repo.cancel_transaction
   raise e
 end
+
+@nm.save_names

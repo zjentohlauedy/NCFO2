@@ -7,7 +7,9 @@ require 'player_kicking_ratings'
 
 class PlayerGenerator
 
-  def initialize
+  def initialize( name_manager )
+    @name_manager = name_manager
+
     @OffensePositions = [ Positions::Runningback,   Positions::WideReceiver, Positions::TightEnd    ]
     @DefensePositions = [ Positions::DefensiveLine, Positions::Linebacker,   Positions::Cornerback, Positions::Safety ]
     @KickingPositions = [ Positions::Kicker,        Positions::Punter        ]
@@ -19,11 +21,13 @@ class PlayerGenerator
 
     face = prng.rand 166
 
+    name = @name_manager.get_name
+
     player.position        = position
     player.number          = number
     player.freshman_season = season
-    player.first_name      = (65 + rand(26)).chr + (1..(3 + rand(6))).map { (97 + rand(26)).chr }.join # temporary test value
-    player.last_name       = (65 + rand(26)).chr + (1..(3 + rand(9))).map { (97 + rand(26)).chr }.join # temporary test value
+    player.first_name      = name[:first]
+    player.last_name       = name[:last ]
     player.face            = (face > 81) ? face + 46 : face
     player.maturity        = prng.rand( 4 ) + 1
     player.ratings         = PlayerRatings.generate id, position
