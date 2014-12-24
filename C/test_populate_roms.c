@@ -332,6 +332,52 @@ static char *populateRoms_ShouldWriteTheKickAndPuntReturnersForEveryTeam()
 
      org->conferences[4].conference = NULL;
 
+     player_s *kr = org->conferences[0].conference->teams[0].team->players[8].player;
+     player_s *pr = org->conferences[0].conference->teams[0].team->players[9].player;
+
+     kr->ratings = buildPlayerRatings( kr->player_id );
+     pr->ratings = buildPlayerRatings( pr->player_id );
+
+     kr->extra_ratings.offense = buildPlayerOffenseRatings( kr->player_id );
+     pr->extra_ratings.offense = buildPlayerOffenseRatings( pr->player_id );
+
+     kr->maturity                            =  4;
+     kr->ratings->max_speed                  = 15;
+     kr->ratings->run_speed                  =  1;
+     kr->ratings->rush_power                 =  1;
+     kr->extra_ratings.offense->ball_control = 15;
+
+     pr->maturity                            =  4;
+     pr->ratings->max_speed                  = 14;
+     pr->ratings->run_speed                  = 15;
+     pr->ratings->rush_power                 = 15;
+     pr->extra_ratings.offense->ball_control = 15;
+
+     assertEquals( bl_True, populateRoms( &tsbrom1, &tsbrom2, org ) );
+
+     // Note: kr and pr should be sorted to the top of WR section
+
+     assertEquals( 0x76, tsbrom1.kick_and_punt_returners1[0] );
+     assertEquals( 0x76, tsbrom1.kick_and_punt_returners2[0] );
+
+     // No kr or pr should have been picked for the next team
+     assertEquals( 0,    tsbrom1.kick_and_punt_returners1[1] );
+     assertEquals( 0,    tsbrom1.kick_and_punt_returners2[1] );
+
+     free_organization( org );
+
+     return NULL;
+}
+
+static char *populateRoms_ShouldNotConsiderPrimaryRunningBackForKickOrPuntReturns()
+{
+     tsbrom_s        tsbrom1 = { 0 };
+     tsbrom_s        tsbrom2 = { 0 };
+     organization_s *org     = get_test_org();
+
+     org->conferences[4].conference = NULL;
+
+     // kr will end up as primary back being the only player with ratings
      player_s *kr = org->conferences[0].conference->teams[0].team->players[5].player;
      player_s *pr = org->conferences[0].conference->teams[0].team->players[9].player;
 
@@ -355,10 +401,10 @@ static char *populateRoms_ShouldWriteTheKickAndPuntReturnersForEveryTeam()
 
      assertEquals( bl_True, populateRoms( &tsbrom1, &tsbrom2, org ) );
 
-     // Note: kr should be sorted to the top of RB section, and the same for pr in the WR section
+     // Note: pr should be sorted to the top of WR section
 
-     assertEquals( 0x26, tsbrom1.kick_and_punt_returners1[0] );
-     assertEquals( 0x26, tsbrom1.kick_and_punt_returners2[0] );
+     assertEquals( 0x66, tsbrom1.kick_and_punt_returners1[0] );
+     assertEquals( 0x66, tsbrom1.kick_and_punt_returners2[0] );
 
      // No kr or pr should have been picked for the next team
      assertEquals( 0,    tsbrom1.kick_and_punt_returners1[1] );
@@ -765,6 +811,7 @@ static void run_all_tests()
      run_test( populateRoms_ShouldWriteTheOffsetsInThePlayerPointersSection_GivenATsbRomAndOrganization,              check_populate_roms_error );
      run_test( populateRoms_ShouldWriteThePlayerRatingsInTheTeamPlayerRatingsSection_GivenATsbRomAndOrganization,     check_populate_roms_error );
      run_test( populateRoms_ShouldWriteTheKickAndPuntReturnersForEveryTeam,                                           check_populate_roms_error );
+     run_test( populateRoms_ShouldNotConsiderPrimaryRunningBackForKickOrPuntReturns,                                  check_populate_roms_error );
      run_test( populateRoms_ShouldWriteThePlayerAndTeamSimData_GivenATsbRomAndOrganization,                           check_populate_roms_error );
      run_test( populateRoms_ShouldPopulateBothRoms_GivenTwoTsbRomsAndOrganization,                                    check_populate_roms_error );
      run_test( populateRoms_ShouldAdjustPlayerRatingsBasedOnMaturity,                                                 check_populate_roms_error );

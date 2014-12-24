@@ -784,6 +784,40 @@ static void setPlaybooks( tsb_playbook_s *playbook, team_s *team )
      }
 }
 
+static int calcKickReturnerScore( const player_s *player, const team_s *team, const boolean_e primary_rb )
+{
+     if ( team == NULL ) return 0;
+
+     if ( player->ratings == NULL  ||  player->extra_ratings.offense == NULL ) return 0;
+
+     if ( primary_rb )
+     {
+          if ( team->offensive_formation == form_Three_Wide ||
+               team->offensive_formation == form_Four_Wide     ) return 0;
+
+          if ( team->use_feature_back ) return 0;
+     }
+
+     return (player->ratings->max_speed * 3) + player->extra_ratings.offense->ball_control;
+}
+
+static int calcPuntReturnerScore( const player_s *player, const team_s *team, const boolean_e primary_rb )
+{
+     if ( team == NULL ) return 0;
+
+     if ( player->ratings == NULL  ||  player->extra_ratings.offense == NULL ) return 0;
+
+     if ( primary_rb )
+     {
+          if ( team->offensive_formation == form_Three_Wide ||
+               team->offensive_formation == form_Four_Wide     ) return 0;
+
+          if ( team->use_feature_back ) return 0;
+     }
+
+     return (player->ratings->max_speed * 3) + player->extra_ratings.offense->ball_control + getPlayerAcceleration( player );
+}
+
 static void injectData( tsbrom_s *rom, team_s **teams, player_s **players )
 {
      unsigned char *ratings_ptr = (unsigned char *)rom->team_player_ratings;
@@ -872,15 +906,15 @@ static void injectData( tsbrom_s *rom, team_s **teams, player_s **players )
                }
                case pos_Runningback:
                case pos_WideReceiver:
-                    if ( player->ratings != NULL  &&  player->extra_ratings.offense != NULL )
-                    {
-                         int kr_score  = (player->ratings->max_speed * 3) + player->extra_ratings.offense->ball_control;
-                         int pr_score  = (player->ratings->max_speed * 2) + player->extra_ratings.offense->ball_control;
-                         /**/pr_score += getPlayerAcceleration( player );
+               {
+#define             IS_PRIMARY_RB  (j == 2)
 
-                         if ( kr_score > kick_returner.score ) { kick_returner.index = j; kick_returner.score = kr_score; }
-                         if ( pr_score > punt_returner.score ) { punt_returner.index = j; punt_returner.score = pr_score; }
-                    }
+                    int kr_score = calcKickReturnerScore( player, teams[i], IS_PRIMARY_RB );
+                    int pr_score = calcPuntReturnerScore( player, teams[i], IS_PRIMARY_RB );
+
+                    if ( kr_score > kick_returner.score ) { kick_returner.index = j; kick_returner.score = kr_score; }
+                    if ( pr_score > punt_returner.score ) { punt_returner.index = j; punt_returner.score = pr_score; }
+               }
                     // Intentional Fallthrough...
                case pos_TightEnd:
                {
