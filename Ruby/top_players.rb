@@ -69,6 +69,8 @@ class Passing < Stats
   end
 
   def calc_score( player )
+    if player[:ratings].nil?; return 0 end
+
     score  = player[:ratings][:pass_control] * 5
     score += player[:ratings][:pass_speed]   * 3
     score += player[:ratings][:pass_accuracy]
@@ -96,6 +98,8 @@ class Rushing < Stats
   end
 
   def calc_score( player )
+    if player[:ratings].nil?; return 0 end
+
     acceleration = (player[:ratings][:run_speed] > player[:ratings][:rush_power]) ? player[:ratings][:run_speed] : player[:ratings][:rush_power]
 
     score  = player[:ratings][:max_speed] * 4
@@ -125,6 +129,8 @@ class Receiving < Stats
   end
 
   def calc_score( player )
+    if player[:ratings].nil?; return 0 end
+
     acceleration = (player[:ratings][:run_speed] > player[:ratings][:rush_power]) ? player[:ratings][:run_speed] : player[:ratings][:rush_power]
 
     score  = player[:ratings][:receiving] * 5
@@ -192,6 +198,8 @@ class Sacks < Stats
   end
 
   def calc_score( player )
+    if player[:ratings].nil?; return 0 end
+
     acceleration = (player[:ratings][:run_speed] > player[:ratings][:rush_power]) ? player[:ratings][:run_speed] : player[:ratings][:rush_power]
 
     score  = player[:ratings][:hit_power] * 6
@@ -221,6 +229,8 @@ class Interceptions < Stats
   end
 
   def calc_score( player )
+    if player[:ratings].nil?; return 0 end
+
     acceleration = (player[:ratings][:run_speed] > player[:ratings][:rush_power]) ? player[:ratings][:run_speed] : player[:ratings][:rush_power]
 
     score  = player[:ratings][:interceptions] * 5
