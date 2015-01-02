@@ -38,6 +38,12 @@ then
 
     source .setgames
 
+    if [[ ${#GAMES} -eq 0 ]]
+    then
+        echo "WARNING: there are no games defined for this week!";
+        exit;
+    fi
+
     echo "Setting playoff uniforms..."
     ~/NES/NCFO/C/set_playoff_uniforms .playoffs.nes.bak playoffs.nes
 
