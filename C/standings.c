@@ -44,6 +44,8 @@ static int compareTeams( const void *arg1, const void *arg2 )
 
      if ( win_pct1 != win_pct2 ) return (win_pct1 > win_pct2) ? -1 : 1;
 
+     if ( team1->losses != team2->losses ) return (team1->losses < team2->losses) ? -1 : 1;
+
      if ( pts_diff1 != pts_diff2 ) return (pts_diff1 > pts_diff2) ? -1 : 1;
 
      if ( team1->scored != team2->scored ) return (team1->scored > team2->scored) ? -1 : 1;

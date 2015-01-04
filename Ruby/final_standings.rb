@@ -98,6 +98,10 @@ def compare_team_records( a, b )
     return a.overall.win_pct <=> b.overall.win_pct
   end
 
+  if a.overall.losses != b.overall.losses
+    return b.overall.losses <=> a.overall.losses
+  end
+
   if a.pts_diff != b.pts_diff
     return a.pts_diff <=> b.pts_diff
   end
