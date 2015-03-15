@@ -114,6 +114,8 @@ result = @repo.custom_read 'SELECT MAX(Player_Id) player_id FROM Players_T'
 
 @repo.start_transaction
 
+@graduates = []
+
 begin
   @teams.each do |team|
     team.players = get_team_players_by_season team.team_id, @org.season
@@ -126,6 +128,8 @@ begin
 
       if player_class == 'Senior'
         graduates.push player
+
+        @graduates.push({ school: team.abbreviation, position: player.position, first_name: player.first_name, last_name: player.last_name })
       else
         team_player = TeamPlayer.new team.team_id, @new_season, player.player_id
 
@@ -168,3 +172,11 @@ end
 @repo.end_transaction
 
 @nm.save_names
+
+if @graduates.length > 0
+  printf "S%02d Graduates:\n", @new_season - 1
+
+  @graduates.each do |grad|
+    printf "%3s %-2s %s %s\n", grad[:school], Positions::string_value( grad[:position] ), grad[:first_name], grad[:last_name]
+  end
+end
