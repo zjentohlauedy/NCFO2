@@ -28,10 +28,13 @@ class TeamRankings
       new_rating = @rating + (scored - allowed)
 
       if scored > allowed
-        new_rating += 10 + (opponent.rating / 4.0).to_i
+#        bonus = (opponent.rating / 4.0).to_i
+        bonus = (@rating < opponent.rating) ? ((opponent.rating - @rating) / 4.0) : 0
+        new_rating += 50 + bonus
       else
-        penalty = (@rating > opponent.rating) ? ((@rating - opponent.rating) / 4).to_i : 0
-        new_rating -= (50 + penalty)
+#        penalty = (@rating > opponent.rating) ? ((@rating - opponent.rating) / 4.0).to_i : 0
+        penalty = (@rating > opponent.rating) ? ((@rating - opponent.rating) / 4.0).to_i : 0
+        new_rating -= (10 + penalty)
       end
 
       return new_rating
@@ -40,8 +43,8 @@ class TeamRankings
   end
 
   def initialize( location = '.' )
-    @ratings = Hash.new
-    @teams   = Array.new
+    @ratings  = Hash.new
+    @teams    = Array.new
     @location = location
   end
 
@@ -132,6 +135,7 @@ class TeamRankings
 
     sp.schedule.days.each do |day|
       next if ! day.completed
+      next if day.day > 10
 
       day.games.each do |game|
         update_ratings game
@@ -140,8 +144,8 @@ class TeamRankings
   end
 
   def update_ratings( game )
-    home = @ratings.fetch game.home_team
-    road = @ratings.fetch game.road_team
+    home = @ratings[ game.home_team ] || return
+    road = @ratings[ game.road_team ] || return
 
     new_home_rating = home.calc_new_rating road, game.home_score, game.road_score
     new_road_rating = road.calc_new_rating home, game.road_score, game.home_score
@@ -161,7 +165,6 @@ class TeamRankings
       break if i >= 25
     end
   end
-
 end
 
 
@@ -176,3 +179,5 @@ rankings = TeamRankings.new location
 rankings.load_teams path
 rankings.process_schedule "#{path}/schedule.csv"
 rankings.print_top_25
+
+
