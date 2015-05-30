@@ -29,10 +29,16 @@ class Stats
   def to_s
     value = get_sort_key
 
-    if value.is_a? Float
-      sprintf "%-2s %-20s %-15s %5.2f", @pos, @name, @school, value
+    format = "%-2s %-20s "
+
+    format << (@season.nil? ? "" : "S%02d ")
+    format << "%-15s "
+    format << ((value.is_a? Float) ? "%5.2f" : "%4d")
+
+    if @season.nil?
+      sprintf format, @pos, @name, @school, value
     else
-      sprintf "%-2s %-20s %-15s %4d", @pos, @name, @school, value
+      sprintf format, @pos, @name, @season, @school, value
     end
   end
 
@@ -46,6 +52,7 @@ class Passing < Stats
 
     @school = school
     @pos    = player[:position]
+    @season = player[:stats][:offense][:season]
     @name   = "#{player[:last_name]}, #{player[:first_name]}"
     @att    = player[:stats][:offense][:pass_attempts]
     @comp   = player[:stats][:offense][:completions]
@@ -87,6 +94,7 @@ class Rushing < Stats
 
     @school = school
     @pos    = player[:position]
+    @season = player[:stats][:offense][:season]
     @name   = "#{player[:last_name]}, #{player[:first_name]}"
     @att    = player[:stats][:offense][:rush_attempts]
     @yards  = player[:stats][:offense][:rush_yards]
@@ -118,6 +126,7 @@ class Receiving < Stats
 
     @school = school
     @pos    = player[:position]
+    @season = player[:stats][:offense][:season]
     @name   = "#{player[:last_name]}, #{player[:first_name]}"
     @rec    = player[:stats][:offense][:receptions]
     @yards  = player[:stats][:offense][:receiving_yards]
@@ -148,6 +157,7 @@ class AllPurpose < Stats
 
     @school = school
     @pos    = player[:position]
+    @season = player[:stats][:offense][:season]
     @name   = "#{player[:last_name]}, #{player[:first_name]}"
 
     if @pos == 'QB'
@@ -169,6 +179,7 @@ class Overall < Stats
 
     @school = school
     @pos    = player[:position]
+    @season = player[:stats][:offense][:season]
     @name   = "#{player[:last_name]}, #{player[:first_name]}"
 
     if @pos == 'QB'
@@ -190,6 +201,7 @@ class Sacks < Stats
 
     @school = school
     @pos    = player[:position]
+    @season = player[:stats][:defense][:season]
     @name   = "#{player[:last_name]}, #{player[:first_name]}"
     @sacks  = player[:stats][:defense][:sacks]
 
@@ -218,6 +230,7 @@ class Interceptions < Stats
 
     @school = school
     @pos    = player[:position]
+    @season = player[:stats][:defense][:season]
     @name   = "#{player[:last_name]}, #{player[:first_name]}"
     @int    = player[:stats][:defense][:interceptions]
     @yards  = player[:stats][:defense][:return_yards]
@@ -249,6 +262,7 @@ class KickReturns < Stats
 
     @school = school
     @pos    = player[:position]
+    @season = player[:stats][:returns][:season]
     @name   = "#{player[:last_name]}, #{player[:first_name]}"
     @ret    = player[:stats][:returns][:kick_returns]
     @yards  = player[:stats][:returns][:kick_return_yards]
@@ -266,6 +280,7 @@ class PuntReturns < Stats
 
     @school = school
     @pos    = player[:position]
+    @season = player[:stats][:returns][:season]
     @name   = "#{player[:last_name]}, #{player[:first_name]}"
     @ret    = player[:stats][:returns][:punt_returns]
     @yards  = player[:stats][:returns][:punt_return_yards]
@@ -283,6 +298,7 @@ class Kicking < Stats
 
     @school = school
     @pos    = player[:position]
+    @season = player[:stats][:kicking][:season]
     @name   = "#{player[:last_name]}, #{player[:first_name]}"
     @xpa    = player[:stats][:kicking][:extra_point_attempts]
     @xpm    = player[:stats][:kicking][:extra_points_made]
@@ -303,6 +319,7 @@ class Punting < Stats
 
     @school = school
     @pos    = player[:position]
+    @season = player[:stats][:kicking][:season]
     @name   = "#{player[:last_name]}, #{player[:first_name]}"
     @punts  = player[:stats][:kicking][:punts]
     @yards  = player[:stats][:kicking][:punt_yards]
