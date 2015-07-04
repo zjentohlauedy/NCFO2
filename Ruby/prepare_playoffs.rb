@@ -95,8 +95,12 @@ schedule.days.each do |day|
 end
 
 def compare_team_records( a, b )
-  if a.overall.win_pct != b.overall.win_pct
-    return a.overall.win_pct <=> b.overall.win_pct
+  if a.overall.wins != b.overall.wins
+    return a.overall.wins <=> b.overall.wins
+  end
+
+  if a.overall.losses != b.overall.losses
+    return b.overall.losses <=> a.overall.losses # unlike wins, fewer losses is better
   end
 
   if a.pts_diff != b.pts_diff
