@@ -3,7 +3,8 @@ class Stats
 
   def initialize
     @direction = :descending
-    @sort_key = nil
+    @sort_key  = nil
+    @format    = '%d'
   end
 
   def <=>( other )
@@ -18,12 +19,20 @@ class Stats
     @direction = direction
   end
 
+  def set_format( format )
+    @format = format
+  end
+
   def set_sort_key( key )
     @sort_key = key
   end
 
   def get_sort_key
     send @sort_key
+  end
+
+  def has_season?
+    @season.nil? ? false : true
   end
 
   def to_s
@@ -33,7 +42,7 @@ class Stats
 
     format << (@season.nil? ? "" : "S%02d ")
     format << "%-15s "
-    format << ((value.is_a? Float) ? "%5.2f" : "%4d")
+    format << @format
 
     if @season.nil?
       sprintf format, @pos, @name, @school, value
@@ -42,6 +51,24 @@ class Stats
     end
   end
 
+end
+
+class TieMessage
+
+  def initialize( count, value, format, padding="" )
+    @count   = count
+    @value   = value
+    @format  = format
+    @padding = padding
+  end
+
+  def get_sort_key
+    return nil
+  end
+
+  def to_s
+    sprintf "   %-35s #{@padding} #{@format}", "#{@count} Players Tied At", @value
+  end
 end
 
 class Passing < Stats
@@ -342,7 +369,7 @@ class StatRankings
 
       value.fetch( 'stats' ).each do |stat|
         print "#{stat.fetch 'label'}\n"
-        print_top_players stat['stat'], stat['filter']
+        print_top_players stat['stat'], stat['filter'], stat['format']
         print "\n"
       end
     end
@@ -362,9 +389,43 @@ class StatRankings
     end
   end
 
-  def print_top_players( stat, filter=nil, count=15 )
+  def select_top_players( players, min=15 )
+    top_players = []
+    last_player = nil
+    i           = 0
+
+    players.each do |player|
+      if i < min
+        top_players.push player
+      elsif player.get_sort_key == last_player.get_sort_key
+        top_players.push player
+      else
+        break
+      end
+
+      i += 1
+      last_player = player
+    end
+
+    return top_players
+  end
+
+  def summarize_ties( players, format, max=20 )
+    if players.length > max
+      tied = players.select { |p| p.get_sort_key == players[-1].get_sort_key }
+
+      players = players.reject { |p| tied.include? p }
+
+      players.push TieMessage.new tied.length, tied[-1].get_sort_key, format, tied[-1].has_season? ? "    " : ""
+    end
+
+    return players
+  end
+
+  def print_top_players( stat, filter=nil, format='%d' )
     @players.each do |player|
       player.set_sort_key stat
+      player.set_format format
     end
 
     players = @players.sort
@@ -391,11 +452,19 @@ class StatRankings
       return
     end
 
-    i = 0
+    top_players = select_top_players players
+    top_players = summarize_ties top_players, format
 
-    while i < [count, players.length].min
-      print "#{players[i].to_s}\n"
-      i += 1
+    last_player = nil
+
+    top_players.each_with_index do |player, idx|
+      if last_player.nil? or player.get_sort_key != last_player.get_sort_key
+        printf "%2d. %s\n", idx + 1, player.to_s
+      else
+        printf " -  %s\n", player.to_s
+      end
+
+      last_player = player
     end
   end
 
@@ -404,51 +473,51 @@ end
 
 @categories = {
   'passing'       => {  'class' => Passing,              'types' => ['QB'],
-    'stats'       => [{ 'label' => "Passing Yards",      'stat'  => :yards,  'filter' =>  nil },
-                      { 'label' => "Passing TD",         'stat'  => :td,     'filter' =>  nil },
-                      { 'label' => "Completion Pct.",    'stat'  => :pct,    'filter' => :att },
-                      { 'label' => "Yards Per Comp.",    'stat'  => :avg,    'filter' => :att },
-                      { 'label' => "Quarterback Rating", 'stat'  => :qbr,    'filter' =>  nil }]},
+    'stats'       => [{ 'label' => "Passing Yards",      'stat'  => :yards,  'filter' =>  nil,   'format' => '%4d'   },
+                      { 'label' => "Passing TD",         'stat'  => :td,     'filter' =>  nil,   'format' => '%2d'   },
+                      { 'label' => "Completion Pct.",    'stat'  => :pct,    'filter' => :att,   'format' => '%6.2f' },
+                      { 'label' => "Yards Per Comp.",    'stat'  => :avg,    'filter' => :att,   'format' => '%5.2f' },
+                      { 'label' => "Quarterback Rating", 'stat'  => :qbr,    'filter' =>  nil,   'format' => '%7.2f' }]},
 
-  'rushing'       => {  'class' => Rushing,             'types' => ['QB','RB','WR','TE'],
-    'stats'       => [{ 'label' => "Rushing Yards",     'stat'  => :yards,  'filter' =>  nil },
-                      { 'label' => "Rushing TD",        'stat'  => :td,     'filter' =>  nil },
-                      { 'label' => "Yards Per Carry",   'stat'  => :avg,    'filter' => :att }]},
+  'rushing'       => {  'class' => Rushing,              'types' => ['QB','RB','WR','TE'],
+    'stats'       => [{ 'label' => "Rushing Yards",      'stat'  => :yards,  'filter' =>  nil,   'format' => '%4d'   },
+                      { 'label' => "Rushing TD",         'stat'  => :td,     'filter' =>  nil,   'format' => '%2d'   },
+                      { 'label' => "Yards Per Carry",    'stat'  => :avg,    'filter' => :att,   'format' => '%5.2f' }]},
 
-  'receiving'     => {  'class' => Receiving,           'types' => ['RB','WR','TE'],
-    'stats'       => [{ 'label' => "Receptions",        'stat'  => :rec,    'filter' =>  nil },
-                      { 'label' => "Receiving Yards",   'stat'  => :yards,  'filter' =>  nil },
-                      { 'label' => "Receiving TD",      'stat'  => :td,     'filter' =>  nil },
-                      { 'label' => "Yards Per Catch",   'stat'  => :avg,    'filter' => :rec }]},
+  'receiving'     => {  'class' => Receiving,            'types' => ['RB','WR','TE'],
+    'stats'       => [{ 'label' => "Receptions",         'stat'  => :rec,    'filter' =>  nil,   'format' => '%2d'   },
+                      { 'label' => "Receiving Yards",    'stat'  => :yards,  'filter' =>  nil,   'format' => '%4d'   },
+                      { 'label' => "Receiving TD",       'stat'  => :td,     'filter' =>  nil,   'format' => '%2d'   },
+                      { 'label' => "Yards Per Catch",    'stat'  => :avg,    'filter' => :rec,   'format' => '%5.2f' }]},
 
-  'all-purpose'   => {  'class' => AllPurpose,          'types' => ['QB','RB','WR','TE'],
-    'stats'       => [{ 'label' => "All Purpose Yards", 'stat'  => :yards   },
-                      { 'label' => "All Purpose TD",    'stat'  => :td      }]},
+  'all-purpose'   => {  'class' => AllPurpose,           'types' => ['QB','RB','WR','TE'],
+    'stats'       => [{ 'label' => "All Purpose Yards",  'stat'  => :yards,  'filter' =>  nil,   'format' => '%4d'   },
+                      { 'label' => "All Purpose TD",     'stat'  => :td,     'filter' =>  nil,   'format' => '%2d'   }]},
 
-  'overall'       => {  'class' => Overall,             'types' => ['QB','RB','WR','TE'],
-    'stats'       => [{ 'label' => "Overall Yards",     'stat'  => :yards   },
-                      { 'label' => "Overall TD",        'stat'  => :td      }]},
+  'overall'       => {  'class' => Overall,              'types' => ['QB','RB','WR','TE'],
+    'stats'       => [{ 'label' => "Overall Yards",      'stat'  => :yards,  'filter' =>  nil,   'format' => '%4d'   },
+                      { 'label' => "Overall TD",         'stat'  => :td,     'filter' =>  nil,   'format' => '%2d'   }]},
 
-  'sacks'         => {  'class' => Sacks,               'types' => ['DL','LB','CB','S'],
-    'stats'       => [{ 'label' => "Sacks",             'stat'  => :sacks   }]},
+  'sacks'         => {  'class' => Sacks,                'types' => ['DL','LB','CB','S'],
+    'stats'       => [{ 'label' => "Sacks",              'stat'  => :sacks,  'filter' =>  nil,   'format' => '%2d'   }]},
 
-  'interceptions' => {  'class' => Interceptions,       'types' => ['DL','LB','CB','S'],
-    'stats'       => [{ 'label' => "Interceptions",     'stat'  => :int     },
-                      { 'label' => "Int. Return Yards", 'stat'  => :yards   },
-                      { 'label' => "Int. Return TD",    'stat'  => :td      }]},
+  'interceptions' => {  'class' => Interceptions,        'types' => ['DL','LB','CB','S'],
+    'stats'       => [{ 'label' => "Interceptions",      'stat'  => :int,    'filter' =>  nil,   'format' => '%2d'   },
+                      { 'label' => "Int. Return Yards",  'stat'  => :yards,  'filter' =>  nil,   'format' => '%3d'   },
+                      { 'label' => "Int. Return TD",     'stat'  => :td,     'filter' =>  nil,   'format' => '%2d'   }]},
 
-  'kick-returns'  => {  'class' => KickReturns,         'types' => ['RB','WR','TE'],
-    'stats'       => [{ 'label' => "Kick Return Avg.",  'stat'  => :avg,    'filter' => :ret },
-                      { 'label' => "Kick Return TD",    'stat'  => :td,     'filter' =>  nil }]},
+  'kick-returns'  => {  'class' => KickReturns,          'types' => ['RB','WR','TE'],
+    'stats'       => [{ 'label' => "Kick Return Avg.",   'stat'  => :avg,    'filter' => :ret,   'format' => '%5.2f' },
+                      { 'label' => "Kick Return TD",     'stat'  => :td,     'filter' =>  nil,   'format' => '%2d'   }]},
 
-  'punt-returns'  => {  'class' => PuntReturns,         'types' => ['RB','WR','TE'],
-    'stats'       => [{ 'label' => "Punt Return Avg.",  'stat'  => :avg,    'filter' => :ret },
-                      { 'label' => "Punt Return TD",    'stat'  => :td,     'filter' =>  nil }]},
+  'punt-returns'  => {  'class' => PuntReturns,          'types' => ['RB','WR','TE'],
+    'stats'       => [{ 'label' => "Punt Return Avg.",   'stat'  => :avg,    'filter' => :ret,   'format' => '%5.2f' },
+                      { 'label' => "Punt Return TD",     'stat'  => :td,     'filter' =>  nil,   'format' => '%2d'   }]},
 
-  'kicking'       => {  'class' => Kicking,             'types' => ['K'],
-    'stats'       => [{ 'label' => "Points",            'stat'  => :points, 'filter' =>  nil },
-                      { 'label' => "Field Goal Pct.",   'stat'  => :fg_pct, 'filter' => :fga }]},
+  'kicking'       => {  'class' => Kicking,              'types' => ['K'],
+    'stats'       => [{ 'label' => "Points",             'stat'  => :points, 'filter' =>  nil,   'format' => '%3d'   },
+                      { 'label' => "Field Goal Pct.",    'stat'  => :fg_pct, 'filter' => :fga,   'format' => '%6.2f' }]},
 
-  'punting'       => {  'class' => Punting,             'types' => ['P'],
-    'stats'       => [{ 'label' => "Yards Per Punt",    'stat'  => :avg, 'filter' => :punts }]}
+  'punting'       => {  'class' => Punting,              'types' => ['P'],
+    'stats'       => [{ 'label' => "Yards Per Punt",     'stat'  => :avg,    'filter' => :punts, 'format' => '%5.2f' }]}
 }
