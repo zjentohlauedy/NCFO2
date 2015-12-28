@@ -30,7 +30,7 @@ schedule = sp.schedule
 
 schedule.days.each do |day|
   unless day.completed
-    printf $stderr, "Next Gameday: %03d\n", day.day
+    printf $stderr, "Next Week: %03d\n", day.day
 
     print "export GAMES='"
 
