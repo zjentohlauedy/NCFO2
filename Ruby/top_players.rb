@@ -35,19 +35,26 @@ class Stats
     @season.nil? ? false : true
   end
 
+  def has_seasons?
+    @seasons.nil? ? false : true
+  end
+
   def to_s
     value = get_sort_key
 
     format = "%-2s %-20s "
 
     format << (@season.nil? ? "" : "S%02d ")
+    format << (@seasons.nil? ? "" : "%d ")
     format << "%-15s "
     format << @format
 
-    if @season.nil?
-      sprintf format, @pos, @name, @school, value
-    else
+    if ! @season.nil?
       sprintf format, @pos, @name, @season, @school, value
+    elsif ! @seasons.nil?
+      sprintf format, @pos, @name, @seasons, @school, value
+    else
+      sprintf format, @pos, @name, @school, value
     end
   end
 
@@ -92,6 +99,8 @@ class Passing < Stats
 
     @score  = player[:score]
     @pass_score = calc_score player
+
+    @seasons = player[:stats][:offense][:seasons]
   end
 
   def calc_qbr
@@ -130,6 +139,8 @@ class Rushing < Stats
 
     @score  = player[:score]
     @rush_score = calc_score player
+
+    @seasons = player[:stats][:offense][:seasons]
   end
 
   def calc_score( player )
@@ -162,6 +173,8 @@ class Receiving < Stats
 
     @score  = player[:score]
     @recv_score = calc_score player
+
+    @seasons = player[:stats][:offense][:seasons]
   end
 
   def calc_score( player )
@@ -194,6 +207,8 @@ class AllPurpose < Stats
       @yards = player[:stats][:offense][:rush_yards]      + player[:stats][:offense][:receiving_yards]
       @td    = player[:stats][:offense][:rush_touchdowns] + player[:stats][:offense][:receiving_touchdowns]
     end
+
+    @seasons = player[:stats][:offense][:seasons]
   end
 
 end
@@ -216,6 +231,8 @@ class Overall < Stats
       @yards = player[:stats][:offense][:rush_yards]      + player[:stats][:offense][:receiving_yards]
       @td    = player[:stats][:offense][:rush_touchdowns] + player[:stats][:offense][:receiving_touchdowns]
     end
+
+    @seasons = player[:stats][:offense][:seasons]
   end
 
 end
@@ -234,6 +251,8 @@ class Sacks < Stats
 
     @score  = player[:score]
     @pr_score = calc_score player
+
+    @seasons = player[:stats][:defense][:seasons]
   end
 
   def calc_score( player )
@@ -266,6 +285,8 @@ class Interceptions < Stats
 
     @score  = player[:score]
     @cvg_score = calc_score player
+
+    @seasons = player[:stats][:defense][:seasons]
   end
 
   def calc_score( player )
@@ -295,6 +316,8 @@ class KickReturns < Stats
     @yards  = player[:stats][:returns][:kick_return_yards]
     @td     = player[:stats][:returns][:kick_return_touchdowns]
     @avg    = (@ret == 0) ? 0.0 : @yards.to_f / @ret.to_f
+
+    @seasons = player[:stats][:returns][:seasons]
   end
 
 end
@@ -313,6 +336,8 @@ class PuntReturns < Stats
     @yards  = player[:stats][:returns][:punt_return_yards]
     @td     = player[:stats][:returns][:punt_return_touchdowns]
     @avg    = (@ret == 0) ? 0.0 : @yards.to_f / @ret.to_f
+
+    @seasons = player[:stats][:returns][:seasons]
   end
 
 end
@@ -334,6 +359,8 @@ class Kicking < Stats
     @points = (@fgm * 3) + @xpm
     @xp_pct = (@xpa == 0) ? 0.0 : @xpm.to_f / @xpa.to_f * 100.0
     @fg_pct = (@fga == 0) ? 0.0 : @fgm.to_f / @fga.to_f * 100.0
+
+    @seasons = player[:stats][:kicking][:seasons]
   end
 
 end
@@ -351,6 +378,8 @@ class Punting < Stats
     @punts  = player[:stats][:kicking][:punts]
     @yards  = player[:stats][:kicking][:punt_yards]
     @avg    = (@punts == 0) ? 0.0 : @yards.to_f / @punts.to_f
+
+    @seasons = player[:stats][:kicking][:seasons]
   end
 
 end
@@ -416,7 +445,12 @@ class StatRankings
 
       players = players.reject { |p| tied.include? p }
 
-      players.push TieMessage.new tied.length, tied[-1].get_sort_key, format, tied[-1].has_season? ? "    " : ""
+      padding = ""
+
+      if tied[-1].has_season?;  padding += "    "; end
+      if tied[-1].has_seasons?; padding += "  ";   end
+
+      players.push TieMessage.new tied.length, tied[-1].get_sort_key, format, padding
     end
 
     return players
