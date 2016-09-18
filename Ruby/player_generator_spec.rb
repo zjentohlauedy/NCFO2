@@ -8,106 +8,85 @@ require 'positions'
 
 describe PlayerGenerator do
   describe '#choose_number' do
-    it 'should return a player number' do
-      generator = PlayerGenerator.new
+    before :each do
+      @mock_name_manager = double( 'NameManager' )
+      @player_generator  = PlayerGenerator.new @mock_name_manager
+    end
 
-      number = generator.choose_number Positions::Quarterback, []
+    it 'should return a player number' do
+      number = @player_generator.choose_number Positions::Quarterback, []
 
       expect( number ).to_not be_nil
       expect( number ).to     be_a   Integer
     end
 
     it 'should return a quarterback number if position is quarterback' do
-      generator = PlayerGenerator.new
-
-      number = generator.choose_number Positions::Quarterback, []
+      number = @player_generator.choose_number Positions::Quarterback, []
 
       expect( [*1..19] ).to include number
     end
 
     it 'should return a runningback number if position is runningback' do
-      generator = PlayerGenerator.new
-
-      number = generator.choose_number Positions::Runningback, []
+      number = @player_generator.choose_number Positions::Runningback, []
 
       expect( [*30..39] ).to include number
     end
 
     it 'should return a wide receiver number if position is wide receiver' do
-      generator = PlayerGenerator.new
-
-      number = generator.choose_number Positions::WideReceiver, []
+      number = @player_generator.choose_number Positions::WideReceiver, []
 
       expect( [*80..89] ).to include number
     end
 
     it 'should return a tight end number if position is tight end' do
-      generator = PlayerGenerator.new
-
-      number = generator.choose_number Positions::TightEnd, []
+      number = @player_generator.choose_number Positions::TightEnd, []
 
       expect( [*80..89] ).to include number
     end
 
     it 'should return a offensive linesman number if position is an offensive linesman' do
-      generator = PlayerGenerator.new
-
-      number = generator.choose_number Positions::OffensiveLine, []
+      number = @player_generator.choose_number Positions::OffensiveLine, []
 
       expect( [*60..79] ).to include number
     end
 
     it 'should return a defensive linesman number if position is an defensive linesman' do
-      generator = PlayerGenerator.new
-
-      number = generator.choose_number Positions::DefensiveLine, []
+      number = @player_generator.choose_number Positions::DefensiveLine, []
 
       expect( [*90..99] ).to include number
     end
 
     it 'should return a linebacker number if position is a linebacker' do
-      generator = PlayerGenerator.new
-
-      number = generator.choose_number Positions::Linebacker, []
+      number = @player_generator.choose_number Positions::Linebacker, []
 
       expect( [*50..59] ).to include number
     end
 
     it 'should return a cornerback number if position is a cornerback' do
-      generator = PlayerGenerator.new
-
-      number = generator.choose_number Positions::Cornerback, []
+      number = @player_generator.choose_number Positions::Cornerback, []
 
       expect( [*20..29] ).to include number
     end
 
     it 'should return a safety number if position is a safety' do
-      generator = PlayerGenerator.new
-
-      number = generator.choose_number Positions::Safety, []
+      number = @player_generator.choose_number Positions::Safety, []
 
       expect( [*40..49] ).to include number
     end
 
     it 'should return a kicker number if position is a kicker' do
-      generator = PlayerGenerator.new
-
-      number = generator.choose_number Positions::Kicker, []
+      number = @player_generator.choose_number Positions::Kicker, []
 
       expect( [*1..19] ).to include number
     end
 
     it 'should return a punter number if position is a punter' do
-      generator = PlayerGenerator.new
-
-      number = generator.choose_number Positions::Punter, []
+      number = @player_generator.choose_number Positions::Punter, []
 
       expect( [*1..19] ).to include number
     end
 
     it 'should return a number not used by any other player' do
-      generator = PlayerGenerator.new
-
       players = []
 
       (30..38).each do |num|
@@ -118,17 +97,22 @@ describe PlayerGenerator do
         players.push tp
       end
 
-      number = generator.choose_number Positions::Runningback, players
+      number = @player_generator.choose_number Positions::Runningback, players
 
       expect( number ).to eq 39
     end
   end
 
   describe '#generate_player' do
-    it 'should return a player object with the given values' do
-      generator = PlayerGenerator.new
+    before :each do
+      @mock_name_manager = double( 'NameManager' )
+      @player_generator  = PlayerGenerator.new @mock_name_manager
 
-      player = generator.generate_player 1, Positions::Quarterback, 12, 1
+      allow( @mock_name_manager ).to receive( :get_name ).and_return( { first: 'Julius', last: 'Caesar' } )
+    end
+
+    it 'should return a player object with the given values' do
+      player = @player_generator.generate_player 1, Positions::Quarterback, 12, 1
 
       expect( player ).to_not be_nil
       expect( player ).to     be_a   Player
@@ -140,21 +124,16 @@ describe PlayerGenerator do
     end
 
     it 'should return a player with a name' do
-      generator = PlayerGenerator.new
+      expect( @mock_name_manager ).to receive( :get_name ).and_return( { first: 'Marc', last: 'Antony' } )
 
-      player = generator.generate_player 1, Positions::Quarterback, 12, 1
+      player = @player_generator.generate_player 1, Positions::Quarterback, 12, 1
 
-      expect( player.first_name ).to_not be_nil
-      expect( player.first_name ).to     be_a   String
-
-      expect( player.last_name ).to_not be_nil
-      expect( player.last_name ).to     be_a   String
+      expect( player.first_name ).to eq 'Marc'
+      expect( player.last_name  ).to eq 'Antony'
     end
 
     it 'should return a player with a face' do
-      generator = PlayerGenerator.new
-
-      player = generator.generate_player 1, Positions::Quarterback, 12, 1
+      player = @player_generator.generate_player 1, Positions::Quarterback, 12, 1
 
       expect( player.face ).to_not be_nil
       expect( player.face ).to     be_a   Integer
@@ -163,9 +142,7 @@ describe PlayerGenerator do
     end
 
     it 'should return a player with maturity' do
-      generator = PlayerGenerator.new
-
-      player = generator.generate_player 1, Positions::Quarterback, 12, 1
+      player = @player_generator.generate_player 1, Positions::Quarterback, 12, 1
 
       expect( player.maturity ).to_not be_nil
       expect( player.maturity ).to     be_a   Integer
@@ -174,9 +151,7 @@ describe PlayerGenerator do
     end
 
     it 'should return a player with ratings' do
-      generator = PlayerGenerator.new
-
-      player = generator.generate_player 1, Positions::Quarterback, 12, 1
+      player = @player_generator.generate_player 1, Positions::Quarterback, 12, 1
 
       expect( player.ratings ).to_not be_nil
       expect( player.ratings ).to     be_a   PlayerRatings
@@ -190,9 +165,7 @@ describe PlayerGenerator do
     end
 
     it 'should return a player with quarterback ratings if that player is a quarterback' do
-      generator = PlayerGenerator.new
-
-      player = generator.generate_player 1, Positions::Quarterback, 12, 1
+      player = @player_generator.generate_player 1, Positions::Quarterback, 12, 1
 
       expect( player.quarterback_ratings ).to_not be_nil
       expect( player.quarterback_ratings ).to     be_a   PlayerQuarterbackRatings
@@ -206,9 +179,7 @@ describe PlayerGenerator do
     end
 
     it 'should return a player without offense, defense and kicking ratings if that player is a quarterback' do
-      generator = PlayerGenerator.new
-
-      player = generator.generate_player 1, Positions::Quarterback, 12, 1
+      player = @player_generator.generate_player 1, Positions::Quarterback, 12, 1
 
       expect( player.offense_ratings ).to be_nil
       expect( player.defense_ratings ).to be_nil
@@ -216,9 +187,7 @@ describe PlayerGenerator do
     end
 
     it 'should return a player with offense ratings if that player is a runningback' do
-      generator = PlayerGenerator.new
-
-      player = generator.generate_player 1, Positions::Runningback, 12, 1
+      player = @player_generator.generate_player 1, Positions::Runningback, 12, 1
 
       expect( player.offense_ratings ).to_not be_nil
       expect( player.offense_ratings ).to     be_a   PlayerOffenseRatings
@@ -230,9 +199,7 @@ describe PlayerGenerator do
     end
 
     it 'should return a player without quarterback, defense or kicking ratings if that player is a runningback' do
-      generator = PlayerGenerator.new
-
-      player = generator.generate_player 1, Positions::Runningback, 12, 1
+      player = @player_generator.generate_player 1, Positions::Runningback, 12, 1
 
       expect( player.quarterback_ratings ).to be_nil
       expect( player.defense_ratings     ).to be_nil
@@ -240,9 +207,7 @@ describe PlayerGenerator do
     end
 
     it 'should return a player with offense ratings if that player is a wide receiver' do
-      generator = PlayerGenerator.new
-
-      player = generator.generate_player 1, Positions::WideReceiver, 12, 1
+      player = @player_generator.generate_player 1, Positions::WideReceiver, 12, 1
 
       expect( player.offense_ratings ).to_not be_nil
       expect( player.offense_ratings ).to     be_a   PlayerOffenseRatings
@@ -254,9 +219,7 @@ describe PlayerGenerator do
     end
 
     it 'should return a player without quarterback, defense or kicking ratings if that player is a wide receiver' do
-      generator = PlayerGenerator.new
-
-      player = generator.generate_player 1, Positions::WideReceiver, 12, 1
+      player = @player_generator.generate_player 1, Positions::WideReceiver, 12, 1
 
       expect( player.quarterback_ratings ).to be_nil
       expect( player.defense_ratings     ).to be_nil
@@ -264,9 +227,7 @@ describe PlayerGenerator do
     end
 
     it 'should return a player with offense ratings if that player is a tight end' do
-      generator = PlayerGenerator.new
-
-      player = generator.generate_player 1, Positions::TightEnd, 12, 1
+      player = @player_generator.generate_player 1, Positions::TightEnd, 12, 1
 
       expect( player.offense_ratings ).to_not be_nil
       expect( player.offense_ratings ).to     be_a   PlayerOffenseRatings
@@ -278,9 +239,7 @@ describe PlayerGenerator do
     end
 
     it 'should return a player without quarterback, defense or kicking ratings if that player is a tight end' do
-      generator = PlayerGenerator.new
-
-      player = generator.generate_player 1, Positions::TightEnd, 12, 1
+      player = @player_generator.generate_player 1, Positions::TightEnd, 12, 1
 
       expect( player.quarterback_ratings ).to be_nil
       expect( player.defense_ratings     ).to be_nil
@@ -288,9 +247,7 @@ describe PlayerGenerator do
     end
 
     it 'should return a player with defense ratings if that player is a defensive lineman' do
-      generator = PlayerGenerator.new
-
-      player = generator.generate_player 1, Positions::DefensiveLine, 12, 1
+      player = @player_generator.generate_player 1, Positions::DefensiveLine, 12, 1
 
       expect( player.defense_ratings ).to_not be_nil
       expect( player.defense_ratings ).to     be_a   PlayerDefenseRatings
@@ -302,9 +259,7 @@ describe PlayerGenerator do
     end
 
     it 'should return a player without quarterback, offense or kicking ratings if that player is a defensive lineman' do
-      generator = PlayerGenerator.new
-
-      player = generator.generate_player 1, Positions::DefensiveLine, 12, 1
+      player = @player_generator.generate_player 1, Positions::DefensiveLine, 12, 1
 
       expect( player.quarterback_ratings ).to be_nil
       expect( player.offense_ratings     ).to be_nil
@@ -312,9 +267,7 @@ describe PlayerGenerator do
     end
 
     it 'should return a player with defense ratings if that player is a linebacker' do
-      generator = PlayerGenerator.new
-
-      player = generator.generate_player 1, Positions::Linebacker, 12, 1
+      player = @player_generator.generate_player 1, Positions::Linebacker, 12, 1
 
       expect( player.defense_ratings ).to_not be_nil
       expect( player.defense_ratings ).to     be_a   PlayerDefenseRatings
@@ -326,9 +279,7 @@ describe PlayerGenerator do
     end
 
     it 'should return a player without quarterback, offense or kicking ratings if that player is a linebacker' do
-      generator = PlayerGenerator.new
-
-      player = generator.generate_player 1, Positions::Linebacker, 12, 1
+      player = @player_generator.generate_player 1, Positions::Linebacker, 12, 1
 
       expect( player.quarterback_ratings ).to be_nil
       expect( player.offense_ratings     ).to be_nil
@@ -336,9 +287,7 @@ describe PlayerGenerator do
     end
 
     it 'should return a player with defense ratings if that player is a cornerback' do
-      generator = PlayerGenerator.new
-
-      player = generator.generate_player 1, Positions::Cornerback, 12, 1
+      player = @player_generator.generate_player 1, Positions::Cornerback, 12, 1
 
       expect( player.defense_ratings ).to_not be_nil
       expect( player.defense_ratings ).to     be_a   PlayerDefenseRatings
@@ -350,9 +299,7 @@ describe PlayerGenerator do
     end
 
     it 'should return a player without quarterback, offense or kicking ratings if that player is a cornerback' do
-      generator = PlayerGenerator.new
-
-      player = generator.generate_player 1, Positions::Cornerback, 12, 1
+      player = @player_generator.generate_player 1, Positions::Cornerback, 12, 1
 
       expect( player.quarterback_ratings ).to be_nil
       expect( player.offense_ratings     ).to be_nil
@@ -360,9 +307,7 @@ describe PlayerGenerator do
     end
 
     it 'should return a player with defense ratings if that player is a safety' do
-      generator = PlayerGenerator.new
-
-      player = generator.generate_player 1, Positions::Safety, 12, 1
+      player = @player_generator.generate_player 1, Positions::Safety, 12, 1
 
       expect( player.defense_ratings ).to_not be_nil
       expect( player.defense_ratings ).to     be_a   PlayerDefenseRatings
@@ -374,9 +319,7 @@ describe PlayerGenerator do
     end
 
     it 'should return a player without quarterback, offense or kicking ratings if that player is a safety' do
-      generator = PlayerGenerator.new
-
-      player = generator.generate_player 1, Positions::Safety, 12, 1
+      player = @player_generator.generate_player 1, Positions::Safety, 12, 1
 
       expect( player.quarterback_ratings ).to be_nil
       expect( player.offense_ratings     ).to be_nil
@@ -384,9 +327,7 @@ describe PlayerGenerator do
     end
 
     it 'should return a player with kicking ratings if that player is a kicker' do
-      generator = PlayerGenerator.new
-
-      player = generator.generate_player 1, Positions::Kicker, 12, 1
+      player = @player_generator.generate_player 1, Positions::Kicker, 12, 1
 
       expect( player.kicking_ratings ).to_not be_nil
       expect( player.kicking_ratings ).to     be_a   PlayerKickingRatings
@@ -398,9 +339,7 @@ describe PlayerGenerator do
     end
 
     it 'should return a player without quarterback, offense or defense ratings if that player is a kicker' do
-      generator = PlayerGenerator.new
-
-      player = generator.generate_player 1, Positions::Kicker, 12, 1
+      player = @player_generator.generate_player 1, Positions::Kicker, 12, 1
 
       expect( player.quarterback_ratings ).to be_nil
       expect( player.offense_ratings     ).to be_nil
@@ -408,9 +347,7 @@ describe PlayerGenerator do
     end
 
     it 'should return a player with kicking ratings if that player is a punter' do
-      generator = PlayerGenerator.new
-
-      player = generator.generate_player 1, Positions::Punter, 12, 1
+      player = @player_generator.generate_player 1, Positions::Punter, 12, 1
 
       expect( player.kicking_ratings ).to_not be_nil
       expect( player.kicking_ratings ).to     be_a   PlayerKickingRatings
@@ -422,9 +359,7 @@ describe PlayerGenerator do
     end
 
     it 'should return a player without quarterback, offense or defense ratings if that player is a punter' do
-      generator = PlayerGenerator.new
-
-      player = generator.generate_player 1, Positions::Punter, 12, 1
+      player = @player_generator.generate_player 1, Positions::Punter, 12, 1
 
       expect( player.quarterback_ratings ).to be_nil
       expect( player.offense_ratings     ).to be_nil
@@ -432,9 +367,7 @@ describe PlayerGenerator do
     end
 
     it 'should return a player without quarterback, offense, defense or kicking ratings if that player is an offensice linesman' do
-      generator = PlayerGenerator.new
-
-      player = generator.generate_player 1, Positions::OffensiveLine, 12, 1
+      player = @player_generator.generate_player 1, Positions::OffensiveLine, 12, 1
 
       expect( player.quarterback_ratings ).to be_nil
       expect( player.offense_ratings     ).to be_nil
