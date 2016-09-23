@@ -130,6 +130,6 @@ org[:conferences].each do |conference|
   end
 end
 
-sr = StatRankings.new org
+sr = StatRankings.new org, :absolute
 
 sr.process_categories @categories

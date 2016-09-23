@@ -39,22 +39,26 @@ class Stats
     @seasons.nil? ? false : true
   end
 
+  def get_filter_threshold
+    return @threshold
+  end
+
   def to_s
     value = get_sort_key
 
-    format = "%-2s %-20s "
+    print_format = "%-2s %-20s "
 
-    format << (@season.nil? ? "" : "S%02d ")
-    format << (@seasons.nil? ? "" : "%d ")
-    format << "%-15s "
-    format << @format
+    print_format << (@season.nil? ? "" : "S%02d ")
+    print_format << (@seasons.nil? ? "" : "%d ")
+    print_format << "%-15s "
+    print_format << @format
 
-    if ! @season.nil?
-      sprintf format, @pos, @name, @season, @school, value
-    elsif ! @seasons.nil?
-      sprintf format, @pos, @name, @seasons, @school, value
+    if has_season?
+      sprintf print_format, @pos, @name, @season, @school, value
+    elsif has_seasons?
+      sprintf print_format, @pos, @name, @seasons, @school, value
     else
-      sprintf format, @pos, @name, @school, value
+      sprintf print_format, @pos, @name, @school, value
     end
   end
 
@@ -101,6 +105,8 @@ class Passing < Stats
     @pass_score = calc_score player
 
     @seasons = player[:stats][:offense][:seasons]
+
+    @threshold = 64
   end
 
   def calc_qbr
@@ -141,6 +147,8 @@ class Rushing < Stats
     @rush_score = calc_score player
 
     @seasons = player[:stats][:offense][:seasons]
+
+    @threshold = 40
   end
 
   def calc_score( player )
@@ -175,6 +183,8 @@ class Receiving < Stats
     @recv_score = calc_score player
 
     @seasons = player[:stats][:offense][:seasons]
+
+    @threshold = 20
   end
 
   def calc_score( player )
@@ -318,6 +328,8 @@ class KickReturns < Stats
     @avg    = (@ret == 0) ? 0.0 : @yards.to_f / @ret.to_f
 
     @seasons = player[:stats][:returns][:seasons]
+
+    @threshold = 20
   end
 
 end
@@ -338,6 +350,8 @@ class PuntReturns < Stats
     @avg    = (@ret == 0) ? 0.0 : @yards.to_f / @ret.to_f
 
     @seasons = player[:stats][:returns][:seasons]
+
+    @threshold = 5
   end
 
 end
@@ -361,6 +375,8 @@ class Kicking < Stats
     @fg_pct = (@fga == 0) ? 0.0 : @fgm.to_f / @fga.to_f * 100.0
 
     @seasons = player[:stats][:kicking][:seasons]
+
+    @threshold = 5
   end
 
 end
@@ -380,6 +396,8 @@ class Punting < Stats
     @avg    = (@punts == 0) ? 0.0 : @yards.to_f / @punts.to_f
 
     @seasons = player[:stats][:kicking][:seasons]
+
+    @threshold = 5
   end
 
 end
@@ -387,9 +405,10 @@ end
 
 class StatRankings
 
-  def initialize( org )
-    @org        = org
-    @players    = Array.new
+  def initialize( org, filter_type = :stat )
+    @org         = org
+    @players     = Array.new
+    @filter_type = filter_type
   end
 
   def process_categories( categories )
@@ -456,6 +475,31 @@ class StatRankings
     return players
   end
 
+  def filter_players( players, filter )
+    if filter.nil?; return players; end
+
+    if @filter_type == :absolute
+      return players.select { |p| (p.send filter) >= p.get_filter_threshold }
+    end
+
+    if @filter_type == :career
+      return players.select { |p| (p.send filter) >= (p.get_filter_threshold * 3) }
+    end
+
+    filtered_players = players.select { |p| (p.send filter) > 0 }
+
+    sum = filtered_players.reduce(0) { |sum, p| sum + (p.send filter) }
+
+    mean = sum.to_f / filtered_players.length
+
+    variance = filtered_players.reduce(0) { |var, p| var + ((p.send filter) - mean)**2 }
+    variance /= (filtered_players.length - 1).to_f
+
+    stddev = Math.sqrt variance
+
+    return filtered_players.select { |p| (p.send filter) > (mean - stddev) }
+  end
+
   def print_top_players( stat, filter=nil, format='%d' )
     @players.each do |player|
       player.set_sort_key stat
@@ -463,21 +507,7 @@ class StatRankings
     end
 
     players = @players.sort
-
-    if ! filter.nil?
-      players.select! { |p| (p.send filter) > 0 }
-
-      sum = players.reduce(0) { |sum, p| sum + (p.send filter) }
-
-      mean = sum.to_f / players.length
-
-      variance = players.reduce(0) { |var, p| var + ((p.send filter) - mean)**2 }
-      variance /= (players.length - 1).to_f
-
-      stddev = Math.sqrt variance
-
-      players.select! { |p| (p.send filter) > (mean - stddev) }
-    end
+    players = filter_players players, filter
 
     players.select! { |p| (p.send stat) > 0 }
 

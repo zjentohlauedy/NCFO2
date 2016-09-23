@@ -105,10 +105,15 @@ org[:conferences].each do |conference|
       player[:position] = Positions::string_value player[:position]
     end
 
-    team[:players].reject! { |player| %w{TE WR}.include? player[:position] and player[:stats][:offense].nil? }
+    team[:players].reject! { |player|
+      %w{QB}        .include? player[:position] and player[:stats][:offense].nil? or
+      %w{RB TE WR}  .include? player[:position] and player[:stats][:offense].nil? and player[:stats][:returns].nil? or
+      %w{DL LB CB S}.include? player[:position] and player[:stats][:defense].nil? or
+      %w{K P}       .include? player[:position] and player[:stats][:kicking].nil?
+    }
   end
 end
 
-sr = StatRankings.new org
+sr = StatRankings.new org, :career
 
 sr.process_categories @categories
