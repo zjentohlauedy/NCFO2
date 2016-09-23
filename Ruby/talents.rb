@@ -10,19 +10,19 @@ require 'top_players'
 
 @categories = {
   'quarterbacks'  => {  'class' => Passing,         'types' => ['QB'],
-    'stats'       => [{ 'label' => "Passers",       'stat'  => :pass_score }]},
+    'stats'       => [{ 'label' => "Passers",       'stat'  => :pass_score, 'filter' => nil, 'format' => '%d' }]},
 
   'runningbacks'  => {  'class' => Rushing,         'types' => ['RB'],
-    'stats'       => [{ 'label' => "Rushers",       'stat'  => :rush_score }]},
+    'stats'       => [{ 'label' => "Rushers",       'stat'  => :rush_score, 'filter' => nil, 'format' => '%d' }]},
 
   'receivers'     => {  'class' => Receiving,       'types' => ['WR','TE'],
-    'stats'       => [{ 'label' => "Receivers",     'stat'  => :recv_score }]},
+    'stats'       => [{ 'label' => "Receivers",     'stat'  => :recv_score, 'filter' => nil, 'format' => '%d' }]},
 
   'pass rushers'  => {  'class' => Sacks,           'types' => ['DL','LB'],
-    'stats'       => [{ 'label' => "Pass Rushers",  'stat'  => :pr_score   }]},
+    'stats'       => [{ 'label' => "Pass Rushers",  'stat'  => :pr_score,   'filter' => nil, 'format' => '%d' }]},
 
   'coverage'      => {  'class' => Interceptions,   'types' => ['LB','CB', 'S'],
-    'stats'       => [{ 'label' => "Pass Coverage", 'stat'  => :cvg_score  }]}
+    'stats'       => [{ 'label' => "Pass Coverage", 'stat'  => :cvg_score,  'filter' => nil, 'format' => '%d' }]}
 }
 
 
