@@ -91,7 +91,7 @@ class TieMessage
 end
 
 class Passing < Stats
-  attr_reader :att, :yards, :td, :pct, :avg, :qbr, :score, :pass_score
+  attr_reader :att, :yards, :td, :pct, :avg, :qbr, :score, :pass_score, :season, :name
 
   def initialize( school, player )
     super()
@@ -137,7 +137,7 @@ class Passing < Stats
 end
 
 class Rushing < Stats
-  attr_reader :att, :yards, :td, :avg, :score, :rush_score
+  attr_reader :att, :yards, :td, :avg, :score, :rush_score, :season, :name
 
   def initialize( school, player )
     super()
@@ -173,7 +173,7 @@ class Rushing < Stats
 end
 
 class Receiving < Stats
-  attr_reader :yards, :td, :rec, :avg, :score, :recv_score
+  attr_reader :yards, :td, :rec, :avg, :score, :recv_score, :season, :name
 
   def initialize( school, player )
     super()
@@ -208,7 +208,7 @@ class Receiving < Stats
 end
 
 class AllPurpose < Stats
-  attr_reader :yards, :td
+  attr_reader :yards, :td, :season, :name
 
   def initialize( school, player )
     super()
@@ -232,7 +232,7 @@ class AllPurpose < Stats
 end
 
 class Overall < Stats
-  attr_reader :yards, :td
+  attr_reader :yards, :td, :season, :name
 
   def initialize( school, player )
     super()
@@ -256,7 +256,7 @@ class Overall < Stats
 end
 
 class Sacks < Stats
-  attr_reader :sacks, :score, :pr_score
+  attr_reader :sacks, :score, :pr_score, :season, :name
 
   def initialize( school, player )
     super()
@@ -287,7 +287,7 @@ class Sacks < Stats
 end
 
 class Interceptions < Stats
-  attr_reader :int, :yards, :td, :score, :cvg_score
+  attr_reader :int, :yards, :td, :score, :cvg_score, :season, :name
 
   def initialize( school, player )
     super()
@@ -321,7 +321,7 @@ class Interceptions < Stats
 end
 
 class KickReturns < Stats
-  attr_reader :ret, :yards, :td, :avg
+  attr_reader :ret, :yards, :td, :avg, :season, :name
 
   def initialize( school, player )
     super()
@@ -343,7 +343,7 @@ class KickReturns < Stats
 end
 
 class PuntReturns < Stats
-  attr_reader :ret, :yards, :td, :avg
+  attr_reader :ret, :yards, :td, :avg, :season, :name
 
   def initialize( school, player )
     super()
@@ -365,7 +365,7 @@ class PuntReturns < Stats
 end
 
 class Kicking < Stats
-  attr_reader :fga, :points, :fg_pct
+  attr_reader :fga, :points, :fg_pct, :season, :name
 
   def initialize( school, player )
     super()
@@ -390,7 +390,7 @@ class Kicking < Stats
 end
 
 class Punting < Stats
-  attr_reader :punts, :yards, :avg
+  attr_reader :punts, :yards, :avg, :season, :name
 
   def initialize( school, player )
     super()
