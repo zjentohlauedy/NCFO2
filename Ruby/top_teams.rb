@@ -87,7 +87,7 @@ class TieMessage
   end
 
   def to_s
-    sprintf "   %-32s #{@padding} #{@format}", "#{@count} Players Tied At", @value
+    sprintf "   %-32s #{@padding} #{@format}", "#{@count} Teams Tied At", @value
   end
 end
 
