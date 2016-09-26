@@ -8,6 +8,14 @@ class Stats
   end
 
   def <=>( other )
+    if get_sort_key == other.get_sort_key
+      if @season == other.season
+        return @name <=> other.name
+      end
+
+      return @season <=> other.season
+    end
+
     if @direction == :ascending
       get_sort_key.to_f <=> other.get_sort_key.to_f
     else
@@ -98,7 +106,7 @@ class Passing < Stats
     @td     = player[:stats][:offense][:pass_touchdowns]
     @int    = player[:stats][:offense][:interceptions]
     @pct    = (@att == 0) ? 0.0 : @comp.to_f / @att.to_f * 100.0
-    @avg    = (@att == 0) ? 0.0 : @yards.to_f / @att.to_f
+    @avg    = (@comp == 0) ? 0.0 : @yards.to_f / @comp.to_f
     @qbr    = calc_qbr
 
     @score  = player[:score]
