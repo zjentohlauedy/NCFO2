@@ -117,6 +117,7 @@ CREATE TABLE Team_Defense_Stats_T
    Interceptions     INTEGER,
    Return_Yards      INTEGER,
    Return_Touchdowns INTEGER,
+   Yards_Allowed     INTEGER,
 --
    UNIQUE ( Team_Id, Season, Bowl_Game )
 );
