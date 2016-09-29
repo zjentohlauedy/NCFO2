@@ -94,7 +94,7 @@ end
 class Team < Stats
   attr_reader :wins, :losses, :ties, :points_scored, :points_allowed, :wl_ratio, :total_offense, :total_off_td
   attr_reader :pass_attempts, :completions, :pass_int, :pass_yards, :pass_touchdowns, :rush_attempts, :rush_yards, :rush_touchdowns
-  attr_reader :sacks, :interceptions, :int_return_yards, :int_return_touchdowns
+  attr_reader :sacks, :interceptions, :int_return_yards, :int_return_touchdowns, :yards_allowed, :pts_diff, :yds_diff
   attr_reader :extra_point_attempts, :extra_points_made, :field_goal_attempts, :field_goals_made, :punts, :punt_yards
   attr_reader :kick_returns, :kick_return_yards, :kick_return_touchdowns, :punt_returns, :punt_return_yards, :punt_return_touchdowns
   attr_reader :comp_pct, :yds_per_comp, :pass_rating, :yds_per_carry, :int_ret_avg, :kick_ret_avg, :punt_ret_avg
@@ -128,6 +128,7 @@ class Team < Stats
     @interceptions          = team[:defense_stats][:interceptions]
     @int_return_yards       = team[:defense_stats][:return_yards]
     @int_return_touchdowns  = team[:defense_stats][:return_touchdowns]
+    @yards_allowed          = team[:defense_stats][:yards_allowed] || 0
 
     @extra_point_attempts   = team[:kicking_stats][:extra_point_attempts]
     @extra_points_made      = team[:kicking_stats][:extra_points_made]
@@ -145,6 +146,7 @@ class Team < Stats
 
 
     @wl_ratio               = ((@wins + @losses) == 0) ? 0.0 : @wins.to_f / (@wins + @losses).to_f * 100.0
+    @pts_diff               = @points_scored - @points_allowed
     @comp_pct               = (@pass_attempts == 0) ? 0.0 : @completions.to_f / @pass_attempts.to_f * 100.0
     @yds_per_comp           = (@completions == 0) ? 0.0 : @pass_yards.to_f / @completions.to_f
     @pass_rating            = calc_qbr
@@ -163,6 +165,7 @@ class Team < Stats
     @total_ret_td           = @kick_return_touchdowns + @punt_return_touchdowns + @int_return_touchdowns
     @total_yards            = @total_offense + @total_ret_yards
     @total_td               = @total_off_td + @total_ret_td
+    @yds_diff               = (@yards_allowed == 0) ? 0 : @total_offense - @yards_allowed
   end
 
   def calc_qbr
@@ -281,7 +284,9 @@ end
 @categories = {
   'records'       => {  'class' => Team,                   'types' => [],
     'stats'       => [{ 'label' => "Wins",                 'stat'  => :wins,                   'direction' => :descending, 'format' => '%2d'   },
-                      { 'label' => "Win/Loss Ratio",       'stat'  => :wl_ratio,               'direction' => :descending, 'format' => '%6.2f' }]},
+                      { 'label' => "Win/Loss Ratio",       'stat'  => :wl_ratio,               'direction' => :descending, 'format' => '%6.2f' },
+                      { 'label' => "Scoring Differential", 'stat'  => :pts_diff,               'direction' => :descending, 'format' => '%3d'   },
+                      { 'label' => "Yards Differential",   'stat'  => :yds_diff,               'direction' => :descending, 'format' => '%4d'   }]},
 
   'offense'       => {  'class' => Team,                   'types' => [],
     'stats'       => [{ 'label' => "Passing Yards",        'stat'  => :pass_yards,             'direction' => :descending, 'format' => '%4d'   },
@@ -301,6 +306,7 @@ end
                       { 'label' => "Interceptions",        'stat'  => :interceptions,          'direction' => :descending, 'format' => '%2d'   },
                       { 'label' => "Int. Return Yards",    'stat'  => :int_return_yards,       'direction' => :descending, 'format' => '%3d'   },
                       { 'label' => "Int. Return TD",       'stat'  => :int_return_touchdowns,  'direction' => :descending, 'format' => '%2d'   },
+                      { 'label' => "Total Yards Allowed",  'stat'  => :yards_allowed,          'direction' => :ascending,  'format' => '%4d'   },
                       { 'label' => "Total Points Allowed", 'stat'  => :points_allowed,         'direction' => :ascending,  'format' => '%3d'   }]},
 
   'returns'       => {  'class' => Team,                   'types' => [],
