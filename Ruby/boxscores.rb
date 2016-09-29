@@ -294,7 +294,7 @@ def print_boxscore( stream, roadteam, hometeam )
     stream.puts
     stream.puts
 
-    stream.puts "                 #{roadteam[:abbreviation]}            #{hometeam[:abbreviation]}"
+    stream.puts "                 #{roadteam[:abbreviation]}           #{hometeam[:abbreviation]}"
 
     stream.printf "Points Scored:   %-2d             %-2d\n",   roadteam[:stats][:points_scored],      hometeam[:stats][:points_scored]
     stream.printf "Plays:           %-2d             %-2d\n",   get_total_plays( roadteam, hometeam ), get_total_plays( hometeam, roadteam )
