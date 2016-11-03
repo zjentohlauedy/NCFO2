@@ -436,6 +436,8 @@ class StatRankings
 
     @org[:conferences].each do |conference|
       conference[:teams].each do |team|
+        next if team[:players].nil?
+
         team[:players].each do |player|
           if types.include? player[:position]
             @players.push( object.new team[:location], player )
