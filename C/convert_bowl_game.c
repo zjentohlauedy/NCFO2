@@ -97,6 +97,8 @@ static void updateDefenseStats( team_s *team, player_s *player, const nst_defens
      player->stats.defense->return_yards      = word2int( defense->return_yards          );
      player->stats.defense->return_touchdowns =           defense->return_touchdowns [0];
 
+     if ( player->stats.defense->return_yards > 65500 ) player->stats.defense->return_yards = 0;
+
      team->defense_stats->sacks             += player->stats.defense->sacks;
      team->defense_stats->interceptions     += player->stats.defense->interceptions;
      team->defense_stats->return_yards      += player->stats.defense->return_yards;

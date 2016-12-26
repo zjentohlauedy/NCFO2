@@ -622,6 +622,68 @@ static char *convertBowlGame_ShouldReturnTeamsWithPlayerStatsFromGame_GivenTsbRo
      return NULL;
 }
 
+static char *check_int_returns( player_s *player )
+{
+     assertNotNull( player->stats.defense );
+
+     assertEquals( 0, player->stats.defense->return_yards );
+
+     return NULL;
+}
+
+static char *convertBowlGame_ShouldRoundNegativeIntReturnYardsToZero_GivenTsbRomAndSaveState()
+{
+     tsbrom_s          rom        = { 0 };
+     nst_save_state_s  save_state = { 0 };
+     unsigned char     ram[2049]  = { 0 };
+
+     setupRom( &rom );
+     setupSaveState( &save_state );
+
+     // Setup negative int return yards
+     for ( int i = 0; i < 11; ++i )
+     {
+          int2word( 0xffff, save_state.road_team[0].defense[i].return_yards );
+          int2word( 0xffff, save_state.home_team[0].defense[i].return_yards );
+     }
+
+     bowl_game_s *bowl_game = convertBowlGame( &rom, &save_state, 0, bg_None );
+
+     assertNotNull( bowl_game                     );
+     assertNotNull( bowl_game->road_team          );
+     assertNotNull( bowl_game->home_team          );
+     assertNotNull( bowl_game->road_team->players );
+     assertNotNull( bowl_game->home_team->players );
+
+     team_player_s *road_players = bowl_game->road_team->players;
+
+     for ( int i = 0; road_players[i].player != NULL; ++i )
+     {
+          player_s *player = road_players[i].player;
+          char     *retval;
+
+          if      ( i <= 16 ) {}// don't care
+          else if ( i <= 27 ) { if ( (retval = check_int_returns( player )) != NULL ) return retval; }
+          else                {}// don't care
+     }
+
+     team_player_s *home_players = bowl_game->home_team->players;
+
+     for ( int i = 0; home_players[i].player != NULL; ++i )
+     {
+          player_s *player = home_players[i].player;
+          char     *retval;
+
+          if      ( i <= 16 ) {}// don't care
+          else if ( i <= 27 ) { if ( (retval = check_int_returns( player )) != NULL ) return retval; }
+          else                {}// don't care
+     }
+
+     freeBowlGame( bowl_game );
+
+     return NULL;
+}
+
 static void check_convert_bowl_game_error()
 {
      printf( "convert bowl game error: %s\n", getConvertBowlGameError() );
@@ -636,6 +698,7 @@ static void run_all_tests()
      run_test( convertBowlGame_ShouldReturnTeamsWithDefenseStatsFromGame_GivenTsbRomAndSaveState, check_convert_bowl_game_error );
      run_test( convertBowlGame_ShouldReturnTeamsWithKickingStatsFromGame_GivenTsbRomAndSaveState, check_convert_bowl_game_error );
      run_test( convertBowlGame_ShouldReturnTeamsWithPlayerStatsFromGame_GivenTsbRomAndSaveState,  check_convert_bowl_game_error );
+     run_test( convertBowlGame_ShouldRoundNegativeIntReturnYardsToZero_GivenTsbRomAndSaveState,   check_convert_bowl_game_error );
 }
 
 int main( int argc, char *argv[] )
