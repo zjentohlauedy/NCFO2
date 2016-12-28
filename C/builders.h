@@ -42,6 +42,9 @@ void                  buildIntoTeamDefenseStats( team_defense_stats_s *team, con
 team_kicking_stats_s *buildTeamKickingStats(                                 const int team_id, const int season, const bowl_game_e bowl_game );
 void                  buildIntoTeamKickingStats( team_kicking_stats_s *team, const int team_id, const int season, const bowl_game_e bowl_game );
 
+team_game_stats_s *buildTeamGameStats(                                         const int team_id, const int season, const int week, const int game );
+void               buildIntoTeamGameStats( team_game_stats_s *team_game_stats, const int team_id, const int season, const int week, const int game );
+
 team_accolade_s *buildTeamAccolade(                            const int team_id, const int season, const team_accolade_e accolade );
 void             buildIntoTeamAccolade( team_accolade_s *team, const int team_id, const int season, const team_accolade_e accolade );
 

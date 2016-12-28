@@ -24,11 +24,12 @@ C/test_conference_teams_t
 C/test_conference_stats_t
 C/test_conference_accolades_t
 C/test_team_defense_stats_t
+C/test_team_game_stats_t
+C/test_team_kicking_stats_t
 C/test_team_offense_stats_t
 C/test_team_players_t
 C/test_team_stats_t
 C/test_teams_t
-C/test_team_kicking_stats_t
 C/test_team_accolades_t
 C/test_players_t
 C/test_player_ratings_t

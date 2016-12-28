@@ -56,6 +56,26 @@ typedef struct
 {
      int          team_id;
      int          season;
+     int          week;
+     int          game;
+     int          wins;
+     int          losses;
+     int          ties;
+     int          home_wins;
+     int          home_losses;
+     int          home_ties;
+     int          road_wins;
+     int          road_losses;
+     int          road_ties;
+     int          points_scored;
+     int          points_allowed;
+
+} team_game_stats_s;
+
+typedef struct
+{
+     int          team_id;
+     int          season;
      bowl_game_e  bowl_game;
      int          extra_point_attempts;
      int          extra_points_made;
@@ -184,6 +204,12 @@ int team_kicking_stats_t_read(         sqlite3 *db,                          tea
 int team_kicking_stats_t_read_by_team( sqlite3 *db, const int team_id,       data_list_s          *team_kicking_stats );
 int team_kicking_stats_t_update(       sqlite3 *db,                    const team_kicking_stats_s *team_kicking_stats );
 int team_kicking_stats_t_delete(       sqlite3 *db,                    const team_kicking_stats_s *team_kicking_stats );
+
+int team_game_stats_t_create(       sqlite3 *db,                    const team_game_stats_s *team_game_stats );
+int team_game_stats_t_read(         sqlite3 *db,                          team_game_stats_s *team_game_stats );
+int team_game_stats_t_read_by_team( sqlite3 *db, const int team_id,       data_list_s       *team_game_stats );
+int team_game_stats_t_update(       sqlite3 *db,                    const team_game_stats_s *team_game_stats );
+int team_game_stats_t_delete(       sqlite3 *db,                    const team_game_stats_s *team_game_stats );
 
 int team_accolades_t_create(       sqlite3 *db,                    const team_accolade_s *team_accolade  );
 int team_accolades_t_read_by_team( sqlite3 *db, const int team_id,       data_list_s     *team_accolades );

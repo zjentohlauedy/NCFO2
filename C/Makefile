@@ -39,6 +39,7 @@ tests = \
    test_team_offense_stats_t \
    test_team_defense_stats_t \
    test_team_kicking_stats_t \
+   test_team_game_stats_t \
    test_team_accolades_t \
    test_players_t \
    test_player_ratings_t \
@@ -166,6 +167,9 @@ test_team_defense_stats_t: test_team_defense_stats_t.o team_defense_stats_t.o sq
 test_team_kicking_stats_t: test_team_kicking_stats_t.o team_kicking_stats_t.o sql_query.o data_list.o libncfobuilders.a libncfocompares.a
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfobuilders -lncfocompares
 
+test_team_game_stats_t: test_team_game_stats_t.o team_game_stats_t.o sql_query.o data_list.o libncfobuilders.a libncfocompares.a
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfobuilders -lncfocompares
+
 test_team_accolades_t: test_team_accolades_t.o team_accolades_t.o sql_query.o data_list.o libncfobuilders.a libncfocompares.a
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfobuilders -lncfocompares
 
@@ -261,6 +265,7 @@ NCFODATA_OBJECTS = \
  players_t.o \
  team_accolades_t.o \
  team_defense_stats_t.o \
+ team_game_stats_t.o \
  team_kicking_stats_t.o \
  team_offense_stats_t.o \
  team_players_t.o \
@@ -287,6 +292,7 @@ NCFOBUILDERS_OBJECTS = \
  build_team_offense_stats.o \
  build_team_defense_stats.o \
  build_team_kicking_stats.o \
+ build_team_game_stats.o \
  build_team_accolade.o \
  build_player.o \
  build_player_ratings.o \
@@ -321,6 +327,7 @@ NCFOCOMPARES_OBJECTS = \
  compare_team_offense_stats.o \
  compare_team_defense_stats.o \
  compare_team_kicking_stats.o \
+ compare_team_game_stats.o \
  compare_team_accolades.o \
  compare_players.o \
  compare_player_ratings.o \
