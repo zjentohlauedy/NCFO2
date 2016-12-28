@@ -58,6 +58,19 @@ typedef struct
      int          season;
      int          week;
      int          game;
+     int          sacks;
+     int          interceptions;
+     int          return_yards;
+     int          return_touchdowns;
+
+} team_game_defense_stats_s;
+
+typedef struct
+{
+     int          team_id;
+     int          season;
+     int          week;
+     int          game;
      int          pass_attempts;
      int          completions;
      int          interceptions;
@@ -233,6 +246,12 @@ int team_game_offense_stats_t_read(         sqlite3 *db,                        
 int team_game_offense_stats_t_read_by_team( sqlite3 *db, const int team_id,       data_list_s               *team_game_offense_stats );
 int team_game_offense_stats_t_update(       sqlite3 *db,                    const team_game_offense_stats_s *team_game_offense_stats );
 int team_game_offense_stats_t_delete(       sqlite3 *db,                    const team_game_offense_stats_s *team_game_offense_stats );
+
+int team_game_defense_stats_t_create(       sqlite3 *db,                    const team_game_defense_stats_s *team_game_defense_stats );
+int team_game_defense_stats_t_read(         sqlite3 *db,                          team_game_defense_stats_s *team_game_defense_stats );
+int team_game_defense_stats_t_read_by_team( sqlite3 *db, const int team_id,       data_list_s               *team_game_defense_stats );
+int team_game_defense_stats_t_update(       sqlite3 *db,                    const team_game_defense_stats_s *team_game_defense_stats );
+int team_game_defense_stats_t_delete(       sqlite3 *db,                    const team_game_defense_stats_s *team_game_defense_stats );
 
 int team_accolades_t_create(       sqlite3 *db,                    const team_accolade_s *team_accolade  );
 int team_accolades_t_read_by_team( sqlite3 *db, const int team_id,       data_list_s     *team_accolades );

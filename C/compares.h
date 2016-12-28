@@ -48,6 +48,9 @@ char *_compareTeamGameStats( team_game_stats_s *expected, team_game_stats_s *act
 #define compareTeamGameOffenseStats( A, B ) do { char *ret; if ( (ret = _compareTeamGameOffenseStats( (A), (B) )) != NULL ) return ret; } while ( 0 )
 char *_compareTeamGameOffenseStats( team_game_offense_stats_s *expected, team_game_offense_stats_s *actual );
 
+#define compareTeamGameDefenseStats( A, B ) do { char *ret; if ( (ret = _compareTeamGameDefenseStats( (A), (B) )) != NULL ) return ret; } while ( 0 )
+char *_compareTeamGameDefenseStats( team_game_defense_stats_s *expected, team_game_defense_stats_s *actual );
+
 #define compareTeamAccolades( A, B ) do { char *ret; if ( (ret = _compareTeamAccolades( (A), (B) )) != NULL ) return ret; } while ( 0 )
 char  *_compareTeamAccolades( team_accolade_s *expected, team_accolade_s *actual );
 
