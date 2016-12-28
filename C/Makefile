@@ -51,6 +51,7 @@ tests = \
    test_player_kicking_stats_t \
    test_player_returns_stats_t \
    test_player_game_offense_stats_t \
+   test_player_game_defense_stats_t \
    test_player_accolades_t\
    test_player_service \
    test_team_service \
@@ -196,7 +197,10 @@ test_player_kicking_stats_t: test_player_kicking_stats_t.o player_kicking_stats_
 test_player_returns_stats_t: test_player_returns_stats_t.o player_returns_stats_t.o sql_query.o data_list.o libncfobuilders.a libncfocompares.a
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfobuilders -lncfocompares
 
-test_player_game_offense_stats_t: test_player_offense_stats_t.o player_offense_stats_t.o sql_query.o data_list.o libncfobuilders.a libncfocompares.a
+test_player_game_offense_stats_t: test_player_game_offense_stats_t.o player_game_offense_stats_t.o sql_query.o data_list.o libncfobuilders.a libncfocompares.a
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfobuilders -lncfocompares
+
+test_player_game_defense_stats_t: test_player_game_defense_stats_t.o player_game_defense_stats_t.o sql_query.o data_list.o libncfobuilders.a libncfocompares.a
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfobuilders -lncfocompares
 
 test_player_accolades_t: test_player_accolades_t.o player_accolades_t.o sql_query.o data_list.o libncfobuilders.a libncfocompares.a
@@ -233,6 +237,7 @@ NCFODATA_OBJECTS = \
  conferences_t.o \
  conference_teams_t.o \
  player_accolades_t.o \
+ player_game_defense_stats_t.o \
  player_game_offense_stats_t.o \
  player_defense_ratings_t.o \
  player_defense_stats_t.o \
@@ -274,6 +279,7 @@ NCFOBUILDERS_OBJECTS = \
  build_team_kicking_stats.o \
  build_team_accolade.o \
  build_player.o \
+ build_player_game_defense_stats.o \
  build_player_game_offense_stats.o \
  build_player_ratings.o \
  build_player_quarterback_ratings.o \
@@ -305,6 +311,7 @@ NCFOCOMPARES_OBJECTS = \
  compare_team_kicking_stats.o \
  compare_team_accolades.o \
  compare_players.o \
+ compare_player_game_defense_stats.o \
  compare_player_game_offense_stats.o \
  compare_player_ratings.o \
  compare_player_quarterback_ratings.o \

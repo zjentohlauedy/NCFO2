@@ -117,7 +117,7 @@ static char *player_game_offense_stats_t_create__ShouldGiveAnErrorIfRecordForSam
      return NULL;
 }
 
-static char *player_game_offense_stats_t_read__ShouldRetrieveMatchingRecord_GivenThePlayerIdSeasonAndBowl()
+static char *player_game_offense_stats_t_read__ShouldRetrieveMatchingRecord_GivenThePlayerIdSeasonWeekAndGame()
 {
      player_game_offense_stats_s *expected = buildPlayerGameOffenseStats( 123, 5, 7, 12 );
 
@@ -127,7 +127,8 @@ static char *player_game_offense_stats_t_read__ShouldRetrieveMatchingRecord_Give
 
      actual.player_id = expected->player_id;
      actual.season    = expected->season;
-     actual.bowl_game = expected->bowl_game;
+     actual.week      = expected->week;
+     actual.game      = expected->game;
 
      assertEquals( SQLITE_OK, player_game_offense_stats_t_read( db, &actual ) );
 
@@ -218,12 +219,12 @@ static void check_sqlite_error()
 
 static void run_all_tests()
 {
-     run_test( player_game_offense_stats_t_create__ShouldInsertRecordsInThePlayerGameOffenseStatsTTable,      check_sqlite_error );
-     run_test( player_game_offense_stats_t_create__ShouldGiveAnErrorIfRecordForSamePlayerSeasonWeekAndGame,   check_sqlite_error );
-     run_test( player_game_offense_stats_t_read__ShouldRetrieveMatchingRecord_GivenThePlayerIdSeasonAndBowl,  check_sqlite_error );
-     run_test( player_game_offense_stats_t_read_by_player__ShouldRetrieveAllMatchingRecords_GivenThePlayerId, check_sqlite_error );
-     run_test( player_game_offense_stats_t_update__ShouldModifyMatchingRecord_GivenThePlayerIdSeasonAndBowl,  check_sqlite_error );
-     run_test( player_game_offense_stats_t_delete__ShouldDeleteMatchingRecord_GivenThePlayerIdSeasonAndBowl,  check_sqlite_error );
+     run_test( player_game_offense_stats_t_create__ShouldInsertRecordsInThePlayerGameOffenseStatsTTable,          check_sqlite_error );
+     run_test( player_game_offense_stats_t_create__ShouldGiveAnErrorIfRecordForSamePlayerSeasonWeekAndGameExists, check_sqlite_error );
+     run_test( player_game_offense_stats_t_read__ShouldRetrieveMatchingRecord_GivenThePlayerIdSeasonWeekAndGame,  check_sqlite_error );
+     run_test( player_game_offense_stats_t_read_by_player__ShouldRetrieveAllMatchingRecords_GivenThePlayerId,     check_sqlite_error );
+     run_test( player_game_offense_stats_t_update__ShouldModifyMatchingRecord_GivenThePlayerIdSeasonWeekAndGame,  check_sqlite_error );
+     run_test( player_game_offense_stats_t_delete__ShouldDeleteMatchingRecord_GivenThePlayerIdSeasonWeekAndGame,  check_sqlite_error );
 }
 
 

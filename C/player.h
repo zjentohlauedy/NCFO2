@@ -122,6 +122,19 @@ typedef struct
      int          season;
      int          week;
      int          game;
+     int          sacks;
+     int          interceptions;
+     int          return_yards;
+     int          return_touchdowns;
+
+} player_game_defense_stats_s;
+
+typedef struct
+{
+     int          player_id;
+     int          season;
+     int          week;
+     int          game;
      int          pass_attempts;
      int          completions;
      int          interceptions;
@@ -353,6 +366,18 @@ int player_returns_stats_t_read(           sqlite3 *db,                         
 int player_returns_stats_t_read_by_player( sqlite3 *db, const int player_id,       data_list_s            *player_returns_stats );
 int player_returns_stats_t_update(         sqlite3 *db,                      const player_returns_stats_s *player_returns_stats );
 int player_returns_stats_t_delete(         sqlite3 *db,                      const player_returns_stats_s *player_returns_stats );
+
+int player_game_offense_stats_t_create(         sqlite3 *db,                      const player_game_offense_stats_s *player_game_offense_stats );
+int player_game_offense_stats_t_read(           sqlite3 *db,                            player_game_offense_stats_s *player_game_offense_stats );
+int player_game_offense_stats_t_read_by_player( sqlite3 *db, const int player_id,       data_list_s                 *player_game_offense_stats );
+int player_game_offense_stats_t_update(         sqlite3 *db,                      const player_game_offense_stats_s *player_game_offense_stats );
+int player_game_offense_stats_t_delete(         sqlite3 *db,                      const player_game_offense_stats_s *player_game_offense_stats );
+
+int player_game_defense_stats_t_create(         sqlite3 *db,                      const player_game_defense_stats_s *player_game_defense_stats );
+int player_game_defense_stats_t_read(           sqlite3 *db,                            player_game_defense_stats_s *player_game_defense_stats );
+int player_game_defense_stats_t_read_by_player( sqlite3 *db, const int player_id,       data_list_s                 *player_game_defense_stats );
+int player_game_defense_stats_t_update(         sqlite3 *db,                      const player_game_defense_stats_s *player_game_defense_stats );
+int player_game_defense_stats_t_delete(         sqlite3 *db,                      const player_game_defense_stats_s *player_game_defense_stats );
 
 int player_accolades_t_create(         sqlite3 *db,                      const player_accolade_s *player_accolade  );
 int player_accolades_t_read_by_player( sqlite3 *db, const int player_id,       data_list_s       *player_accolades );

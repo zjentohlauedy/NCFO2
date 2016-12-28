@@ -25,13 +25,13 @@ void buildIntoPlayerGameOffenseStats( player_game_offense_stats_s *player_game_o
 
      player_game_offense_stats->pass_attempts        = rand() %  13;
      player_game_offense_stats->completions          = rand() %  22;
-     player_game_offense_stats->interceptions        = rand() %   4;
+     player_game_offense_stats->interceptions        = rand() %   5;
      player_game_offense_stats->pass_yards           = rand() % 400;
      player_game_offense_stats->pass_touchdowns      = rand() %   5;
      player_game_offense_stats->rush_attempts        = rand() %  20;
      player_game_offense_stats->rush_yards           = rand() % 150;
-     player_game_offense_stats->rush_touchdowns      = rand() %   2;
+     player_game_offense_stats->rush_touchdowns      = rand() %   5;
      player_game_offense_stats->receptions           = rand() %  10;
      player_game_offense_stats->receiving_yards      = rand() % 100;
-     player_game_offense_stats->receiving_touchdowns = rand() %   2;
+     player_game_offense_stats->receiving_touchdowns = rand() %   5;
 }
