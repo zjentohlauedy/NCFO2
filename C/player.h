@@ -122,6 +122,21 @@ typedef struct
      int          season;
      int          week;
      int          game;
+     int          kick_returns;
+     int          kick_return_yards;
+     int          kick_return_touchdowns;
+     int          punt_returns;
+     int          punt_return_yards;
+     int          punt_return_touchdowns;
+
+} player_game_returns_stats_s;
+
+typedef struct
+{
+     int          player_id;
+     int          season;
+     int          week;
+     int          game;
      int          sacks;
      int          interceptions;
      int          return_yards;
@@ -378,6 +393,12 @@ int player_game_defense_stats_t_read(           sqlite3 *db,                    
 int player_game_defense_stats_t_read_by_player( sqlite3 *db, const int player_id,       data_list_s                 *player_game_defense_stats );
 int player_game_defense_stats_t_update(         sqlite3 *db,                      const player_game_defense_stats_s *player_game_defense_stats );
 int player_game_defense_stats_t_delete(         sqlite3 *db,                      const player_game_defense_stats_s *player_game_defense_stats );
+
+int player_game_returns_stats_t_create(         sqlite3 *db,                      const player_game_returns_stats_s *player_game_returns_stats );
+int player_game_returns_stats_t_read(           sqlite3 *db,                            player_game_returns_stats_s *player_game_returns_stats );
+int player_game_returns_stats_t_read_by_player( sqlite3 *db, const int player_id,       data_list_s                 *player_game_returns_stats );
+int player_game_returns_stats_t_update(         sqlite3 *db,                      const player_game_returns_stats_s *player_game_returns_stats );
+int player_game_returns_stats_t_delete(         sqlite3 *db,                      const player_game_returns_stats_s *player_game_returns_stats );
 
 int player_accolades_t_create(         sqlite3 *db,                      const player_accolade_s *player_accolade  );
 int player_accolades_t_read_by_player( sqlite3 *db, const int player_id,       data_list_s       *player_accolades );

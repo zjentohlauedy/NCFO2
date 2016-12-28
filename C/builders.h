@@ -81,6 +81,9 @@ void                         buildIntoPlayerGameOffenseStats( player_game_offens
 player_game_defense_stats_s *buildPlayerGameDefenseStats(                                                             const int player_id, const int season, const int week, const int game );
 void                         buildIntoPlayerGameDefenseStats( player_game_defense_stats_s *player_game_defense_stats, const int player_id, const int season, const int week, const int game );
 
+player_game_returns_stats_s *buildPlayerGameReturnsStats(                                                             const int player_id, const int season, const int week, const int game );
+void                         buildIntoPlayerGameReturnsStats( player_game_returns_stats_s *player_game_returns_stats, const int player_id, const int season, const int week, const int game );
+
 player_accolade_s *buildPlayerAccolade(                                const int player_id, const int season, const player_accolade_e accolade );
 void               buildIntoPlayerAccolade( player_accolade_s *player, const int player_id, const int season, const player_accolade_e accolade );
 
