@@ -143,6 +143,82 @@ CREATE TABLE Team_Kicking_Stats_T
    UNIQUE ( Team_Id, Season, Bowl_Game )
 );
 
+CREATE TABLE Team_Game_Stats_T
+(
+   Team_Id        INTEGER,
+   Season         INTEGER,
+   Week           INTEGER,
+   Game           INTEGER,
+   Wins           INTEGER,
+   Losses         INTEGER,
+   Ties           INTEGER,
+   Home_Wins      INTEGER,
+   Home_Losses    INTEGER,
+   Home_Ties      INTEGER,
+   Road_Wins      INTEGER,
+   Road_Losses    INTEGER,
+   Road_Ties      INTEGER,
+   Points_Scored  INTEGER,
+   Points_Allowed INTEGER,
+--
+   UNIQUE ( Team_Id, Season, Week, Game )
+);
+
+CREATE TABLE Team_Game_Offense_Stats_T
+(
+   Team_Id         INTEGER,
+   Season          INTEGER,
+   Week            INTEGER,
+   Game            INTEGER,
+   Pass_Attempts   INTEGER,
+   Completions     INTEGER,
+   Interceptions   INTEGER,
+   Pass_Yards      INTEGER,
+   Pass_Touchdowns INTEGER,
+   Rush_Attempts   INTEGER,
+   Rush_Yards      INTEGER,
+   Rush_Touchdowns INTEGER,
+--
+   UNIQUE ( Team_Id, Season, Week, Game )
+);
+
+CREATE TABLE Team_Game_Defense_Stats_T
+(
+   Team_Id           INTEGER,
+   Season            INTEGER,
+   Week              INTEGER,
+   Game              INTEGER,
+   Sacks             INTEGER,
+   Interceptions     INTEGER,
+   Return_Yards      INTEGER,
+   Return_Touchdowns INTEGER,
+   Yards_Allowed     INTEGER,
+--
+   UNIQUE ( Team_Id, Season, Week, Game )
+);
+
+CREATE TABLE Team_Game_Kicking_Stats_T
+(
+   Team_Id                INTEGER,
+   Season                 INTEGER,
+   Week                   INTEGER,
+   Game                   INTEGER,
+   Extra_Point_Attempts   INTEGER,
+   Extra_Points_Made      INTEGER,
+   Field_Goal_Attempts    INTEGER,
+   Field_Goals_Made       INTEGER,
+   Punts                  INTEGER,
+   Punt_Yards             INTEGER,
+   Kick_Returns           INTEGER,
+   Kick_Return_Yards      INTEGER,
+   Kick_Return_Touchdowns INTEGER,
+   Punt_Returns           INTEGER,
+   Punt_Return_Yards      INTEGER,
+   Punt_Return_Touchdowns INTEGER,
+--
+   UNIQUE ( Team_Id, Season, Week, Game )
+);
+
 CREATE TABLE Team_Accolades_T
 (
    Team_Id  INTEGER,
@@ -264,6 +340,73 @@ CREATE TABLE Player_Returns_Stats_T
    Punt_Return_Touchdowns INTEGER,
 --
    UNIQUE ( Player_Id, Season, Bowl_Game )
+);
+
+CREATE TABLE Player_Game_Offense_Stats_T
+(
+   Player_Id            INTEGER,
+   Season               INTEGER,
+   Week                 INTEGER,
+   Game                 INTEGER,
+   Pass_Attempts        INTEGER,
+   Completions          INTEGER,
+   Interceptions        INTEGER,
+   Pass_Yards           INTEGER,
+   Pass_Touchdowns      INTEGER,
+   Rush_Attempts        INTEGER,
+   Rush_Yards           INTEGER,
+   Rush_Touchdowns      INTEGER,
+   Receptions           INTEGER,
+   Receiving_Yards      INTEGER,
+   Receiving_Touchdowns INTEGER,
+--
+   UNIQUE ( Player_Id, Season, Week, Game )
+);
+
+CREATE TABLE Player_Game_Defense_Stats_T
+(
+   Player_Id         INTEGER,
+   Season            INTEGER,
+   Week              INTEGER,
+   Game              INTEGER,
+   Sacks             INTEGER,
+   Interceptions     INTEGER,
+   Return_Yards      INTEGER,
+   Return_Touchdowns INTEGER,
+--
+   UNIQUE ( Player_Id, Season, Week, Game )
+);
+
+CREATE TABLE Player_Game_Kicking_Stats_T
+(
+   Player_Id            INTEGER,
+   Season               INTEGER,
+   Week                 INTEGER,
+   Game                 INTEGER,
+   Extra_Point_Attempts INTEGER,
+   Extra_Points_Made    INTEGER,
+   Field_Goal_Attempts  INTEGER,
+   Field_Goals_Made     INTEGER,
+   Punts                INTEGER,
+   Punt_Yards           INTEGER,
+--
+   UNIQUE ( Player_Id, Season, Week, Game )
+);
+
+CREATE TABLE Player_Game_Returns_Stats_T
+(
+   Player_Id              INTEGER,
+   Season                 INTEGER,
+   Week                   INTEGER,
+   Game                   INTEGER,
+   Kick_Returns           INTEGER,
+   Kick_Return_Yards      INTEGER,
+   Kick_Return_Touchdowns INTEGER,
+   Punt_Returns           INTEGER,
+   Punt_Return_Yards      INTEGER,
+   Punt_Return_Touchdowns INTEGER,
+--
+   UNIQUE ( Player_Id, Season, Week, Game )
 );
 
 CREATE TABLE Player_Accolades_T

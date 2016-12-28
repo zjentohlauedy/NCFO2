@@ -120,6 +120,26 @@ typedef struct
 {
      int          player_id;
      int          season;
+     int          week;
+     int          game;
+     int          pass_attempts;
+     int          completions;
+     int          interceptions;
+     int          pass_yards;
+     int          pass_touchdowns;
+     int          rush_attempts;
+     int          rush_yards;
+     int          rush_touchdowns;
+     int          receptions;
+     int          receiving_yards;
+     int          receiving_touchdowns;
+
+} player_game_offense_stats_s;
+
+typedef struct
+{
+     int          player_id;
+     int          season;
      bowl_game_e  bowl_game;
      int          kick_returns;
      int          kick_return_yards;
