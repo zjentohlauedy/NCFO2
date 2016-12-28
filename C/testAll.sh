@@ -64,6 +64,7 @@ runTestProg test_team_offense_stats_t
 runTestProg test_team_defense_stats_t
 runTestProg test_team_kicking_stats_t
 runTestProg test_team_game_stats_t
+runTestProg test_team_game_offense_stats_t
 runTestProg test_team_accolades_t
 
 runTestProg test_conferences_t

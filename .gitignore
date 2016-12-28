@@ -25,6 +25,7 @@ C/test_conference_stats_t
 C/test_conference_accolades_t
 C/test_team_defense_stats_t
 C/test_team_game_stats_t
+C/test_team_game_offense_stats_t
 C/test_team_kicking_stats_t
 C/test_team_offense_stats_t
 C/test_team_players_t
