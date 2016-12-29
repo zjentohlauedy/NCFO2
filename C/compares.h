@@ -24,6 +24,9 @@ char  *_compareConferenceStats( conference_stats_s *expected, conference_stats_s
 #define compareConferenceAccolades( A, B ) do { char *ret; if ( (ret = _compareConferenceAccolades( (A), (B) )) != NULL ) return ret; } while ( 0 )
 char  *_compareConferenceAccolades( conference_accolade_s *expected, conference_accolade_s *actual );
 
+#define compareMatches( A, B ) do { char *ret; if ( (ret = _compareMatches( (A), (B) )) != NULL ) return ret; } while ( 0 )
+char *_compareMatches( match_s *expected, match_s *actual );
+
 #define compareTeams( A, B ) do { char *ret; if ( (ret = _compareTeams( (A), (B) )) != NULL ) return ret; } while ( 0 )
 char  *_compareTeams( team_s *expected, team_s *actual );
 

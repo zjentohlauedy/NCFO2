@@ -417,3 +417,14 @@ CREATE TABLE Player_Accolades_T
 --
    UNIQUE ( Player_Id, Season, Accolade )
 );
+
+CREATE TABLE Matches_T
+(
+   Season       INTEGER,
+   Week         INTEGER,
+   Game         INTEGER,
+   Road_Team_Id INTEGER,
+   Home_Team_Id INTEGER,
+--
+   UNIQUE ( Season, Week, Game )
+);

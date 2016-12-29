@@ -33,6 +33,7 @@ tests = \
    test_conference_teams_t \
    test_conference_stats_t \
    test_conference_accolades_t \
+   test_matches_t \
    test_teams_t \
    test_team_players_t \
    test_team_stats_t \
@@ -150,6 +151,9 @@ test_conference_stats_t: test_conference_stats_t.o conference_stats_t.o sql_quer
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfobuilders -lncfocompares
 
 test_conference_accolades_t: test_conference_accolades_t.o conference_accolades_t.o sql_query.o data_list.o libncfobuilders.a libncfocompares.a
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfobuilders -lncfocompares
+
+test_matches_t: test_matches_t.o matches_t.o sql_query.o libncfobuilders.a libncfocompares.a
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfobuilders -lncfocompares
 
 test_teams_t: test_teams_t.o teams_t.o sql_query.o libncfobuilders.a libncfocompares.a
@@ -286,6 +290,7 @@ NCFODATA_OBJECTS = \
  team_players_t.o \
  team_stats_t.o \
  teams_t.o \
+ matches_t.o \
  player_service.o \
  team_service.o \
  conference_service.o \
@@ -301,6 +306,7 @@ NCFOBUILDERS_OBJECTS = \
  build_conference_team.o \
  build_conference_stats.o \
  build_conference_accolade.o \
+ build_match.o \
  build_team.o \
  build_team_player.o \
  build_team_stats.o \
@@ -339,6 +345,7 @@ NCFOCOMPARES_OBJECTS = \
  compare_conference_teams.o \
  compare_conference_stats.o \
  compare_conference_accolades.o \
+ compare_matches.o \
  compare_teams.o \
  compare_team_players.o \
  compare_team_stats.o \

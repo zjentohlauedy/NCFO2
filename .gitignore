@@ -23,6 +23,7 @@ C/test_conferences_t
 C/test_conference_teams_t
 C/test_conference_stats_t
 C/test_conference_accolades_t
+C/test_matches_t
 C/test_team_defense_stats_t
 C/test_team_game_defense_stats_t
 C/test_team_game_kicking_stats_t
