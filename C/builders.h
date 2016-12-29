@@ -51,6 +51,9 @@ void                       buildIntoTeamGameOffenseStats( team_game_offense_stat
 team_game_defense_stats_s *buildTeamGameDefenseStats(                                                         const int team_id, const int season, const int week, const int game );
 void                       buildIntoTeamGameDefenseStats( team_game_defense_stats_s *team_game_defense_stats, const int team_id, const int season, const int week, const int game );
 
+team_game_kicking_stats_s *buildTeamGameKickingStats(                                                         const int team_id, const int season, const int week, const int game );
+void                       buildIntoTeamGameKickingStats( team_game_kicking_stats_s *team_game_kicking_stats, const int team_id, const int season, const int week, const int game );
+
 team_accolade_s *buildTeamAccolade(                            const int team_id, const int season, const team_accolade_e accolade );
 void             buildIntoTeamAccolade( team_accolade_s *team, const int team_id, const int season, const team_accolade_e accolade );
 
