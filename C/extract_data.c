@@ -186,7 +186,8 @@ static int calcPlayerScore( const player_s *player )
 
 static void printPlayer( const player_s *player )
 {
-     printf( "{\"first_name\":\"%s\"",                     player->first_name );
+     printf( "{\"player_id\":%d",                          player->player_id  );
+     printf( ",\"first_name\":\"%s\"",                     player->first_name );
      printf( ",\"last_name\":\"%s\"",                      player->last_name  );
      printf( ",\"position\":\"%s\"",   getDisplayPosition( player->position   ) );
      printf( ",\"number\":%d",                             player->number     );
@@ -350,7 +351,8 @@ static void printPlayer( const player_s *player )
 
 static void printTeam( const team_s *team )
 {
-     printf( "{\"name\":\"%s\"",             team->name                 );
+     printf( "{\"team_id\":%d",              team->team_id              );
+     printf( ",\"name\":\"%s\"",             team->name                 );
      printf( ",\"location\":\"%s\"",         team->location             );
      printf( ",\"abbreviation\":\"%s\"",     team->abbreviation         );
      printf( ",\"offensive_formation\":%d",  team->offensive_formation  );
