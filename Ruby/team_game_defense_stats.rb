@@ -1,7 +1,7 @@
 require 'persistable'
 
 class TeamGameDefenseStats < Persistable
-  attr_accessor :team_id, :season, :week, :game, :sacks, :interceptions, :return_yards, :return_touchdowns
+  attr_accessor :team_id, :season, :week, :game, :sacks, :interceptions, :return_yards, :return_touchdowns, :yards_allowed
 
   @team_id
   @season
@@ -11,6 +11,7 @@ class TeamGameDefenseStats < Persistable
   @interceptions
   @return_yards
   @return_touchdowns
+  @yards_allowed
 
   def self.build id, season, week, game
     team_game_defense_stats = TeamGameDefenseStats.new
@@ -24,13 +25,14 @@ class TeamGameDefenseStats < Persistable
     team_game_defense_stats.interceptions     = prng.rand  10
     team_game_defense_stats.return_yards      = prng.rand 500
     team_game_defense_stats.return_touchdowns = prng.rand  10
+    team_game_defense_stats.yards_allowed     = prng.rand 500
 
     team_game_defense_stats
   end
 
   def initialize id = nil, season = nil, week = nil, game = nil
     @TableName  = "Team_Game_Defense_Stats_T"
-    @FieldNames = %w(Team_Id Season Week Game Sacks Interceptions Return_Yards Return_Touchdowns)
+    @FieldNames = %w(Team_Id Season Week Game Sacks Interceptions Return_Yards Return_Touchdowns Yards_Allowed)
     @KeyFields  = %w(Team_Id Season Week Game)
 
     @team_id = id
@@ -52,7 +54,8 @@ class TeamGameDefenseStats < Persistable
       sacks:             @sacks,
       interceptions:     @interceptions,
       return_yards:      @return_yards,
-      return_touchdowns: @return_touchdowns
+      return_touchdowns: @return_touchdowns,
+      yards_allowed:     @yards_allowed
     }
   end
 
@@ -69,6 +72,7 @@ class TeamGameDefenseStats < Persistable
     @interceptions     = hash[ :interceptions     ]
     @return_yards      = hash[ :return_yards      ]
     @return_touchdowns = hash[ :return_touchdowns ]
+    @yards_allowed     = hash[ :yards_allowed     ]
   end
 
 end
