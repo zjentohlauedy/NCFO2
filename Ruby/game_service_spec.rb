@@ -131,6 +131,8 @@ describe 'GameService' do
 
       actual = db.execute 'select * from team_game_defense_stats_t'
 
+      actual.sort! { |a,b| a[:team_id] <=> b[:team_id] }
+
       expect( actual.length                   ).to eq   2
       expect( actual[0]["Team_Id"           ] ).to eq  14
       expect( actual[0]["Season"            ] ).to eq   1
@@ -165,7 +167,42 @@ describe 'GameService' do
 
       actual = db.execute 'select * from team_game_kicking_stats_t'
 
-      expect( actual.length ).to eq  2
+      actual.sort! { |a,b| a[:team_id] <=> b[:team_id] }
+
+      expect( actual.length                        ).to eq   2
+      expect( actual[0]["Team_Id"                ] ).to eq  14
+      expect( actual[0]["Season"                 ] ).to eq   1
+      expect( actual[0]["Week"                   ] ).to eq   2
+      expect( actual[0]["Game"                   ] ).to eq   3
+      expect( actual[0]["Extra_Point_Attempts"   ] ).to eq   5
+      expect( actual[0]["Extra_Points_Made"      ] ).to eq   5
+      expect( actual[0]["Field_Goal_Attempts"    ] ).to eq   0
+      expect( actual[0]["Field_Goals_Made"       ] ).to eq   0
+      expect( actual[0]["Punts"                  ] ).to eq   1
+      expect( actual[0]["Punt_Yards"             ] ).to eq  43
+      expect( actual[0]["Kick_Returns"           ] ).to eq   3
+      expect( actual[0]["Kick_Return_Yards"      ] ).to eq  72
+      expect( actual[0]["Kick_Return_Touchdowns" ] ).to eq   0
+      expect( actual[0]["Punt_Returns"           ] ).to eq   3
+      expect( actual[0]["Punt_Return_Yards"      ] ).to eq  86
+      expect( actual[0]["Punt_Return_Touchdowns" ] ).to eq   1
+
+      expect( actual[1]["Team_Id"                ] ).to eq  16
+      expect( actual[1]["Season"                 ] ).to eq   1
+      expect( actual[1]["Week"                   ] ).to eq   2
+      expect( actual[1]["Game"                   ] ).to eq   3
+      expect( actual[1]["Extra_Point_Attempts"   ] ).to eq   3
+      expect( actual[1]["Extra_Points_Made"      ] ).to eq   2
+      expect( actual[1]["Field_Goal_Attempts"    ] ).to eq   2
+      expect( actual[1]["Field_Goals_Made"       ] ).to eq   1
+      expect( actual[1]["Punts"                  ] ).to eq   3
+      expect( actual[1]["Punt_Yards"             ] ).to eq 139
+      expect( actual[1]["Kick_Returns"           ] ).to eq   5
+      expect( actual[1]["Kick_Return_Yards"      ] ).to eq 172
+      expect( actual[1]["Kick_Return_Touchdowns" ] ).to eq   1
+      expect( actual[1]["Punt_Returns"           ] ).to eq   1
+      expect( actual[1]["Punt_Return_Yards"      ] ).to eq  23
+      expect( actual[1]["Punt_Return_Touchdowns" ] ).to eq   0
     end
   end
 end
