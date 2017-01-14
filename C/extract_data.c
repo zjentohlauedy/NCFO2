@@ -193,6 +193,7 @@ static void printPlayer( const player_s *player )
      printf( ",\"number\":%d",                             player->number     );
      printf( ",\"starter\":%s",                            player->starter    ?   "true" : "false" );
      printf( ",\"score\":%d",          calcPlayerScore(    player             ) );
+     printf( ",\"injuries\":%d",                           player->injuries   );
 
      if ( player->position == pos_Runningback )
      {

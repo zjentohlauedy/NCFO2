@@ -26,19 +26,20 @@ describe PlayerGameOffenseStats do
     expect( player_game_offense_stats.receptions           ).to be_a Integer
     expect( player_game_offense_stats.receiving_yards      ).to be_a Integer
     expect( player_game_offense_stats.receiving_touchdowns ).to be_a Integer
+    expect( player_game_offense_stats.injuries             ).to be_a Integer
   end
 
   describe '#build_insert' do
     it 'should return a well formed SQL insert statement' do
       player_game_offense_stats = PlayerGameOffenseStats.new
-      expect( player_game_offense_stats.build_insert ).to eq 'INSERT INTO Player_Game_Offense_Stats_T ( Player_Id, Season, Week, Game, Pass_Attempts, Completions, Interceptions, Pass_Yards, Pass_Touchdowns, Rush_Attempts, Rush_Yards, Rush_Touchdowns, Receptions, Receiving_Yards, Receiving_Touchdowns ) VALUES ( :player_id, :season, :week, :game, :pass_attempts, :completions, :interceptions, :pass_yards, :pass_touchdowns, :rush_attempts, :rush_yards, :rush_touchdowns, :receptions, :receiving_yards, :receiving_touchdowns )'
+      expect( player_game_offense_stats.build_insert ).to eq 'INSERT INTO Player_Game_Offense_Stats_T ( Player_Id, Season, Week, Game, Pass_Attempts, Completions, Interceptions, Pass_Yards, Pass_Touchdowns, Rush_Attempts, Rush_Yards, Rush_Touchdowns, Receptions, Receiving_Yards, Receiving_Touchdowns, Injuries ) VALUES ( :player_id, :season, :week, :game, :pass_attempts, :completions, :interceptions, :pass_yards, :pass_touchdowns, :rush_attempts, :rush_yards, :rush_touchdowns, :receptions, :receiving_yards, :receiving_touchdowns, :injuries )'
     end
   end
 
   describe '#build_select' do
     it 'should return a well formed SQL select statement' do
       player_game_offense_stats = PlayerGameOffenseStats.new
-      expect( player_game_offense_stats.build_select ).to eq 'SELECT Player_Id, Season, Week, Game, Pass_Attempts, Completions, Interceptions, Pass_Yards, Pass_Touchdowns, Rush_Attempts, Rush_Yards, Rush_Touchdowns, Receptions, Receiving_Yards, Receiving_Touchdowns FROM Player_Game_Offense_Stats_T WHERE Player_Id = :player_id AND Season = :season AND Week = :week AND Game = :game'
+      expect( player_game_offense_stats.build_select ).to eq 'SELECT Player_Id, Season, Week, Game, Pass_Attempts, Completions, Interceptions, Pass_Yards, Pass_Touchdowns, Rush_Attempts, Rush_Yards, Rush_Touchdowns, Receptions, Receiving_Yards, Receiving_Touchdowns, Injuries FROM Player_Game_Offense_Stats_T WHERE Player_Id = :player_id AND Season = :season AND Week = :week AND Game = :game'
     end
   end
 
@@ -46,14 +47,14 @@ describe PlayerGameOffenseStats do
     it 'should return a well formed SQL select statement' do
       player_game_offense_stats = PlayerGameOffenseStats.new
       result = player_game_offense_stats.build_select_by_player
-      expect( result ).to eq 'SELECT Player_Id, Season, Week, Game, Pass_Attempts, Completions, Interceptions, Pass_Yards, Pass_Touchdowns, Rush_Attempts, Rush_Yards, Rush_Touchdowns, Receptions, Receiving_Yards, Receiving_Touchdowns FROM Player_Game_Offense_Stats_T WHERE Player_Id = :player_id'
+      expect( result ).to eq 'SELECT Player_Id, Season, Week, Game, Pass_Attempts, Completions, Interceptions, Pass_Yards, Pass_Touchdowns, Rush_Attempts, Rush_Yards, Rush_Touchdowns, Receptions, Receiving_Yards, Receiving_Touchdowns, Injuries FROM Player_Game_Offense_Stats_T WHERE Player_Id = :player_id'
     end
   end
 
   describe '#build_update' do
     it 'should return a well formed SQL update statement' do
       player_game_offense_stats = PlayerGameOffenseStats.new
-      expect( player_game_offense_stats.build_update ).to eq 'UPDATE Player_Game_Offense_Stats_T SET Pass_Attempts = :pass_attempts, Completions = :completions, Interceptions = :interceptions, Pass_Yards = :pass_yards, Pass_Touchdowns = :pass_touchdowns, Rush_Attempts = :rush_attempts, Rush_Yards = :rush_yards, Rush_Touchdowns = :rush_touchdowns, Receptions = :receptions, Receiving_Yards = :receiving_yards, Receiving_Touchdowns = :receiving_touchdowns WHERE Player_Id = :player_id AND Season = :season AND Week = :week AND Game = :game'
+      expect( player_game_offense_stats.build_update ).to eq 'UPDATE Player_Game_Offense_Stats_T SET Pass_Attempts = :pass_attempts, Completions = :completions, Interceptions = :interceptions, Pass_Yards = :pass_yards, Pass_Touchdowns = :pass_touchdowns, Rush_Attempts = :rush_attempts, Rush_Yards = :rush_yards, Rush_Touchdowns = :rush_touchdowns, Receptions = :receptions, Receiving_Yards = :receiving_yards, Receiving_Touchdowns = :receiving_touchdowns, Injuries = :injuries WHERE Player_Id = :player_id AND Season = :season AND Week = :week AND Game = :game'
     end
   end
 
@@ -79,10 +80,11 @@ describe PlayerGameOffenseStats do
       player_game_offense_stats.receptions           = 83
       player_game_offense_stats.receiving_yards      = 1146
       player_game_offense_stats.receiving_touchdowns = 12
+      player_game_offense_stats.injuries             = 3
 
       result = player_game_offense_stats.to_hash
 
-      expect( result.keys.length              ).to eq 15
+      expect( result.keys.length              ).to eq 16
       expect( result[ :player_id            ] ).to eq 1
       expect( result[ :season               ] ).to eq 2
       expect( result[ :week                 ] ).to eq 3
@@ -98,6 +100,7 @@ describe PlayerGameOffenseStats do
       expect( result[ :receptions           ] ).to eq 83
       expect( result[ :receiving_yards      ] ).to eq 1146
       expect( result[ :receiving_touchdowns ] ).to eq 12
+      expect( result[ :injuries             ] ).to eq 3
     end
   end
 
@@ -133,7 +136,8 @@ describe PlayerGameOffenseStats do
         rush_touchdowns:      16,
         receptions:           83,
         receiving_yards:      1146,
-        receiving_touchdowns: 12
+        receiving_touchdowns: 12,
+        injuries:             3
       }
 
       player_game_offense_stats.from_hash hash
@@ -153,6 +157,7 @@ describe PlayerGameOffenseStats do
       expect( player_game_offense_stats.receptions           ).to eq hash[ :receptions           ]
       expect( player_game_offense_stats.receiving_yards      ).to eq hash[ :receiving_yards      ]
       expect( player_game_offense_stats.receiving_touchdowns ).to eq hash[ :receiving_touchdowns ]
+      expect( player_game_offense_stats.injuries             ).to eq hash[ :injuries             ]
     end
   end
 end

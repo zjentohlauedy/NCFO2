@@ -1,7 +1,7 @@
 require 'persistable'
 
 class PlayerGameOffenseStats < Persistable
-  attr_accessor :player_id, :season, :week, :game, :pass_attempts, :completions, :interceptions, :pass_yards, :pass_touchdowns, :rush_attempts, :rush_yards, :rush_touchdowns, :receptions, :receiving_yards, :receiving_touchdowns
+  attr_accessor :player_id, :season, :week, :game, :pass_attempts, :completions, :interceptions, :pass_yards, :pass_touchdowns, :rush_attempts, :rush_yards, :rush_touchdowns, :receptions, :receiving_yards, :receiving_touchdowns, :injuries
 
   @player_id
   @season
@@ -38,13 +38,14 @@ class PlayerGameOffenseStats < Persistable
     player_game_offense_stats.receptions           = prng.rand  100
     player_game_offense_stats.receiving_yards      = prng.rand 1000
     player_game_offense_stats.receiving_touchdowns = prng.rand   20
+    player_game_offense_stats.injuries             = prng.rand    4
 
     player_game_offense_stats
   end
 
   def initialize id = nil, season = nil, week = nil, game = nil
     @TableName  = "Player_Game_Offense_Stats_T"
-    @FieldNames = %w(Player_Id Season Week Game Pass_Attempts Completions Interceptions Pass_Yards Pass_Touchdowns Rush_Attempts Rush_Yards Rush_Touchdowns Receptions Receiving_Yards Receiving_Touchdowns)
+    @FieldNames = %w(Player_Id Season Week Game Pass_Attempts Completions Interceptions Pass_Yards Pass_Touchdowns Rush_Attempts Rush_Yards Rush_Touchdowns Receptions Receiving_Yards Receiving_Touchdowns Injuries)
     @KeyFields  = %w(Player_Id Season Week Game)
 
     @player_id = id
@@ -73,7 +74,8 @@ class PlayerGameOffenseStats < Persistable
       rush_touchdowns:      @rush_touchdowns,
       receptions:           @receptions,
       receiving_yards:      @receiving_yards,
-      receiving_touchdowns: @receiving_touchdowns
+      receiving_touchdowns: @receiving_touchdowns,
+      injuries:             @injuries
     }
   end
 
@@ -97,6 +99,7 @@ class PlayerGameOffenseStats < Persistable
     @receptions           = hash[ :receptions           ]
     @receiving_yards      = hash[ :receiving_yards      ]
     @receiving_touchdowns = hash[ :receiving_touchdowns ]
+    @injuries             = hash[ :injuries             ]
   end
 
 end

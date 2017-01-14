@@ -359,6 +359,7 @@ CREATE TABLE Player_Game_Offense_Stats_T
    Receptions           INTEGER,
    Receiving_Yards      INTEGER,
    Receiving_Touchdowns INTEGER,
+   Injuries             INTEGER,
 --
    UNIQUE ( Player_Id, Season, Week, Game )
 );
