@@ -31,19 +31,21 @@ describe 'BoxscoreParser' do
 
       stats = actual['Tennessee'][:stats]
 
-      expect( stats                   ).to be_a Hash
-      expect( stats[ :wins          ] ).to eq 0
-      expect( stats[ :losses        ] ).to eq 1
-      expect( stats[ :ties          ] ).to eq 0
-      expect( stats[ :points_scored ] ).to eq 28
+      expect( stats                    ).to be_a Hash
+      expect( stats[ :wins           ] ).to eq 0
+      expect( stats[ :losses         ] ).to eq 1
+      expect( stats[ :ties           ] ).to eq 0
+      expect( stats[ :points_scored  ] ).to eq 28
+      expect( stats[ :points_allowed ] ).to eq 31
 
       stats = actual['Missouri'][:stats]
 
-      expect( stats                   ).to be_a Hash
-      expect( stats[ :wins          ] ).to eq 1
-      expect( stats[ :losses        ] ).to eq 0
-      expect( stats[ :ties          ] ).to eq 0
-      expect( stats[ :points_scored ] ).to eq 31
+      expect( stats                    ).to be_a Hash
+      expect( stats[ :wins           ] ).to eq 1
+      expect( stats[ :losses         ] ).to eq 0
+      expect( stats[ :ties           ] ).to eq 0
+      expect( stats[ :points_scored  ] ).to eq 31
+      expect( stats[ :points_allowed ] ).to eq 28
     end
 
     it 'should parse team stats when teams are tied' do
@@ -53,19 +55,21 @@ describe 'BoxscoreParser' do
 
       stats = actual['Tennessee'][:stats]
 
-      expect( stats                   ).to be_a Hash
-      expect( stats[ :wins          ] ).to eq 0
-      expect( stats[ :losses        ] ).to eq 0
-      expect( stats[ :ties          ] ).to eq 1
-      expect( stats[ :points_scored ] ).to eq 28
+      expect( stats                    ).to be_a Hash
+      expect( stats[ :wins           ] ).to eq 0
+      expect( stats[ :losses         ] ).to eq 0
+      expect( stats[ :ties           ] ).to eq 1
+      expect( stats[ :points_scored  ] ).to eq 28
+      expect( stats[ :points_allowed ] ).to eq 28
 
       stats = actual['Missouri'][:stats]
 
-      expect( stats                   ).to be_a Hash
-      expect( stats[ :wins          ] ).to eq 0
-      expect( stats[ :losses        ] ).to eq 0
-      expect( stats[ :ties          ] ).to eq 1
-      expect( stats[ :points_scored ] ).to eq 28
+      expect( stats                    ).to be_a Hash
+      expect( stats[ :wins           ] ).to eq 0
+      expect( stats[ :losses         ] ).to eq 0
+      expect( stats[ :ties           ] ).to eq 1
+      expect( stats[ :points_scored  ] ).to eq 28
+      expect( stats[ :points_allowed ] ).to eq 28
     end
 
     it 'should parse team offense stats for both teams' do
@@ -77,6 +81,7 @@ describe 'BoxscoreParser' do
 
       expect( offense_stats                     ).to be_a Hash
       expect( offense_stats[ :completions     ] ).to eq  10
+      expect( offense_stats[ :interceptions   ] ).to eq   3
       expect( offense_stats[ :pass_attempts   ] ).to eq  13
       expect( offense_stats[ :pass_touchdowns ] ).to eq   4
       expect( offense_stats[ :pass_yards      ] ).to eq 249
@@ -88,6 +93,7 @@ describe 'BoxscoreParser' do
 
       expect( offense_stats                   ).to be_a Hash
       expect( offense_stats[ :completions     ] ).to eq   8
+      expect( offense_stats[ :interceptions   ] ).to eq   1
       expect( offense_stats[ :pass_attempts   ] ).to eq   9
       expect( offense_stats[ :pass_touchdowns ] ).to eq   2
       expect( offense_stats[ :pass_yards      ] ).to eq 187
@@ -126,22 +132,34 @@ describe 'BoxscoreParser' do
       kicking_stats = actual['Tennessee'][:kicking_stats]
 
       expect( kicking_stats                          ).to be_a Hash
-      expect( kicking_stats[ :extra_point_attempts ] ).to eq   4
-      expect( kicking_stats[ :extra_points_made    ] ).to eq   4
-      expect( kicking_stats[ :field_goal_attempts  ] ).to eq   0
-      expect( kicking_stats[ :field_goals_made     ] ).to eq   0
-      expect( kicking_stats[ :punts                ] ).to eq   1
-      expect( kicking_stats[ :punt_yards           ] ).to eq  54
+      expect( kicking_stats[ :extra_point_attempts   ] ).to eq   4
+      expect( kicking_stats[ :extra_points_made      ] ).to eq   4
+      expect( kicking_stats[ :field_goal_attempts    ] ).to eq   1
+      expect( kicking_stats[ :field_goals_made       ] ).to eq   0
+      expect( kicking_stats[ :punts                  ] ).to eq   1
+      expect( kicking_stats[ :punt_yards             ] ).to eq  54
+      expect( kicking_stats[ :kick_returns           ] ).to eq   6
+      expect( kicking_stats[ :kick_return_yards      ] ).to eq 114
+      expect( kicking_stats[ :kick_return_touchdowns ] ).to eq   0
+      expect( kicking_stats[ :punt_returns           ] ).to eq   1
+      expect( kicking_stats[ :punt_return_yards      ] ).to eq   0
+      expect( kicking_stats[ :punt_return_touchdowns ] ).to eq   0
 
       kicking_stats = actual['Missouri'][:kicking_stats]
 
       expect( kicking_stats                          ).to be_a Hash
-      expect( kicking_stats[ :extra_point_attempts ] ).to eq   4
-      expect( kicking_stats[ :extra_points_made    ] ).to eq   4
-      expect( kicking_stats[ :field_goal_attempts  ] ).to eq   1
-      expect( kicking_stats[ :field_goals_made     ] ).to eq   1
-      expect( kicking_stats[ :punts                ] ).to eq   1
-      expect( kicking_stats[ :punt_yards           ] ).to eq  37
+      expect( kicking_stats[ :extra_point_attempts   ] ).to eq   5
+      expect( kicking_stats[ :extra_points_made      ] ).to eq   4
+      expect( kicking_stats[ :field_goal_attempts    ] ).to eq   1
+      expect( kicking_stats[ :field_goals_made       ] ).to eq   1
+      expect( kicking_stats[ :punts                  ] ).to eq   1
+      expect( kicking_stats[ :punt_yards             ] ).to eq  37
+      expect( kicking_stats[ :kick_returns           ] ).to eq   4
+      expect( kicking_stats[ :kick_return_yards      ] ).to eq 131
+      expect( kicking_stats[ :kick_return_touchdowns ] ).to eq   0
+      expect( kicking_stats[ :punt_returns           ] ).to eq   1
+      expect( kicking_stats[ :punt_return_yards      ] ).to eq   6
+      expect( kicking_stats[ :punt_return_touchdowns ] ).to eq   0
     end
 
     it 'should parse players for both teams' do
@@ -204,7 +222,7 @@ describe 'BoxscoreParser' do
 
       expect( offense_stats[ :pass_attempts        ] ).to eq  10
       expect( offense_stats[ :completions          ] ).to eq   9
-      expect( offense_stats[ :interceptions        ] ).to eq   3
+      expect( offense_stats[ :interceptions        ] ).to eq   2
       expect( offense_stats[ :pass_yards           ] ).to eq 235
       expect( offense_stats[ :pass_touchdowns      ] ).to eq   4
       expect( offense_stats[ :rush_attempts        ] ).to eq   0
@@ -218,7 +236,7 @@ describe 'BoxscoreParser' do
 
       expect( offense_stats[ :pass_attempts        ] ).to eq   3
       expect( offense_stats[ :completions          ] ).to eq   1
-      expect( offense_stats[ :interceptions        ] ).to eq   0
+      expect( offense_stats[ :interceptions        ] ).to eq   1
       expect( offense_stats[ :pass_yards           ] ).to eq  14
       expect( offense_stats[ :pass_touchdowns      ] ).to eq   0
       expect( offense_stats[ :rush_attempts        ] ).to eq   0
@@ -411,11 +429,20 @@ describe 'BoxscoreParser' do
 
       returns_stats = players['80'][:stats][:returns]
 
-      expect( returns_stats[ :kick_returns           ] ).to eq   4
-      expect( returns_stats[ :kick_return_yards      ] ).to eq 131
+      expect( returns_stats[ :kick_returns           ] ).to eq   3
+      expect( returns_stats[ :kick_return_yards      ] ).to eq 111
       expect( returns_stats[ :kick_return_touchdowns ] ).to eq   0
       expect( returns_stats[ :punt_returns           ] ).to eq   1
       expect( returns_stats[ :punt_return_yards      ] ).to eq   6
+      expect( returns_stats[ :punt_return_touchdowns ] ).to eq   0
+
+      returns_stats = players['82'][:stats][:returns]
+
+      expect( returns_stats[ :kick_returns           ] ).to eq   1
+      expect( returns_stats[ :kick_return_yards      ] ).to eq  20
+      expect( returns_stats[ :kick_return_touchdowns ] ).to eq   0
+      expect( returns_stats[ :punt_returns           ] ).to eq   0
+      expect( returns_stats[ :punt_return_yards      ] ).to eq   0
       expect( returns_stats[ :punt_return_touchdowns ] ).to eq   0
     end
 
@@ -681,7 +708,6 @@ describe 'BoxscoreParser' do
       expect( players['38'][:stats][:returns] ).to be_nil
       expect( players['44'][:stats][:returns] ).to be_nil
       expect( players['59'][:stats][:returns] ).to be_nil
-      expect( players['82'][:stats][:returns] ).to be_nil
       expect( players['89'][:stats][:returns] ).to be_nil
       expect( players['97'][:stats][:returns] ).to be_nil
       expect( players['99'][:stats][:returns] ).to be_nil

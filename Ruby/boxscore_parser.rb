@@ -46,6 +46,9 @@ class BoxscoreParser
       current_team = results[team]
     end
 
+    enrich_team_offense_stats results
+    enrich_team_kicking_stats results
+
     return results
   end
 
@@ -95,7 +98,7 @@ class BoxscoreParser
   end
 
   def parse_score( line, results )
-    team_name = line.match( %r|^([A-Za-z] )+| )[0].gsub( ' ', '' )
+    team_name = line.match( /^[^0-9]+/ )[0].gsub( /([A-Za-z]) /, '\1' ).strip
     home = results.keys.length == 0 ? false : true
     results[team_name] = { home: home, stats: {}, offense_stats: {}, defense_stats: {}, kicking_stats: {}, players: {} }
   end
@@ -136,15 +139,17 @@ class BoxscoreParser
   end
 
   def extract_points_scored( fields, road_team, home_team )
-    road_team[:stats][:wins]   = 0
-    road_team[:stats][:losses] = 0
-    road_team[:stats][:ties]   = 0
-    road_team[:stats][:points_scored] = fields[1].to_i
+    road_team[:stats][:wins]           = 0
+    road_team[:stats][:losses]         = 0
+    road_team[:stats][:ties]           = 0
+    road_team[:stats][:points_scored]  = fields[1].to_i
+    road_team[:stats][:points_allowed] = fields[2].to_i
 
-    home_team[:stats][:wins]   = 0
-    home_team[:stats][:losses] = 0
-    home_team[:stats][:ties]   = 0
-    home_team[:stats][:points_scored] = fields[2].to_i
+    home_team[:stats][:wins]           = 0
+    home_team[:stats][:losses]         = 0
+    home_team[:stats][:ties]           = 0
+    home_team[:stats][:points_scored]  = fields[2].to_i
+    home_team[:stats][:points_allowed] = fields[1].to_i
 
     if    road_team[:stats][:points_scored] > home_team[:stats][:points_scored]
       road_team[:stats][:wins]   = 1
@@ -208,15 +213,15 @@ class BoxscoreParser
     road_fields = fields[1].split %r([/-])
     home_fields = fields[2].split %r([/-])
 
-    road_team[:kicking_stats][:extra_point_attempts] = road_fields[0].to_i
-    road_team[:kicking_stats][:extra_points_made]    = road_fields[1].to_i
-    road_team[:kicking_stats][:field_goal_attempts]  = road_fields[2].to_i
-    road_team[:kicking_stats][:field_goals_made]     = road_fields[3].to_i
+    road_team[:kicking_stats][:extra_point_attempts] = road_fields[1].to_i
+    road_team[:kicking_stats][:extra_points_made]    = road_fields[0].to_i
+    road_team[:kicking_stats][:field_goal_attempts]  = road_fields[3].to_i
+    road_team[:kicking_stats][:field_goals_made]     = road_fields[2].to_i
 
-    home_team[:kicking_stats][:extra_point_attempts] = home_fields[0].to_i
-    home_team[:kicking_stats][:extra_points_made]    = home_fields[1].to_i
-    home_team[:kicking_stats][:field_goal_attempts]  = home_fields[2].to_i
-    home_team[:kicking_stats][:field_goals_made]     = home_fields[3].to_i
+    home_team[:kicking_stats][:extra_point_attempts] = home_fields[1].to_i
+    home_team[:kicking_stats][:extra_points_made]    = home_fields[0].to_i
+    home_team[:kicking_stats][:field_goal_attempts]  = home_fields[3].to_i
+    home_team[:kicking_stats][:field_goals_made]     = home_fields[2].to_i
   end
 
   def extract_punting( fields, road_team, home_team )
@@ -345,5 +350,43 @@ class BoxscoreParser
 
     player[:stats][:kicking][:punts]      = fields[4].to_i
     player[:stats][:kicking][:punt_yards] = fields[5].to_i
+  end
+
+  def enrich_team_offense_stats( teams )
+    teams.each_value do |team|
+      offense_stats = team[:offense_stats]
+
+      offense_stats[:interceptions] = 0
+
+      team[:players].each_value do |player|
+        next if player[:stats][:offense].nil?
+
+        offense_stats[:interceptions] += player[:stats][:offense][:interceptions]
+      end
+    end
+  end
+
+  def enrich_team_kicking_stats( teams )
+    teams.each_value do |team|
+      kicking_stats = team[:kicking_stats]
+
+      kicking_stats[ :kick_returns           ] = 0
+      kicking_stats[ :kick_return_yards      ] = 0
+      kicking_stats[ :kick_return_touchdowns ] = 0
+      kicking_stats[ :punt_returns           ] = 0
+      kicking_stats[ :punt_return_yards      ] = 0
+      kicking_stats[ :punt_return_touchdowns ] = 0
+
+      team[:players].each_value do |player|
+        next if player[:stats][:returns].nil?
+
+        kicking_stats[ :kick_returns           ] += player[:stats][:returns][ :kick_returns           ]
+        kicking_stats[ :kick_return_yards      ] += player[:stats][:returns][ :kick_return_yards      ]
+        kicking_stats[ :kick_return_touchdowns ] += player[:stats][:returns][ :kick_return_touchdowns ]
+        kicking_stats[ :punt_returns           ] += player[:stats][:returns][ :punt_returns           ]
+        kicking_stats[ :punt_return_yards      ] += player[:stats][:returns][ :punt_return_yards      ]
+        kicking_stats[ :punt_return_touchdowns ] += player[:stats][:returns][ :punt_return_touchdowns ]
+      end
+    end
   end
 end
