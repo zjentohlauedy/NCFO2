@@ -1,5 +1,9 @@
 #!/usr/bin/env ruby
 #
+# From the season directiory run:
+# find W* -name "*.txt" | xargs ../Ruby/ydsall.rb | ../Ruby/calc_yards_allowed.rb <season number>
+#
+# Example, for season 4 the command would be:
 # S04 $ find W* -name "*.txt" | xargs ../Ruby/ydsall.rb | ../Ruby/calc_yards_allowed.rb 4
 #
 
