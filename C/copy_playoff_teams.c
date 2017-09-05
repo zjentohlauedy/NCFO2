@@ -30,7 +30,7 @@ static const struct {
 
 
 static void *allocations[10]  = { 0 };
-static  int   allocation_count =   0;
+static  int  allocation_count =   0;
 
 static void freeAllocations( void )
 {

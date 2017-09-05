@@ -2,6 +2,7 @@ class Stats
   include Comparable
 
   def initialize
+    @classes = [ "\u22C5", "\u2236", "\u2234", "\u2237" ]
     @direction = :descending
     @sort_key  = nil
     @format    = '%d'
@@ -51,10 +52,18 @@ class Stats
     return @threshold
   end
 
+  def get_class
+    if @season.nil? || @freshman_season.nil?
+      return ''
+    end
+
+    return @classes[@season - @freshman_season]
+  end
+
   def to_s
     value = get_sort_key
 
-    print_format = "%-2s %-20s "
+    print_format = "%-2s %-24s "
 
     print_format << (@season.nil? ? "" : "S%02d ")
     print_format << (@seasons.nil? ? "" : "%d ")
@@ -62,11 +71,11 @@ class Stats
     print_format << @format
 
     if has_season?
-      sprintf print_format, @pos, @name, @season, @school, value
+      sprintf print_format, @pos, @name + get_class, @season, @school, value
     elsif has_seasons?
-      sprintf print_format, @pos, @name, @seasons, @school, value
+      sprintf print_format, @pos, @name + get_class, @seasons, @school, value
     else
-      sprintf print_format, @pos, @name, @school, value
+      sprintf print_format, @pos, @name + get_class, @school, value
     end
   end
 
@@ -108,6 +117,8 @@ class Passing < Stats
     @pct    = (@att == 0) ? 0.0 : @comp.to_f / @att.to_f * 100.0
     @avg    = (@comp == 0) ? 0.0 : @yards.to_f / @comp.to_f
     @qbr    = calc_qbr
+
+    @freshman_season = player[:freshman_season]
 
     @score  = player[:score]
     @pass_score = calc_score player
@@ -151,6 +162,8 @@ class Rushing < Stats
     @td     = player[:stats][:offense][:rush_touchdowns]
     @avg    = (@att == 0) ? 0.0 : @yards.to_f / @att.to_f
 
+    @freshman_season = player[:freshman_season]
+
     @score  = player[:score]
     @rush_score = calc_score player
 
@@ -186,6 +199,8 @@ class Receiving < Stats
     @yards  = player[:stats][:offense][:receiving_yards]
     @td     = player[:stats][:offense][:receiving_touchdowns]
     @avg    = (@rec == 0) ? 0.0 : @yards.to_f / @rec.to_f
+
+    @freshman_season = player[:freshman_season]
 
     @score  = player[:score]
     @recv_score = calc_score player
@@ -226,6 +241,8 @@ class AllPurpose < Stats
       @td    = player[:stats][:offense][:rush_touchdowns] + player[:stats][:offense][:receiving_touchdowns]
     end
 
+    @freshman_season = player[:freshman_season]
+
     @seasons = player[:stats][:offense][:seasons]
   end
 
@@ -250,6 +267,8 @@ class Overall < Stats
       @td    = player[:stats][:offense][:rush_touchdowns] + player[:stats][:offense][:receiving_touchdowns]
     end
 
+    @freshman_season = player[:freshman_season]
+
     @seasons = player[:stats][:offense][:seasons]
   end
 
@@ -266,6 +285,8 @@ class Sacks < Stats
     @season = player[:stats][:defense][:season]
     @name   = "#{player[:last_name]}, #{player[:first_name]}"
     @sacks  = player[:stats][:defense][:sacks]
+
+    @freshman_season = player[:freshman_season]
 
     @score  = player[:score]
     @pr_score = calc_score player
@@ -301,6 +322,8 @@ class Interceptions < Stats
     @td     = player[:stats][:defense][:return_touchdowns]
     @avg    = (@int == 0) ? 0.0 : @yards.to_f / @int.to_f
 
+    @freshman_season = player[:freshman_season]
+
     @score  = player[:score]
     @cvg_score = calc_score player
 
@@ -335,6 +358,8 @@ class KickReturns < Stats
     @td     = player[:stats][:returns][:kick_return_touchdowns]
     @avg    = (@ret == 0) ? 0.0 : @yards.to_f / @ret.to_f
 
+    @freshman_season = player[:freshman_season]
+
     @seasons = player[:stats][:returns][:seasons]
 
     @threshold = 20
@@ -356,6 +381,8 @@ class PuntReturns < Stats
     @yards  = player[:stats][:returns][:punt_return_yards]
     @td     = player[:stats][:returns][:punt_return_touchdowns]
     @avg    = (@ret == 0) ? 0.0 : @yards.to_f / @ret.to_f
+
+    @freshman_season = player[:freshman_season]
 
     @seasons = player[:stats][:returns][:seasons]
 
@@ -382,6 +409,8 @@ class Kicking < Stats
     @xp_pct = (@xpa == 0) ? 0.0 : @xpm.to_f / @xpa.to_f * 100.0
     @fg_pct = (@fga == 0) ? 0.0 : @fgm.to_f / @fga.to_f * 100.0
 
+    @freshman_season = player[:freshman_season]
+
     @seasons = player[:stats][:kicking][:seasons]
 
     @threshold = 5
@@ -402,6 +431,8 @@ class Punting < Stats
     @punts  = player[:stats][:kicking][:punts]
     @yards  = player[:stats][:kicking][:punt_yards]
     @avg    = (@punts == 0) ? 0.0 : @yards.to_f / @punts.to_f
+
+    @freshman_season = player[:freshman_season]
 
     @seasons = player[:stats][:kicking][:seasons]
 
