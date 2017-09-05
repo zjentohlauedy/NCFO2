@@ -21,7 +21,8 @@ progs = \
    boxscore \
    import_season \
    import_bowl_game \
-   import_aa_game
+   import_aa_game \
+   rename_new_york
 
 tests = \
    test_file_utils \
@@ -122,6 +123,9 @@ import_bowl_game: import_bowl_game.o file_utils.o convert_bowl_game.o convert_or
 
 import_aa_game: import_aa_game.o file_utils.o convert_aa_game.o convert_bowl_game.o convert_organization.o libncfodata.a
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lncfodata
+
+rename_new_york: rename_new_york.o file_utils.o
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
 
 
 TESTS: $(tests) ncfo_test.db TAGS

@@ -51,7 +51,7 @@ end
           { team_id:  7, name: 'Fighting Illini', location: 'Illinois',       abbreviation: 'UIL' },
           { team_id:  8, name: 'Wolverines',      location: 'Michigan',       abbreviation: 'UMI' },
           { team_id:  9, name: 'Golden Gophers',  location: 'Minnesota',      abbreviation: 'UMN' },
-          { team_id: 10, name: 'Bobcats',         location: 'New York',       abbreviation: 'UNY' },
+          { team_id: 10, name: 'Orangemen',       location: 'New York',       abbreviation: 'UNY' },
           { team_id: 11, name: 'Buckeyes',        location: 'Ohio',           abbreviation: 'UOH' },
           { team_id: 12, name: 'Badgers',         location: 'Wisconsin',      abbreviation: 'UWI' },
           # Midwest

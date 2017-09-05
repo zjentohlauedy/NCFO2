@@ -16,7 +16,7 @@ static const struct { char *name; char *location; char *abbrev; } teams1[] = {
      { "F. ILLINI",  "ILLINOIS",      "UIL" },
      { "WOLVERINES", "MICHIGAN",      "UMI" },
      { "G. GOPHERS", "MINNESOTA",     "UMN" },
-     { "BOBCATS",    "NEW YORK",      "UNY" },
+     { "ORANGEMEN",  "NEW YORK",      "UNY" },
      { "BUCKEYES",   "OHIO",          "UOH" },
      { "BADGERS",    "WISCONSIN",     "UWI" },
      { "RAZORBACKS", "ARKANSAS",      "UAR" },
