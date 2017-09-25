@@ -7,8 +7,72 @@ require 'json'
 require 'bowls'
 require 'positions'
 require 'repository'
-require 'top_players'
+require 'stat_rankings'
 require 'utils'
+
+
+class LeadersPrinter
+  def initialize( single_season, single_week )
+    @single_season = single_season
+    @single_week   = single_week
+  end
+
+  def print_empty_indicator()
+    puts "--"
+  end
+
+  def print( player, format, index, tied )
+    value = player.get_sort_key
+
+    name = player.name + player.get_class
+
+    if tied
+      prefix = ' - '
+    else
+      prefix = sprintf '%2d.', index + 1
+    end
+
+    if @single_week
+      context = ''
+    elsif @single_season
+      context = sprintf 'W%02d ', player.week
+    else
+      context = sprintf 'S%02d W%02d ', player.season, player.week
+    end
+
+    printf "#{prefix} %-2s %-24s #{context}%-15s #{format}\n", player.pos, name, player.school, value
+  end
+
+  def print_tie_message( summary, format, index )
+    if @single_week
+      padding = ''
+    elsif @single_season
+      padding = '    '
+    else
+      padding = '        '
+    end
+
+    printf "%2d.    %-35s      #{padding}#{format}\n", index + 1, "#{summary.count} Players Tied At", summary.value
+  end
+end
+
+class LeadersFilter
+  def apply( players, filter_stat )
+    if filter_stat.nil?; return players; end
+
+    filtered_players = players.select { |p| (p.send filter_stat) > 0 }
+
+    case filter_stat
+    when :att;   return filtered_players.select { |p| (p.send filter_stat) > 5 }
+    when :rec;   return filtered_players.select { |p| (p.send filter_stat) > 3 }
+    when :ret;   return filtered_players.select { |p| (p.send filter_stat) > 3 }
+    when :fga;   return filtered_players.select { |p| (p.send filter_stat) > 3 }
+    when :punts; return filtered_players.select { |p| (p.send filter_stat) > 3 }
+    end
+
+    return filtered_players
+  end
+end
 
 
 @repository = Repository.new Utils.get_db "#{location}/../ncfo.db"
@@ -163,6 +227,8 @@ org[:conferences].each do |conference|
   end
 end
 
-sr = StatRankings.new org
+lp = LeadersPrinter.new !season.nil?, !week.nil?
 
-sr.process_categories @categories
+sr = StatRankings.new lp, LeadersFilter.new, org
+
+sr.process_categories @player_categories
