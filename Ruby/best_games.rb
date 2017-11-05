@@ -12,9 +12,11 @@ require 'utils'
 
 
 class LeadersPrinter
-  def initialize( single_season, single_week )
+  def initialize( single_season, single_week, all_time_best, season_best )
     @single_season = single_season
     @single_week   = single_week
+    @all_time_best = all_time_best
+    @season_best   = season_best
   end
 
   def print_empty_indicator()
@@ -22,7 +24,7 @@ class LeadersPrinter
   end
 
   def print( player, format, index, tied )
-    value = player.get_sort_key
+    value = player.get_sort_value
 
     name = player.name + player.get_class
 
@@ -40,7 +42,9 @@ class LeadersPrinter
       context = sprintf 'S%02d W%02d ', player.season, player.week
     end
 
-    printf "#{prefix} %-2s %-24s #{context}%-15s #{format}\n", player.pos, name, player.school, value
+    value_format = hilite_format format, player
+
+    printf "#{prefix} %-2s %-24s #{context}%-15s #{value_format}\n", player.pos, name, player.school, value
   end
 
   def print_tie_message( summary, format, index )
@@ -54,6 +58,21 @@ class LeadersPrinter
 
     printf "%2d.    %-35s      #{padding}#{format}\n", index + 1, "#{summary.count} Players Tied At", summary.value
   end
+
+  private
+  def hilite_format( format, player )
+    stat = player.get_sort_key
+
+    if @all_time_best[stat] && player.get_sort_value == @all_time_best[stat]
+      return "\e[33m\e[1m#{format}\e[0m"
+    end
+
+    if @season_best[stat] && player.get_sort_value == @season_best[stat]
+      return "\e[1m#{format}\e[0m"
+    end
+
+    return format
+  end
 end
 
 class LeadersFilter
@@ -63,8 +82,9 @@ class LeadersFilter
     filtered_players = players.select { |p| (p.send filter_stat) > 0 }
 
     case filter_stat
-    when :att;   return filtered_players.select { |p| (p.send filter_stat) > 5 }
-    when :rec;   return filtered_players.select { |p| (p.send filter_stat) > 3 }
+    when :pass_attempts; return filtered_players.select { |p| (p.send filter_stat) > 5 }
+    when :rush_attempts; return filtered_players.select { |p| (p.send filter_stat) > 5 }
+    when :receptions;    return filtered_players.select { |p| (p.send filter_stat) > 3 }
     when :ret;   return filtered_players.select { |p| (p.send filter_stat) > 3 }
     when :fga;   return filtered_players.select { |p| (p.send filter_stat) > 3 }
     when :punts; return filtered_players.select { |p| (p.send filter_stat) > 3 }
@@ -201,6 +221,57 @@ def flatten_stats( player )
   return players
 end
 
+def get_max_stat( stat, season )
+  schema = {
+    pass_yards:      { column: 'pass_yards',      table: 'player_game_offense_stats_t' },
+    rush_yards:      { column: 'rush_yards',      table: 'player_game_offense_stats_t' },
+    receiving_yards: { column: 'receiving_yards', table: 'player_game_offense_stats_t' },
+    sacks:           { column: 'sacks',           table: 'player_game_defense_stats_t' },
+    interceptions:   { column: 'interceptions',   table: 'player_game_defense_stats_t' }
+  }
+
+  parameters = {}
+
+  query = "select max(#{schema[stat][:column]}) as #{stat.to_s} from #{schema[stat][:table]}"
+
+  unless season.nil?
+    parameters[:season] = season
+    query = "#{query} where season = :season"
+  end
+
+  result = @repository.custom_read query, parameters
+
+  return result[0][stat]
+end
+
+def get_all_time_best_stat( stat )
+  return get_max_stat stat, nil
+end
+
+def get_season_best_stat( season, stat )
+  return get_max_stat stat, season
+end
+
+@tracked_stats = [
+  :pass_yards,
+  :rush_yards,
+  :receiving_yards,
+  :sacks,
+  :interceptions
+]
+
+def get_all_time_best_games( best_games )
+  @tracked_stats.each do |stat|
+    best_games[stat] = get_all_time_best_stat stat
+  end
+end
+
+def get_season_best_games( best_games, season )
+  @tracked_stats.each do |stat|
+    best_games[stat] = get_season_best_stat season, stat
+  end
+end
+
 
 season = ARGV[0]
 week   = ARGV[1]
@@ -227,7 +298,18 @@ org[:conferences].each do |conference|
   end
 end
 
-lp = LeadersPrinter.new !season.nil?, !week.nil?
+all_time_best = {}
+season_best   = {}
+
+unless season.nil?
+  get_all_time_best_games all_time_best
+end
+
+unless week.nil?
+  get_season_best_games season_best, season
+end
+
+lp = LeadersPrinter.new !season.nil?, !week.nil?, all_time_best, season_best
 
 sr = StatRankings.new lp, LeadersFilter.new, org
 
