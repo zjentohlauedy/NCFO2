@@ -14,15 +14,15 @@ class LeadersPrinter
   end
 
   def print( player, format, index, tied )
-    value = player.get_sort_key
+    value = player.get_sort_value
 
     name = player.name + player.get_class
 
-    if tied
-      printf " -  %-2s %-24s %-15s #{format}\n", player.pos, name, player.school, value
-    else
-      printf "%2d. %-2s %-24s %-15s #{format}\n", index + 1, player.pos, name, player.school, value
+    if tied; then printf " -  ";
+    else          printf "%2d. ", index + 1;
     end
+
+    printf "%-2s %-24s %-15s #{format}\n", player.pos, name, player.school, value
   end
 
   def print_tie_message( summary, format, index )
