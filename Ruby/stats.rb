@@ -10,7 +10,7 @@ class Stats
   def <=>( other )
     if get_sort_value == other.get_sort_value
       if @season == other.season
-        return @name <=> other.name
+        return @identifier <=> other.identifier
       end
 
       return @season <=> other.season
@@ -24,7 +24,7 @@ class Stats
   end
 
   def set_direction( direction )
-    @direction = direction
+    @direction = direction || :descending
   end
 
   def set_sort_key( key )
@@ -61,8 +61,96 @@ class TieSummary
   end
 end
 
+class Team < Stats
+  attr_reader :wins, :losses, :ties, :points_scored, :points_allowed, :wl_ratio, :total_offense, :total_off_td
+  attr_reader :pass_attempts, :completions, :pass_int, :pass_yards, :pass_touchdowns, :rush_attempts, :rush_yards, :rush_touchdowns
+  attr_reader :sacks, :interceptions, :int_return_yards, :int_return_touchdowns, :yards_allowed, :pts_diff, :yds_diff
+  attr_reader :extra_point_attempts, :extra_points_made, :field_goal_attempts, :field_goals_made, :punts, :punt_yards
+  attr_reader :kick_returns, :kick_return_yards, :kick_return_touchdowns, :punt_returns, :punt_return_yards, :punt_return_touchdowns
+  attr_reader :comp_pct, :yds_per_comp, :pass_rating, :yds_per_carry, :int_ret_avg, :kick_ret_avg, :punt_ret_avg
+  attr_reader :kicking_points, :xp_pct, :fg_pct, :punt_avg, :total_ret_yards, :total_yards, :total_ret_td, :total_td
+  attr_reader :season, :school, :identifier, :name
+
+  def initialize( team )
+    super()
+
+    @school                 = team[:location]
+    @season                 = team[:stats][:season]
+    @seasons                = team[:stats][:seasons]
+    @name                   = team[:name]
+
+    @wins                   = team[:stats][:wins]
+    @losses                 = team[:stats][:losses]
+    @ties                   = team[:stats][:ties]
+    @points_scored          = team[:stats][:points_scored]
+    @points_allowed         = team[:stats][:points_allowed]
+
+    @pass_attempts          = team[:offense_stats][:pass_attempts]
+    @completions            = team[:offense_stats][:completions]
+    @pass_int               = team[:offense_stats][:interceptions]
+    @pass_yards             = team[:offense_stats][:pass_yards]
+    @pass_touchdowns        = team[:offense_stats][:pass_touchdowns]
+    @rush_attempts          = team[:offense_stats][:rush_attempts]
+    @rush_yards             = team[:offense_stats][:rush_yards]
+    @rush_touchdowns        = team[:offense_stats][:rush_touchdowns]
+
+    @sacks                  = team[:defense_stats][:sacks]
+    @interceptions          = team[:defense_stats][:interceptions]
+    @int_return_yards       = team[:defense_stats][:return_yards]
+    @int_return_touchdowns  = team[:defense_stats][:return_touchdowns]
+    @yards_allowed          = team[:defense_stats][:yards_allowed] || 0
+
+    @extra_point_attempts   = team[:kicking_stats][:extra_point_attempts]
+    @extra_points_made      = team[:kicking_stats][:extra_points_made]
+    @field_goal_attempts    = team[:kicking_stats][:field_goal_attempts]
+    @field_goals_made       = team[:kicking_stats][:field_goals_made]
+    @punts                  = team[:kicking_stats][:punts]
+    @punt_yards             = team[:kicking_stats][:punt_yards]
+
+    @kick_returns           = team[:kicking_stats][:kick_returns]
+    @kick_return_yards      = team[:kicking_stats][:kick_return_yards]
+    @kick_return_touchdowns = team[:kicking_stats][:kick_return_touchdowns]
+    @punt_returns           = team[:kicking_stats][:punt_returns]
+    @punt_return_yards      = team[:kicking_stats][:punt_return_yards]
+    @punt_return_touchdowns = team[:kicking_stats][:punt_return_touchdowns]
+
+
+    @wl_ratio               = ((@wins + @losses) == 0) ? 0.0 : @wins.to_f / (@wins + @losses).to_f * 100.0
+    @pts_diff               = @points_scored - @points_allowed
+    @comp_pct               = (@pass_attempts == 0) ? 0.0 : @completions.to_f / @pass_attempts.to_f * 100.0
+    @yds_per_comp           = (@completions == 0) ? 0.0 : @pass_yards.to_f / @completions.to_f
+    @pass_rating            = calc_qbr
+    @yds_per_carry          = (@rush_attempts == 0) ? 0.0 : @rush_yards.to_f / @rush_attempts.to_f
+    @int_ret_avg            = (@interceptions == 0) ? 0.0 : @int_return_yards.to_f / @interceptions.to_f
+    @kick_ret_avg           = (@kick_returns == 0) ? 0.0 : @kick_return_yards.to_f / @kick_returns.to_f
+    @punt_ret_avg           = (@punt_returns == 0) ? 0.0 : @punt_return_yards.to_f / @punt_returns.to_f
+    @kicking_points         = (@field_goals_made * 3) + @extra_points_made
+    @xp_pct                 = (@extra_point_attempts == 0) ? 0.0 : @extra_points_made.to_f / @extra_point_attempts.to_f * 100.0
+    @fg_pct                 = (@field_goal_attempts == 0) ? 0.0 : @field_goals_made.to_f / @field_goal_attempts.to_f * 100.0
+    @punt_avg               = (@punts == 0) ? 0.0 : @punt_yards.to_f / @punts.to_f
+
+    @total_offense          = @pass_yards + @rush_yards
+    @total_off_td           = @pass_touchdowns + @rush_touchdowns
+    @total_ret_yards        = @kick_return_yards + @punt_return_yards + @int_return_yards
+    @total_ret_td           = @kick_return_touchdowns + @punt_return_touchdowns + @int_return_touchdowns
+    @total_yards            = @total_offense + @total_ret_yards
+    @total_td               = @total_off_td + @total_ret_td
+    @yds_diff               = (@yards_allowed == 0) ? 0 : @total_offense - @yards_allowed
+
+    @identifier             = @school
+  end
+
+  def calc_qbr
+    qbr = @pass_yards.to_f
+    qbr += 2.0 * (@pass_touchdowns.to_f ** 2.0) + 5.0 * @pass_touchdowns.to_f + 1.0
+    qbr -= 2.0 * (@pass_int.to_f ** 2.0) + 5.0 * @pass_int.to_f + 1.0
+    qbr += (@comp_pct ** (@comp_pct / 100.0)) * 3.0 / 2.0
+    return (qbr / 5.0)
+  end
+end
+
 class Passing < Stats
-  attr_reader :pass_attempts, :pass_yards, :pass_touchdowns, :completion_pct, :yards_per_comp, :qbr, :score, :pass_score, :season, :week, :name, :pos, :school, :seasons
+  attr_reader :pass_attempts, :pass_yards, :pass_touchdowns, :completion_pct, :yards_per_comp, :qbr, :score, :pass_score, :season, :week, :name, :pos, :school, :seasons, :identifier
 
   def initialize( school, player )
     super()
@@ -89,6 +177,8 @@ class Passing < Stats
     @seasons = player[:stats][:offense][:seasons]
 
     @threshold = 64
+
+    @identifier = @name
   end
 
   def calc_qbr
@@ -110,7 +200,7 @@ class Passing < Stats
 end
 
 class Rushing < Stats
-  attr_reader :rush_attempts, :rush_yards, :rush_touchdowns, :yards_per_carry, :score, :rush_score, :season, :week, :name, :pos, :school, :seasons
+  attr_reader :rush_attempts, :rush_yards, :rush_touchdowns, :yards_per_carry, :score, :rush_score, :season, :week, :name, :pos, :school, :seasons, :identifier
 
   def initialize( school, player )
     super()
@@ -133,6 +223,8 @@ class Rushing < Stats
     @seasons = player[:stats][:offense][:seasons]
 
     @threshold = 40
+
+    @identifier = @name
   end
 
   def calc_score( player )
@@ -148,7 +240,7 @@ class Rushing < Stats
 end
 
 class Receiving < Stats
-  attr_reader :receiving_yards, :receiving_touchdowns, :receptions, :yards_per_catch, :score, :recv_score, :season, :week, :name, :pos, :school, :seasons
+  attr_reader :receiving_yards, :receiving_touchdowns, :receptions, :yards_per_catch, :score, :recv_score, :season, :week, :name, :pos, :school, :seasons, :identifier
 
   def initialize( school, player )
     super()
@@ -171,6 +263,8 @@ class Receiving < Stats
     @seasons = player[:stats][:offense][:seasons]
 
     @threshold = 20
+
+    @identifier = @name
   end
 
   def calc_score( player )
@@ -185,7 +279,7 @@ class Receiving < Stats
 end
 
 class AllPurpose < Stats
-  attr_reader :all_purpose_yards, :all_purpose_td, :season, :week, :name, :pos, :school, :seasons
+  attr_reader :all_purpose_yards, :all_purpose_td, :season, :week, :name, :pos, :school, :seasons, :identifier
 
   def initialize( school, player )
     super()
@@ -207,11 +301,13 @@ class AllPurpose < Stats
     @freshman_season = player[:freshman_season]
 
     @seasons = player[:stats][:offense][:seasons]
+
+    @identifier = @name
   end
 end
 
 class Overall < Stats
-  attr_reader :overall_yards, :overall_td, :season, :week, :name, :pos, :school, :seasons
+  attr_reader :overall_yards, :overall_td, :season, :week, :name, :pos, :school, :seasons, :identifier
 
   def initialize( school, player )
     super()
@@ -233,11 +329,13 @@ class Overall < Stats
     @freshman_season = player[:freshman_season]
 
     @seasons = player[:stats][:offense][:seasons]
+
+    @identifier = @name
   end
 end
 
 class Sacks < Stats
-  attr_reader :sacks, :score, :pr_score, :season, :week, :name, :pos, :school, :seasons
+  attr_reader :sacks, :score, :pr_score, :season, :week, :name, :pos, :school, :seasons, :identifier
 
   def initialize( school, player )
     super()
@@ -255,6 +353,8 @@ class Sacks < Stats
     @pr_score = calc_score player
 
     @seasons = player[:stats][:defense][:seasons]
+
+    @identifier = @name
   end
 
   def calc_score( player )
@@ -271,7 +371,7 @@ class Sacks < Stats
 end
 
 class Interceptions < Stats
-  attr_reader :interceptions, :int_return_yards, :int_return_td, :score, :cvg_score, :season, :week, :name, :pos, :school, :seasons
+  attr_reader :interceptions, :int_return_yards, :int_return_td, :score, :cvg_score, :season, :week, :name, :pos, :school, :seasons, :identifier
 
   def initialize( school, player )
     super()
@@ -292,6 +392,8 @@ class Interceptions < Stats
     @cvg_score = calc_score player
 
     @seasons = player[:stats][:defense][:seasons]
+
+    @identifier = @name
   end
 
   def calc_score( player )
@@ -307,7 +409,7 @@ class Interceptions < Stats
 end
 
 class KickReturns < Stats
-  attr_reader :kick_returns, :kick_return_yards, :kick_return_td, :kick_return_avg, :season, :week, :name, :pos, :school, :seasons
+  attr_reader :kick_returns, :kick_return_yards, :kick_return_td, :kick_return_avg, :season, :week, :name, :pos, :school, :seasons, :identifier
 
   def initialize( school, player )
     super()
@@ -327,11 +429,13 @@ class KickReturns < Stats
     @seasons = player[:stats][:returns][:seasons]
 
     @threshold = 20
+
+    @identifier = @name
   end
 end
 
 class PuntReturns < Stats
-  attr_reader :punt_returns, :punt_return_yards, :punt_return_td, :punt_return_avg, :season, :week, :name, :pos, :school, :seasons
+  attr_reader :punt_returns, :punt_return_yards, :punt_return_td, :punt_return_avg, :season, :week, :name, :pos, :school, :seasons, :identifier
 
   def initialize( school, player )
     super()
@@ -351,12 +455,14 @@ class PuntReturns < Stats
     @seasons = player[:stats][:returns][:seasons]
 
     @threshold = 5
+
+    @identifier = @name
   end
 
 end
 
 class Kicking < Stats
-  attr_reader :fga, :points, :fg_pct, :season, :week, :name, :pos, :school, :seasons
+  attr_reader :fga, :points, :fg_pct, :season, :week, :name, :pos, :school, :seasons, :identifier
 
   def initialize( school, player )
     super()
@@ -379,11 +485,13 @@ class Kicking < Stats
     @seasons = player[:stats][:kicking][:seasons]
 
     @threshold = 5
+
+    @identifier = @name
   end
 end
 
 class Punting < Stats
-  attr_reader :punts, :punt_yards, :punt_avg, :season, :week, :name, :pos, :school, :seasons
+  attr_reader :punts, :punt_yards, :punt_avg, :season, :week, :name, :pos, :school, :seasons, :identifier
 
   def initialize( school, player )
     super()
@@ -402,5 +510,7 @@ class Punting < Stats
     @seasons = player[:stats][:kicking][:seasons]
 
     @threshold = 5
+
+    @identifier = @name
   end
 end

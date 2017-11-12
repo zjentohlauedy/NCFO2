@@ -94,6 +94,26 @@ class LeadersFilter
   end
 end
 
+class LeadersCompiler
+  def initialize( org )
+    @org = org
+  end
+
+  def compile_stats( list, target_class, types )
+    @org[:conferences].each do |conference|
+      conference[:teams].each do |team|
+        next if team[:players].nil?
+
+        team[:players].each do |player|
+          if types.include? player[:position]
+            list.push( target_class.new team[:location], player )
+          end
+        end
+      end
+    end
+  end
+end
+
 
 @repository = Repository.new Utils.get_db "#{location}/../ncfo.db"
 
@@ -309,8 +329,10 @@ unless week.nil?
   get_season_best_games season_best, season
 end
 
-lp = LeadersPrinter.new !season.nil?, !week.nil?, all_time_best, season_best
+printer  = LeadersPrinter.new !season.nil?, !week.nil?, all_time_best, season_best
+filter   = LeadersFilter.new
+compiler = LeadersCompiler.new org
 
-sr = StatRankings.new lp, LeadersFilter.new, org
+sr = StatRankings.new printer, filter, compiler
 
 sr.process_categories @player_categories

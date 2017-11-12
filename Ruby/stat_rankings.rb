@@ -2,11 +2,11 @@ require 'stats'
 
 class StatRankings
 
-  def initialize( printer, filter, org )
-    @players = Array.new
-    @org     = org
-    @printer = printer
-    @filter  = filter
+  def initialize( printer, filter, compiler )
+    @players  = Array.new
+    @printer  = printer
+    @filter   = filter
+    @compiler = compiler
   end
 
   def process_categories( categories )
@@ -15,7 +15,7 @@ class StatRankings
 
       value.fetch( 'stats' ).each do |stat|
         print "#{stat.fetch 'label'}\n"
-        print_top_players stat['stat'], stat['filter'], stat['format']
+        print_top_players stat['stat'], stat['filter'], stat['direction'], stat['format']
         print "\n"
       end
     end
@@ -23,6 +23,10 @@ class StatRankings
 
   def compile_stats( object, types )
     @players = Array.new
+
+    @compiler.compile_stats @players, object, types
+
+    return
 
     @org[:conferences].each do |conference|
       conference[:teams].each do |team|
@@ -70,9 +74,10 @@ class StatRankings
     return nil
   end
 
-  def print_top_players( stat, filter_stat=nil, format='%d' )
+  def print_top_players( stat, filter_stat=nil, sort_direction=:descending, format='%d' )
     @players.each do |player|
       player.set_sort_key stat
+      player.set_direction sort_direction
     end
 
     players = @players.sort
@@ -89,7 +94,7 @@ class StatRankings
     tie_summary = summarize_ties top_players
 
     last_player = nil
-    last_idx    = 0
+    last_idx    = -1
 
     top_players.each_with_index do |player, idx|
       tied = (!last_player.nil? and player.get_sort_value == last_player.get_sort_value)
@@ -157,4 +162,52 @@ end
 
   'punting'       => {  'class' => Punting,              'types' => ['P'],
     'stats'       => [{ 'label' => "Yards Per Punt",     'stat'  => :punt_avg,             'filter' => :punts,         'format' => '%5.2f' }]}
+}
+
+
+@team_categories = {
+  'records'       => {  'class' => Team,                   'types' => [],
+    'stats'       => [{ 'label' => "Wins",                 'stat'  => :wins,                   'direction' => :descending, 'format' => '%2d'   },
+                      { 'label' => "Win/Loss Ratio",       'stat'  => :wl_ratio,               'direction' => :descending, 'format' => '%6.2f' },
+                      { 'label' => "Scoring Differential", 'stat'  => :pts_diff,               'direction' => :descending, 'format' => '%3d'   },
+                      { 'label' => "Yards Differential",   'stat'  => :yds_diff,               'direction' => :descending, 'format' => '%4d'   }]},
+
+  'offense'       => {  'class' => Team,                   'types' => [],
+    'stats'       => [{ 'label' => "Passing Yards",        'stat'  => :pass_yards,             'direction' => :descending, 'format' => '%4d'   },
+                      { 'label' => "Passing TD",           'stat'  => :pass_touchdowns,        'direction' => :descending, 'format' => '%2d'   },
+                      { 'label' => "Completion Pct.",      'stat'  => :comp_pct,               'direction' => :descending, 'format' => '%6.2f' },
+                      { 'label' => "Yards Per Comp.",      'stat'  => :yds_per_comp,           'direction' => :descending, 'format' => '%5.2f' },
+                      { 'label' => "Quarterback Rating",   'stat'  => :pass_rating,            'direction' => :descending, 'format' => '%7.2f' },
+                      { 'label' => "Rushing Yards",        'stat'  => :rush_yards,             'direction' => :descending, 'format' => '%4d'   },
+                      { 'label' => "Rushing TD",           'stat'  => :rush_touchdowns,        'direction' => :descending, 'format' => '%2d'   },
+                      { 'label' => "Yards Per Carry",      'stat'  => :yds_per_carry,          'direction' => :descending, 'format' => '%5.2f' },
+                      { 'label' => "Total Offense",        'stat'  => :total_offense,          'direction' => :descending, 'format' => '%4d'   },
+                      { 'label' => "Total Offensive TD",   'stat'  => :total_off_td,           'direction' => :descending, 'format' => '%2d'   },
+                      { 'label' => "Total Points Scored",  'stat'  => :points_scored,          'direction' => :descending, 'format' => '%3d'   }]},
+
+  'defense'       => {  'class' => Team,                   'types' => [],
+    'stats'       => [{ 'label' => "Sacks",                'stat'  => :sacks,                  'direction' => :descending, 'format' => '%2d'   },
+                      { 'label' => "Interceptions",        'stat'  => :interceptions,          'direction' => :descending, 'format' => '%2d'   },
+                      { 'label' => "Int. Return Yards",    'stat'  => :int_return_yards,       'direction' => :descending, 'format' => '%3d'   },
+                      { 'label' => "Int. Return TD",       'stat'  => :int_return_touchdowns,  'direction' => :descending, 'format' => '%2d'   },
+                      { 'label' => "Total Yards Allowed",  'stat'  => :yards_allowed,          'direction' => :ascending,  'format' => '%4d'   },
+                      { 'label' => "Total Points Allowed", 'stat'  => :points_allowed,         'direction' => :ascending,  'format' => '%3d'   }]},
+
+  'returns'       => {  'class' => Team,                   'types' => [],
+    'stats'       => [{ 'label' => "Kick Return Yards",    'stat'  => :kick_return_yards,      'direction' => :descending, 'format' => '%4d'   },
+                      { 'label' => "Kick Return Avg.",     'stat'  => :kick_ret_avg,           'direction' => :descending, 'format' => '%5.2f' },
+                      { 'label' => "Kick Return TD",       'stat'  => :kick_return_touchdowns, 'direction' => :descending, 'format' => '%2d'   },
+                      { 'label' => "Punt Return Yards",    'stat'  => :punt_return_yards,      'direction' => :descending, 'format' => '%3d'   },
+                      { 'label' => "Punt Return Avg.",     'stat'  => :punt_ret_avg,           'direction' => :descending, 'format' => '%5.2f' },
+                      { 'label' => "Punt Return TD",       'stat'  => :punt_return_touchdowns, 'direction' => :descending, 'format' => '%2d'   },
+                      { 'label' => "Total Return Yards",   'stat'  => :total_ret_yards,        'direction' => :descending, 'format' => '%4d'   },
+                      { 'label' => "Total Return TD",      'stat'  => :total_ret_td,           'direction' => :descending, 'format' => '%2d'   },
+                      { 'label' => "Total Yards",          'stat'  => :total_yards,            'direction' => :descending, 'format' => '%4d'   },
+                      { 'label' => "Total Touchdowns",     'stat'  => :total_td,               'direction' => :descending, 'format' => '%4d'   }]},
+
+  'kicking'       => {  'class' => Team,                   'types' => [],
+    'stats'       => [{ 'label' => "Field Goal Pct.",      'stat'  => :fg_pct,                 'direction' => :descending, 'format' => '%6.2f' },
+                      { 'label' => "Extra Point Pct.",     'stat'  => :xp_pct,                 'direction' => :descending, 'format' => '%6.2f' },
+                      { 'label' => "Points Off Kicks",     'stat'  => :kicking_points,         'direction' => :descending, 'format' => '%3d'   },
+                      { 'label' => "Yards Per Punt",       'stat'  => :punt_avg,               'direction' => :descending, 'format' => '%5.2f' }]}
 }

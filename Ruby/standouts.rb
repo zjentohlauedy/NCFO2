@@ -50,6 +50,26 @@ class LeadersFilter
   end
 end
 
+class LeadersCompiler
+  def initialize( org )
+    @org = org
+  end
+
+  def compile_stats( list, target_class, types )
+    @org[:conferences].each do |conference|
+      conference[:teams].each do |team|
+        next if team[:players].nil?
+
+        team[:players].each do |player|
+          if types.include? player[:position]
+            list.push( target_class.new team[:location], player )
+          end
+        end
+      end
+    end
+  end
+end
+
 
 path = ARGV[0] || '.'
 
@@ -67,6 +87,10 @@ if File.file?("#{path}/.ncfo1.nst.bak") and File.file?("#{path}/.ncfo2.nst.bak")
   Utils::org_delta org, old_org
 end
 
-sr = StatRankings.new LeadersPrinter.new, LeadersFilter.new, org
+printer  = LeadersPrinter.new
+filter   = LeadersFilter.new
+compiler = LeadersCompiler.new org
+
+sr = StatRankings.new printer, filter, compiler
 
 sr.process_categories @player_categories
