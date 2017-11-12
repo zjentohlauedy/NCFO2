@@ -3,7 +3,7 @@ require 'stats'
 class StatRankings
 
   def initialize( printer, filter, compiler )
-    @players  = Array.new
+    @items    = Array.new
     @printer  = printer
     @filter   = filter
     @compiler = compiler
@@ -15,42 +15,28 @@ class StatRankings
 
       value.fetch( 'stats' ).each do |stat|
         print "#{stat.fetch 'label'}\n"
-        print_top_players stat['stat'], stat['filter'], stat['direction'], stat['format']
+        print_top_items stat['stat'], stat['filter'], stat['direction'], stat['format']
         print "\n"
       end
     end
   end
 
   def compile_stats( object, types )
-    @players = Array.new
+    @items = Array.new
 
-    @compiler.compile_stats @players, object, types
-
-    return
-
-    @org[:conferences].each do |conference|
-      conference[:teams].each do |team|
-        next if team[:players].nil?
-
-        team[:players].each do |player|
-          if types.include? player[:position]
-            @players.push( object.new team[:location], player )
-          end
-        end
-      end
-    end
+    @compiler.compile_stats @items, object, types
   end
 
-  def select_top_players( players, min=15 )
-    top_players = []
+  def select_top_items( items, min=15 )
+    top_items   = []
     last_player = nil
     i           = 0
 
-    players.each do |player|
+    items.each do |player|
       if i < min
-        top_players.push player
+        top_items.push player
       elsif player.get_sort_value == last_player.get_sort_value
-        top_players.push player
+        top_items.push player
       else
         break
       end
@@ -59,14 +45,14 @@ class StatRankings
       last_player = player
     end
 
-    return top_players
+    return top_items
   end
 
-  def summarize_ties( players, max=20 )
-    if players.length > max
-      tied = players.select { |p| p.get_sort_value == players[-1].get_sort_value }
+  def summarize_ties( items, max=20 )
+    if items.length > max
+      tied = items.select { |p| p.get_sort_value == items[-1].get_sort_value }
 
-      players.reject! { |p| tied.include? p }
+      items.reject! { |p| tied.include? p }
 
       return TieSummary.new tied.length, tied[-1].get_sort_value
     end
@@ -74,29 +60,29 @@ class StatRankings
     return nil
   end
 
-  def print_top_players( stat, filter_stat=nil, sort_direction=:descending, format='%d' )
-    @players.each do |player|
+  def print_top_items( stat, filter_stat=nil, sort_direction=:descending, format='%d' )
+    @items.each do |player|
       player.set_sort_key stat
       player.set_direction sort_direction
     end
 
-    players = @players.sort
-    players = @filter.apply players, filter_stat
+    items = @items.sort
+    items = @filter.apply items, filter_stat
 
-    players.select! { |p| (p.send stat) > 0 }
+    items.select! { |p| (p.send stat) > 0 }
 
-    if players.length == 0
+    if items.length == 0
       @printer.print_empty_indicator
       return
     end
 
-    top_players = select_top_players players
-    tie_summary = summarize_ties top_players
+    top_items   = select_top_items items
+    tie_summary = summarize_ties top_items
 
     last_player = nil
     last_idx    = -1
 
-    top_players.each_with_index do |player, idx|
+    top_items.each_with_index do |player, idx|
       tied = (!last_player.nil? and player.get_sort_value == last_player.get_sort_value)
 
       @printer.print player, format, idx, tied
