@@ -403,15 +403,6 @@ static void copyPlayers(
 
           player_identifier_offset += len;
 
-          position_e source_position = getPosition( source_player_idx );
-
-          if ( source_position != position )
-          {
-               printf( "Position mismatch for player at index %d\n", i );
-
-               continue;
-          }
-
           const nst_players_s *s_stats = NULL;
           /**/  nst_players_s *o_stats = NULL;
 
