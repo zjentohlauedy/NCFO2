@@ -25,11 +25,14 @@ class LeadersPrinter
     else          printf "%2d. ", index + 1;
     end
 
-    printf "%-2s %-24s %d %-15s #{format}\n", player.pos, name, player.seasons, player.school, value
+    first_season = player.freshman_season > 0 ? player.freshman_season : 1
+    last_season  = first_season + player.seasons - 1
+
+    printf "%-2s %-24s S%02d-S%02d %d %-15s #{format}\n", player.pos, name, first_season, last_season, player.seasons, player.school, value
   end
 
   def print_tie_message( summary, format, index )
-    printf "%2d.    %-35s        #{format}\n", index + 1, "#{summary.count} Players Tied At", summary.value
+    printf "%2d.    %-50s #{format}\n", index + 1, "#{summary.count} Players Tied At", summary.value
   end
 end
 
