@@ -4,6 +4,7 @@ location = File.dirname __FILE__
 
 $: << "#{location}"
 require 'json'
+require 'optparse'
 require 'bowls'
 require 'positions'
 require 'repository'
@@ -116,6 +117,13 @@ end
 
 
 @repository = Repository.new Utils.get_db "#{location}/../ncfo.db"
+
+@options = {}
+
+OptionParser.new do |opt|
+  opt.on( '-s', '--season SEASON',   'Show best games for this season'    ) { |o| @options[ :season ] = o }
+  opt.on( '-w', '--week   SEASON',   'Show best games for this week'      ) { |o| @options[ :week   ] = o }
+end.parse!
 
 
 def get_organization( organization_id )
@@ -293,8 +301,8 @@ def get_season_best_games( best_games, season )
 end
 
 
-season = ARGV[0]
-week   = ARGV[1]
+season = @options[ :season ]
+week   = @options[ :week   ]
 
 org = get_organization 1
 org[:conferences] = get_conferences_by_org org
