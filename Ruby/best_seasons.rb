@@ -13,8 +13,9 @@ require 'utils'
 
 
 class LeadersPrinter
-  def initialize( single_team )
-    @single_team = single_team
+  def initialize( single_team, single_season )
+    @single_team   = single_team
+    @single_season = single_season
   end
 
   def print_empty_indicator()
@@ -33,9 +34,17 @@ class LeadersPrinter
     end
 
     if @single_team
-      context = sprintf "S%02d", player.season
+      if @single_season
+        context = ''
+      else
+        context = sprintf "S%02d", player.season
+      end
     else
-      context = sprintf "S%02d %-15s", player.season, player.school
+      if @single_season
+        context = sprintf "%-15s", player.school
+      else
+        context = sprintf "S%02d %-15s", player.season, player.school
+      end
     end
 
     printf "#{prefix} %-2s %-24s #{context}  #{format}\n", player.pos, name, value
@@ -43,9 +52,17 @@ class LeadersPrinter
 
   def print_tie_message( summary, format, index )
     if @single_team
-      padding = '   '
+      if @single_season
+        padding = ''
+      else
+        padding = '   '
+      end
     else
-      padding = '                   '
+      if @single_season
+        padding = '               '
+      else
+        padding = '                   '
+      end
     end
 
     printf "%2d.    %-20s      #{padding} #{format}\n", index + 1, "#{summary.count} Players Tied At", summary.value
@@ -86,6 +103,7 @@ end
 @options = {}
 
 OptionParser.new do |opt|
+  opt.on( '-s', '--season SEASON',   'Show best games for this season'    ) { |o| @options[ :season ] = o }
   opt.on( '-t', '--team   TEAM',     'Show best games for this team'      ) { |o| @options[ :team   ] = o }
 end.parse!
 
@@ -111,53 +129,77 @@ def get_players_by_team( team )
 end
 
 
-def get_player_offense_stats_by_player_id( player_id )
-  @repository.custom_read "select * from player_offense_stats_t where player_id = #{player_id} and bowl_game = #{Bowls::None}"
+def get_player_offense_stats_by_player_id( player_id, season )
+  query = "select * from player_offense_stats_t where player_id = #{player_id} and bowl_game = #{Bowls::None}"
+
+  if season
+    query = "#{query} and season = #{season}"
+  end
+
+  @repository.custom_read query
 end
 
 
-def get_player_defense_stats_by_player_id( player_id )
-  @repository.custom_read "select * from player_defense_stats_t where player_id = #{player_id} and bowl_game = #{Bowls::None}"
+def get_player_defense_stats_by_player_id( player_id, season )
+  query = "select * from player_defense_stats_t where player_id = #{player_id} and bowl_game = #{Bowls::None}"
+
+  if season
+    query = "#{query} and season = #{season}"
+  end
+
+  @repository.custom_read query
 end
 
 
-def get_player_kicking_stats_by_player_id( player_id )
-  @repository.custom_read "select * from player_kicking_stats_t where player_id = #{player_id} and bowl_game = #{Bowls::None}"
+def get_player_kicking_stats_by_player_id( player_id, season )
+  query = "select * from player_kicking_stats_t where player_id = #{player_id} and bowl_game = #{Bowls::None}"
+
+  if season
+    query = "#{query} and season = #{season}"
+  end
+
+  @repository.custom_read query
 end
 
 
-def get_player_returns_stats_by_player_id( player_id )
-  @repository.custom_read "select * from player_returns_stats_t where player_id = #{player_id} and bowl_game = #{Bowls::None}"
+def get_player_returns_stats_by_player_id( player_id, season )
+  query = "select * from player_returns_stats_t where player_id = #{player_id} and bowl_game = #{Bowls::None}"
+
+  if season
+    query = "#{query} and season = #{season}"
+  end
+
+  @repository.custom_read query
 end
 
 
-def get_player_stats_by_player( player )
+def get_player_stats_by_player( player, season )
   player[:stats] = {}
 
   case player[:position]
   when Positions::Quarterback
-    player[:stats][:offense] = get_player_offense_stats_by_player_id player[:player_id]
+    player[:stats][:offense] = get_player_offense_stats_by_player_id player[:player_id], season
   when Positions::Runningback
-    player[:stats][:offense] = get_player_offense_stats_by_player_id player[:player_id]
-    player[:stats][:returns] = get_player_returns_stats_by_player_id player[:player_id]
+    player[:stats][:offense] = get_player_offense_stats_by_player_id player[:player_id], season
+    player[:stats][:returns] = get_player_returns_stats_by_player_id player[:player_id], season
   when Positions::WideReceiver
-    player[:stats][:offense] = get_player_offense_stats_by_player_id player[:player_id]
-    player[:stats][:returns] = get_player_returns_stats_by_player_id player[:player_id]
+    player[:stats][:offense] = get_player_offense_stats_by_player_id player[:player_id], season
+    player[:stats][:returns] = get_player_returns_stats_by_player_id player[:player_id], season
   when Positions::TightEnd
-    player[:stats][:offense] = get_player_offense_stats_by_player_id player[:player_id]
-    player[:stats][:returns] = get_player_returns_stats_by_player_id player[:player_id]
+    player[:stats][:offense] = get_player_offense_stats_by_player_id player[:player_id], season
+    player[:stats][:returns] = get_player_returns_stats_by_player_id player[:player_id], season
   when Positions::DefensiveLine
-    player[:stats][:defense] = get_player_defense_stats_by_player_id player[:player_id]
+    player[:stats][:defense] = get_player_defense_stats_by_player_id player[:player_id], season
   when Positions::Linebacker
-    player[:stats][:defense] = get_player_defense_stats_by_player_id player[:player_id]
+    player[:stats][:defense] = get_player_defense_stats_by_player_id player[:player_id], season
   when Positions::Cornerback
-    player[:stats][:defense] = get_player_defense_stats_by_player_id player[:player_id]
+    player[:stats][:defense] = get_player_defense_stats_by_player_id player[:player_id], season
   when Positions::Safety
-    player[:stats][:defense] = get_player_defense_stats_by_player_id player[:player_id]
+    player[:stats][:defense] = get_player_defense_stats_by_player_id player[:player_id], season
   when Positions::Kicker
-    player[:stats][:kicking] = get_player_kicking_stats_by_player_id player[:player_id]
+    player[:stats][:kicking] = get_player_kicking_stats_by_player_id player[:player_id], season
   when Positions::Punter
-    player[:stats][:kicking] = get_player_kicking_stats_by_player_id player[:player_id]
+    player[:stats][:kicking] = get_player_kicking_stats_by_player_id player[:player_id], season
   end
 end
 
@@ -184,7 +226,8 @@ def flatten_stats( player )
 end
 
 
-chosen_team = @options[:team]
+chosen_team   = @options[:team]
+chosen_season = @options[:season]
 
 org = get_organization 1
 org[:conferences] = get_conferences_by_org org
@@ -199,7 +242,7 @@ org[:conferences].each do |conference|
     players = get_players_by_team team
 
     players.each do |player|
-      get_player_stats_by_player player
+      get_player_stats_by_player player, chosen_season
 
       player[:position] = Positions::string_value player[:position]
 
@@ -210,7 +253,7 @@ org[:conferences].each do |conference|
   end
 end
 
-printer  = LeadersPrinter.new !chosen_team.nil?
+printer  = LeadersPrinter.new !chosen_team.nil?, !chosen_season.nil?
 filter   = LeadersFilter.new
 compiler = LeadersCompiler.new org
 
