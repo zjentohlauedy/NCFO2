@@ -4,6 +4,7 @@ location = File.dirname __FILE__
 
 $: << "#{location}"
 require 'json'
+require 'optparse'
 require 'bowls'
 require 'positions'
 require 'repository'
@@ -12,6 +13,10 @@ require 'utils'
 
 
 class LeadersPrinter
+  def initialize( single_team )
+    @single_team = single_team
+  end
+
   def print_empty_indicator()
     puts "--"
   end
@@ -21,15 +26,29 @@ class LeadersPrinter
 
     name = player.name + player.get_class
 
-    if tied; then printf " -  ";
-    else          printf "%2d. ", index + 1;
+    if tied
+      prefix = ' - '
+    else
+      prefix = sprintf '%2d.', index + 1
     end
 
-    printf "%-2s %-24s S%02d %-15s #{format}\n", player.pos, name, player.season, player.school, value
+    if @single_team
+      context = sprintf "S%02d", player.season
+    else
+      context = sprintf "S%02d %-15s", player.season, player.school
+    end
+
+    printf "#{prefix} %-2s %-24s #{context}  #{format}\n", player.pos, name, value
   end
 
   def print_tie_message( summary, format, index )
-    printf "%2d.    %-35s          #{format}\n", index + 1, "#{summary.count} Players Tied At", summary.value
+    if @single_team
+      padding = '   '
+    else
+      padding = '                   '
+    end
+
+    printf "%2d.    %-20s      #{padding} #{format}\n", index + 1, "#{summary.count} Players Tied At", summary.value
   end
 end
 
@@ -63,6 +82,12 @@ end
 
 
 @repository = Repository.new Utils.get_db "#{location}/../ncfo.db"
+
+@options = {}
+
+OptionParser.new do |opt|
+  opt.on( '-t', '--team   TEAM',     'Show best games for this team'      ) { |o| @options[ :team   ] = o }
+end.parse!
 
 
 def get_organization( organization_id )
@@ -159,10 +184,7 @@ def flatten_stats( player )
 end
 
 
-if ARGV.length > 0
-  chosen_team = ARGV[0]
-end
-
+chosen_team = @options[:team]
 
 org = get_organization 1
 org[:conferences] = get_conferences_by_org org
@@ -188,7 +210,7 @@ org[:conferences].each do |conference|
   end
 end
 
-printer  = LeadersPrinter.new
+printer  = LeadersPrinter.new !chosen_team.nil?
 filter   = LeadersFilter.new
 compiler = LeadersCompiler.new org
 
