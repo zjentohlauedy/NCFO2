@@ -1,5 +1,6 @@
 require 'json'
 require 'ProgRunner'
+require 'standings'
 
 class TeamRankings
 
@@ -20,11 +21,9 @@ class TeamRankings
       new_rating = @rating + (scored - allowed)
 
       if scored > allowed
-#        bonus = (opponent.rating / 4.0).to_i
         bonus = (@rating < opponent.rating) ? ((opponent.rating - @rating) / 4.0) : 0
         new_rating += 50 + bonus
       else
-#        penalty = (@rating > opponent.rating) ? ((@rating - opponent.rating) / 4.0).to_i : 0
         penalty = (@rating > opponent.rating) ? ((@rating - opponent.rating) / 4.0).to_i : 0
         new_rating -= (10 + penalty)
       end
@@ -134,15 +133,15 @@ class TeamRankings
       end
     end
 
-    # todo: bump ratings for conference champions (when they clinch) by 100
-    @ratings[ 'West Virginia'  ].rating += 100
-    @ratings[ 'Minnesota'      ].rating += 100
-    @ratings[ 'Kansas'         ].rating += 100
-    @ratings[ 'Vermont'        ].rating += 100
-    @ratings[ 'North Dakota'   ].rating += 100
-    @ratings[ 'Oregon'         ].rating += 100
-    @ratings[ 'North Carolina' ].rating += 100
-    @ratings[ 'Oklahoma'       ].rating += 100
+    standings = Standings.new sp.schedule
+
+    conferences = standings.process
+
+    conferences.each do |conference|
+      if conference[:standings][0][:clinched]
+        @ratings[ conference[:standings][0][:name] ].rating += 100
+      end
+    end
   end
 
   def update_ratings( game )
