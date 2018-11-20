@@ -9,7 +9,12 @@ require 'standings'
 
 
 def print_team_record( team )
+  if team[:clinched]
+    printf "\e[33m"
+  end
+
   printf "%-15s  %2d %2d %2d", team[:name], team[:record].overall.wins, team[:record].overall.losses, team[:record].overall.ties
+  printf "\e[0m"
 end
 
 
